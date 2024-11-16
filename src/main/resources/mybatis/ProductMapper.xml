@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ganmashop.dao.ProductDao">
+
+    <!-- Query to find product by ID -->
+    <select id="findProductId" resultType="com.ganmashop.entity.Product" parameterType="String">
+        SELECT * FROM product WHERE id = #{id}
+    </select>
+
+    <!-- Query to find product by category ID -->
+    <select id="findCategoryId" resultType="com.ganmashop.entity.Product" parameterType="String">
+        SELECT * FROM product WHERE category_id = #{categoryId}
+    </select>
+
+    <!-- Query to find product by name -->
+    <select id="findProductName" resultType="com.ganmashop.entity.Product" parameterType="String">
+        SELECT * FROM product WHERE name = #{name}
+    </select>
+
+    <!-- Query to find product by price -->
+    <select id="findProductPrice" resultType="com.ganmashop.entity.Product" parameterType="Double">
+        SELECT * FROM product WHERE price = #{price}
+    </select>
+
+    <!-- Query to find product by image name -->
+    <select id="findProductImg" resultType="com.ganmashop.entity.Product" parameterType="String">
+        SELECT * FROM product WHERE image_name = #{imageName}
+    </select>
+
+    <!-- Query to find product by description -->
+    <select id="findProductDesc" resultType="com.ganmashop.entity.Product" parameterType="String">
+        SELECT * FROM product WHERE description = #{description}
+    </select>
+
+    <select id="findAllProducts" resultType="com.ganmashop.entity.Product">
+        SELECT * FROM product
+    </select>
+
+</mapper>
