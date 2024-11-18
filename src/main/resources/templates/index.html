@@ -18,11 +18,9 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link" href="/ganma/index">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="/ganma/product">Products</a></li>
                 <li class="nav-item"><a class="nav-link" href="/ganma/cart">Carts</a></li>
-                <li class="nav-item" th:if="${isLoggedIn}">
-                    <a class="nav-link" href="/ganma/account">Account</a>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="${isLoggedIn ? '/ganma/account' : '/auth/login'}">Account</a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto">
@@ -94,19 +92,25 @@
     <!-- Product Listings -->
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
         <div class="col" th:each="product : ${products}">
-            <div class="card border-secondary">
-                <div class="ratio ratio-1x1">
-                    <img th:src="@{/${product.imageName}}" class="card-img-top" alt="Product Image">
-                </div>
+            <div class="card border-secondary rounded-4 shadow-sm" style="max-width: 95%; margin: auto;">
+                <!-- Link wrapper for the image -->
+                <a th:href="@{/ganma/product/{id}(id=${product.id})}" class="ratio ratio-4x3 rounded-top-4 d-block overflow-hidden">
+                    <img
+                            th:src="@{/${product.imageName}}"
+                            class="card-img-top img-fluid rounded-top-4 hover-effect"
+                            alt="Product Image"
+                            style="object-fit: cover;">
+                </a>
                 <div class="card-body text-center">
                     <h5 class="card-title" th:text="${product.name}"></h5>
                     <p class="card-text" th:text="'Description:' + ${product.description}"></p>
-                    <a href="/product" class="btn btn-primary me-2">View</a>
+                    <!-- Favorite button -->
                     <button class="btn btn-outline-secondary"><i class="bi bi-heart"></i></button>
                 </div>
             </div>
         </div>
     </div>
+
 </div>
 
 <!-- Footer -->

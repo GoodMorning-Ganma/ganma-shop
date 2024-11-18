@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,24 +36,6 @@ public class IndexController {
 
         return "index";
     }
-
-    @GetMapping("/product")
-    public String showProductPage(Model model, HttpSession session) {
-        User user = (User) session.getAttribute("loggedInUser");
-        model.addAttribute("isLoggedIn", user != null); // 如果user不为空，表示已登录
-
-        List<Product> products = productService.findAllProducts(); // Assume this returns all products
-        model.addAttribute("products", products);
-        return "product"; // Refers to the product.html page in the templates folder
-    }
-
-    @GetMapping("/cart")
-    public String showCartPage(Model model, HttpSession session) {
-        User user = (User) session.getAttribute("loggedInUser");
-        model.addAttribute("isLoggedIn", user != null); // 如果user不为空，表示已登录
-        return "cart"; // Refers to the product.html page in the templates folder
-    }
-
     @GetMapping("/account")
     public String showAccountPage(Model model, HttpSession session) {
         User user = (User) session.getAttribute("loggedInUser");

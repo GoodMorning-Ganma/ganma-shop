@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Products</title>
+    <title th:text="${product.name}">Product Details</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
 </head>
@@ -18,11 +18,9 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link" href="/ganma/index">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="/ganma/product">Products</a></li>
-                <li class="nav-item"><a class="nav-link" href="/ganma/cart">Carts</a></li>
-                <li class="nav-item" th:if="${isLoggedIn}">
-                    <a class="nav-link" href="/ganma/account">Account</a>
+                <li class="nav-item"><a class="nav-link" href="/ganma/cart">Cart</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="${isLoggedIn ? '/ganma/account' : '/auth/login'}">Account</a>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto">
@@ -36,45 +34,33 @@
     </div>
 </nav>
 
-<div class="container my-4">
-    <!-- Search and Filter Bar -->
-    <div class="d-flex justify-content-end mb-3">
-        <form class="d-flex w-100 w-md-auto">
-            <select class="form-select me-2" style="max-width: 150px;">
-                <option>All Categories</option>
-                <option>Health Products</option>
-                <option>####</option>
-                <option>####</option>
-            </select>
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" style="max-width: 400px;">
-            <button class="btn btn-outline-dark" type="submit">Search</button>
-        </form>
-    </div>
-</div>
-
-<!-- Products Section -->
-<section class="py-5">
-    <div class="container">
-        <h2 class="text-center mb-4">Our Products</h2>
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-            <div class="col" th:each="product : ${products}">
-                <div class="card border-secondary">
-                    <div class="ratio ratio-1x1">
-                        <img th:src="@{/${product.imageName}}" class="card-img-top" alt="Product Image">
-                    </div>
-                    <div class="card-body text-center">
-                        <h5 class="card-title" th:text="${product.name}"></h5>
-                        <p class="card-text" th:text="'Price: RM' + ${product.price}"></p>
-                        <p class="card-text" th:text="'Description:' + ${product.description}"></p>
-                        <a href="#" class="btn btn-primary me-2">View</a>
-                        <button class="btn btn-outline-secondary">Add to Cart</button>
-                        <button class="btn btn-outline-secondary"><i class="bi bi-heart"></i></button>
-                    </div>
+<!-- Product Details Section -->
+<div class="container my-5">
+    <div class="row">
+        <!-- Product Image -->
+        <div class="col-md-6 mb-4">
+            <img th:src="@{/${product.imageName}}" class="img-fluid rounded" alt="Product Image">
+        </div>
+        <!-- Product Details -->
+        <div class="col-md-6">
+            <h1 th:text="${product.name}" class="mb-3"></h1>
+            <p><strong>Price:</strong> RM<span th:text="${product.price}"></span></p>
+            <p><strong>Description:</strong></p>
+            <p th:text="${product.description}"></p>
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <!-- Quantity Selector -->
+                <div class="input-group" style="width: 120px;">
+                    <button class="btn btn-outline-secondary" onclick="decrementQuantity()">-</button>
+                    <input type="number" id="quantity" class="form-control text-center" value="1" min="1">
+                    <button class="btn btn-outline-secondary" onclick="incrementQuantity()">+</button>
                 </div>
+                <!-- Buttons -->
+                <a th:href="@{/cart/add(productId=${product.id}, quantity=1)}" class="btn btn-primary flex-fill">Check Out</a>
+                <a th:href="@{/cart/add(productId=${product.id}, quantity=1)}" class="btn btn-primary flex-fill">Add to Cart</a>
             </div>
         </div>
     </div>
-</section>
+</div>
 
 <!-- Footer -->
 <footer class="py-4 bg-dark text-light">
@@ -102,6 +88,21 @@
         <p class="text-center mt-3">&copy; 2024 Ganma Shop. All Rights Reserved.</p>
     </div>
 </footer>
+
+<script>
+    // Simple JavaScript to handle quantity changes
+    function incrementQuantity() {
+        let quantityInput = document.getElementById('quantity');
+        quantityInput.value = parseInt(quantityInput.value) + 1;
+    }
+
+    function decrementQuantity() {
+        let quantityInput = document.getElementById('quantity');
+        if (parseInt(quantityInput.value) > 1) {
+            quantityInput.value = parseInt(quantityInput.value) - 1;
+        }
+    }
+</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
