@@ -331,3 +331,17 @@
 [36m2024-11-18 15:14:49[0;39m [32m[http-nio-8081-exec-1][0;39m [34mINFO [0;39m [1;35mo.a.c.c.C.[.[.[/][0;39m - (Initializing Spring DispatcherServlet 'dispatcherServlet'
 [36m2024-11-18 15:16:44[0;39m [32m[SpringApplicationShutdownHook][0;39m [34mINFO [0;39m [1;35mc.z.h.HikariDataSource[0;39m - (HikariPool-1 - Shutdown initiated...
 [36m2024-11-18 15:16:44[0;39m [32m[SpringApplicationShutdownHook][0;39m [34mINFO [0;39m [1;35mc.z.h.HikariDataSource[0;39m - (HikariPool-1 - Shutdown completed.
+[36m2024-11-18 22:49:15[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mc.g.GanmaApplication[0;39m - (Starting GanmaApplication using Java 17.0.12 with PID 18196 (C:\Users\User\Desktop\ganma\target\classes started by User in C:\Users\User\Desktop\ganma)
+[36m2024-11-18 22:49:15[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mc.g.GanmaApplication[0;39m - (No active profile set, falling back to 1 default profile: "default"
+[36m2024-11-18 22:49:19[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mo.a.c.h.Http11NioProtocol[0;39m - (Initializing ProtocolHandler ["http-nio-8081"]
+[36m2024-11-18 22:49:19[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mo.a.c.c.StandardService[0;39m - (Starting service [Tomcat]
+[36m2024-11-18 22:49:19[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mo.a.c.c.StandardEngine[0;39m - (Starting Servlet engine: [Apache Tomcat/10.1.19]
+[36m2024-11-18 22:49:19[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mo.a.c.c.C.[.[.[/][0;39m - (Initializing Spring embedded WebApplicationContext
+[36m2024-11-18 22:49:20[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mc.z.h.HikariDataSource[0;39m - (HikariPool-1 - Starting...
+[36m2024-11-18 22:49:21[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mc.z.h.p.HikariPool[0;39m - (HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4e4d0a0b
+[36m2024-11-18 22:49:21[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mc.z.h.HikariDataSource[0;39m - (HikariPool-1 - Start completed.
+[36m2024-11-18 22:49:24[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mo.a.c.h.Http11NioProtocol[0;39m - (Starting ProtocolHandler ["http-nio-8081"]
+[36m2024-11-18 22:49:24[0;39m [32m[main][0;39m [34mINFO [0;39m [1;35mc.g.GanmaApplication[0;39m - (Started GanmaApplication in 9.985 seconds (process running for 11.721)
+[36m2024-11-18 22:49:29[0;39m [32m[http-nio-8081-exec-1][0;39m [34mINFO [0;39m [1;35mo.a.c.c.C.[.[.[/][0;39m - (Initializing Spring DispatcherServlet 'dispatcherServlet'
+[36m2024-11-18 22:56:02[0;39m [32m[SpringApplicationShutdownHook][0;39m [34mINFO [0;39m [1;35mc.z.h.HikariDataSource[0;39m - (HikariPool-1 - Shutdown initiated...
+[36m2024-11-18 22:56:02[0;39m [32m[SpringApplicationShutdownHook][0;39m [34mINFO [0;39m [1;35mc.z.h.HikariDataSource[0;39m - (HikariPool-1 - Shutdown completed.

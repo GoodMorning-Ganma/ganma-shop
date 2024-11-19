@@ -7,6 +7,7 @@ target/
 .mvn/wrapper/maven-wrapper.properties
 .idea/
 *.class
+javademoe/
 .DS_Store
 
 ### STS ###
