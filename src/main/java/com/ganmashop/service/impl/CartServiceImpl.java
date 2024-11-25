@@ -17,36 +17,46 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private CartDao cartDao;
 
-    // Find cart item by user and product
     @Override
     public Cart findCartByUserAndProduct(String userId, String productId) {
-        return cartDao.findCartByUserAndProduct(userId, productId);
-    }
-
-    // Add product to cart
-    @Override
-    public void addToCart(Cart cart) {
-        if (Objects.isNull(cart.getUserId()) || Objects.isNull(cart.getProductId())) {
-            throw new BusinessException("User or Product is Invalid!");
+        if (Objects.isNull(userId) || Objects.isNull(productId)) {
+            throw new BusinessException("UserId or ProductId cannot be null!");
         }
         try {
-            Cart cartItem = cartDao.findCartByUserAndProduct(cart.getUserId(), cart.getProductId());
-            if (Objects.nonNull(cartItem)) {
-                cartItem.setId(GenUUID.getUUID());
-                cartItem.setQuantity(cart.getQuantity());
-                cartItem.setPrice(cart.getPrice());
-
-                cartDao.insertCart(cartItem);
-            }
+            return cartDao.findCartByUserAndProduct(userId, productId);
         } catch (Exception e) {
-//            logger.error("获取商店异常", e);
-            throw new BusinessException("获取失败，请稍后再试");
+            throw new BusinessException("UserId or ProductId invalid. Cart item not found");
+        }
+    }
+    
+    @Override
+    public void addToCart(Cart cart) {
+        /**
+         * 昨天逻辑有误，这一步是为了把用户选好的product放进去cart table
+         * 所以不应该有太多的查询逻辑，主要是做添加而已
+         */
+        if (Objects.isNull(cart.getUserId()) || Objects.isNull(cart.getProductId())) {
+            throw new BusinessException("UserId or ProductId cannot be null!");
+        }
+        try {
+            //TODO: 在把用户选好的product添加到cart table之前，
+            // 应该查询对应的物品是否已经存在，如果已存在那就只增加quantity
+            cart.setUserId(GenUUID.getUUID());
+            cartDao.insertCart(cart);
+        } catch (Exception e) {
+            throw new BusinessException("Internal server error. Please try again");
         }
     }
 
-    // Get cart items for a user
     @Override
     public List<Cart> getCartItems(String userId) {
-        return cartDao.findCartItemsByUser(userId);
+        if (Objects.isNull(userId)) {
+            throw new BusinessException("UserId cannot be null!");
+        }
+        try {
+            return cartDao.findCartItemsByUser(userId);
+        } catch (Exception e) {
+            throw new BusinessException("UserId invalid. Cart item not found");
+        }
     }
 }
