@@ -147,12 +147,11 @@ CREATE TABLE cart
   product_id                VARCHAR(255) COMMENT 'product id',
   user_id                   VARCHAR(255) COMMENT 'user id',
   quantity                  INTEGER COMMENT 'quantity',
+  price                     DOUBLE NOT NULL COMMENT 'Price'
   create_time               TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation Time',
   update_time               TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Update Time',
   FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 );
-INSERT INTO cart(id, product_id, user_id, quantity)
-values ('1','1','2', 3);
 
 SET FOREIGN_KEY_CHECKS = 1;

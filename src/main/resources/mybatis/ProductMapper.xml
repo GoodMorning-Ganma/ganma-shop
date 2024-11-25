@@ -12,25 +12,6 @@
         SELECT * FROM product WHERE category_id = #{categoryId}
     </select>
 
-    <!-- Query to find product by name -->
-    <select id="findProductName" resultType="com.ganmashop.entity.Product" parameterType="String">
-        SELECT * FROM product WHERE name = #{name}
-    </select>
-
-    <!-- Query to find product by price -->
-    <select id="findProductPrice" resultType="com.ganmashop.entity.Product" parameterType="Double">
-        SELECT * FROM product WHERE price = #{price}
-    </select>
-
-    <!-- Query to find product by image name -->
-    <select id="findProductImg" resultType="com.ganmashop.entity.Product" parameterType="String">
-        SELECT * FROM product WHERE image_name = #{imageName}
-    </select>
-
-    <!-- Query to find product by description -->
-    <select id="findProductDesc" resultType="com.ganmashop.entity.Product" parameterType="String">
-        SELECT * FROM product WHERE description = #{description}
-    </select>
 
     <select id="findAllProducts" resultType="com.ganmashop.entity.Product">
         SELECT * FROM product
