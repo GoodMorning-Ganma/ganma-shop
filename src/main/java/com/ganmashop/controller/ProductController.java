@@ -47,7 +47,7 @@ public class ProductController {
         if (userId == null) {
             return "redirect:/auth/login"; // Redirect if not logged in
         }
-        cartService.addToCart(cart);
+        cartService.save(cart);
         return "redirect:/cart"; // Redirect to the cart page
     }
 

@@ -28,21 +28,28 @@ public class CartServiceImpl implements CartService {
             throw new BusinessException("UserId or ProductId invalid. Cart item not found");
         }
     }
+
+    public void updateCart(Cart cart){
+        cartDao.updateCart(cart);
+    }
     
     @Override
-    public void addToCart(Cart cart) {
-        /**
-         * 昨天逻辑有误，这一步是为了把用户选好的product放进去cart table
-         * 所以不应该有太多的查询逻辑，主要是做添加而已
-         */
+    public void save(Cart cart) {
         if (Objects.isNull(cart.getUserId()) || Objects.isNull(cart.getProductId())) {
             throw new BusinessException("UserId or ProductId cannot be null!");
         }
+
         try {
             //TODO: 在把用户选好的product添加到cart table之前，
             // 应该查询对应的物品是否已经存在，如果已存在那就只增加quantity
-            cart.setUserId(GenUUID.getUUID());
-            cartDao.insertCart(cart);
+            if(Objects.nonNull(cart.getProductId())){
+                cart.setQuantity(cart.getQuantity() + cart.getQuantity());
+                cartDao.updateCart(cart);
+            }else{
+                cart.setUserId(GenUUID.getUUID());
+                cartDao.save(cart);
+            }
+
         } catch (Exception e) {
             throw new BusinessException("Internal server error. Please try again");
         }

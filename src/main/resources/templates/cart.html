@@ -55,20 +55,20 @@
 
     <div class="card shadow-sm">
         <div class="card-body" id="cart-items">
-            <div th:each="item : ${cartItems}" class="row align-items-center mb-3">
+            <div th:each="item : ${carts}" class="row align-items-center mb-3">
                 <div class="col-2 text-center">
                     <input type="checkbox" class="form-check-input item-checkbox">
                 </div>
                 <div class="col-2">
-                    <img th:src="@{/images/{productId}.jpg(productId=${item.productId})}" alt="Product Image"
+                    <img th:src="@{/images/{productId}.jpg(productId=${cart.productId})}" alt="Product Image"
                          class="img-fluid rounded" style="width: 100%; height: auto; object-fit: cover;">
                 </div>
                 <div class="col-5 text-center text-md-start">
-                    <p class="mb-1 fw-bold" th:text="${item.productId}">Product Name</p>
-                    <small class="text-muted" th:text="${item.quantity} + ' x $' + ${item.price}">Price</small>
+                    <p class="mb-1 fw-bold" th:text="${cart.productId}">Product Name</p>
+                    <small class="text-muted" th:text="${cart.quantity} + ' x $' + ${cart.price}">Price</small>
                 </div>
                 <div class="col-3 text-end">
-                    <span th:text="'x' + ${item.quantity}">x1</span>
+                    <span th:text="'x' + ${cart.quantity}">x1</span>
                 </div>
             </div>
         </div>

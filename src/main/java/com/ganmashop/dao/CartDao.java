@@ -16,10 +16,10 @@ public interface CartDao {
     Cart findCartByUserAndProduct(@Param("userId") String userId, @Param("productId") String productId);
 
     // Insert new cart item
-    void insertCart(Cart cartItem);
+    void save(Cart cart);
 
     // Update existing cart item
-    void updateCart(Cart cartItem);
+    void updateCart(Cart cart);
 
     // Find all cart items for a user
     List<Cart> findCartItemsByUser(@Param("userId") String userId);

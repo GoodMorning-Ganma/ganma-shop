@@ -15,7 +15,8 @@ import java.util.List;
 @Service
 public interface CartService {
     Cart findCartByUserAndProduct(String userId, String productId);
-    void addToCart(Cart cart);
+    void save(Cart cart);
+    void updateCart(Cart cart);
     List<Cart> getCartItems(String userId);
 
 
