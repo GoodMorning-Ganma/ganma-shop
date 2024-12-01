@@ -19,16 +19,6 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link" href="/ganma/cart">Cart</a></li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="${isLoggedIn ? '/ganma/account' : '/auth/login'}">Account</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="${isLoggedIn ? '/auth/logout' : '/auth/login'}">
-                        <span th:text="${isLoggedIn ? 'Logout' : 'Login'}"></span>
-                    </a>
-                </li>
             </ul>
         </div>
     </div>
@@ -55,7 +45,6 @@
                     <button class="btn btn-outline-secondary" onclick="incrementQuantity()">+</button>
                 </div>
                 <!-- Buttons -->
-                <!-- <a href="checkout.html" class="btn btn-primary flex-fill">Check Out</a>-->
                 <a th:href="@{/cart/add(productId=${product.id}}" class="btn btn-primary flex-fill">Add to Cart</a>
             </div>
         </div>

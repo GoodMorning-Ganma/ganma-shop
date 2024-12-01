@@ -55,33 +55,40 @@
 
     <div class="card shadow-sm">
         <div class="card-body" id="cart-items">
-            <div th:each="item : ${carts}" class="row align-items-center mb-3">
-                <div class="col-2 text-center">
-                    <input type="checkbox" class="form-check-input item-checkbox">
-                </div>
-                <div class="col-2">
-                    <!---<img th:src="@{/images/{productId}.jpg(productId=${cart.productId})}" alt="Product Image"
-                         class="img-fluid rounded" style="width: 100%; height: auto; object-fit: cover;">-->
-                </div>
-                <div class="col-5 text-center text-md-start">
-                    <p class="mb-1 fw-bold" th:text="${cart.productId}">Product Name</p>
-                    <small class="text-muted" th:text="${cart.quantity} + ' x $' + ${cart.price}">Price</small>
-                </div>
-                <div class="col-3 text-end">
-                    <span th:text="'x' + ${cart.quantity}">x1</span>
+            <!-- 检查购物车是否为空 -->
+            <div th:if="${#lists.isEmpty(cartProductDetails)}" class="text-center py-5">
+                <p class="fs-5 text-muted">🛒 Your cart is still empty. Start shopping now and fill it with awesome products! 🎉</p>
+                <a href="/ganma/index" class="btn btn-primary">Shop Now</a>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(cartProductDetails)}">
+                <div th:each="item : ${cartProductDetails}" class="row align-items-center mb-3">
+                    <div class="col-2 text-center">
+                        <input type="checkbox" class="form-check-input item-checkbox">
+                    </div>
+                    <div class="col-2">
+                        <img th:src="@{/images/{productId}.jpg(productId=${item.cart.productId})}" alt="Product Image"
+                             class="img-fluid rounded" style="width: 100%; height: auto; object-fit: cover;">
+                    </div>
+                    <div class="col-5 text-center text-md-start">
+                        <p class="mb-1 fw-bold" th:text="${item.product.name}">Product Name</p>
+                        <small class="text-muted" th:text="${item.cart.price}">Price</small>
+                    </div>
+                    <div class="col-3 text-end">
+                        <span th:text="'x' + ${item.cart.quantity}">x1</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-
-
     <!-- Footer -->
-    <div class="d-flex justify-content-between align-items-center mt-4">
+    <div class="d-flex justify-content-between align-items-center mt-4" th:if="${!#lists.isEmpty(carts)}">
         <span>Total Amount: RM0</span>
         <button class="btn btn-primary">Checkout</button>
     </div>
 </div>
+
 
 <!-- Footer -->
 <footer class="py-4 bg-dark text-light">

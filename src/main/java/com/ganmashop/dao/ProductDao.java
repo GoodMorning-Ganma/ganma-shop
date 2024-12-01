@@ -6,7 +6,7 @@ import java.util.List;
 
 @Mapper
 public interface ProductDao {
-   Product findProductId(String id);
+   Product findProductById(String id);
     Product findCategoryId(String categoryId);
     List<Product> findAllProducts();
 }

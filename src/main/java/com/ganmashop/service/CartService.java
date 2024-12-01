@@ -18,7 +18,4 @@ public interface CartService {
     void save(Cart cart);
     void updateCart(Cart cart);
     List<Cart> getCartItems(String userId);
-
-
-
 }

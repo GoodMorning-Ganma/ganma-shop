@@ -22,16 +22,15 @@ import java.util.List;
 @Controller
 @RequestMapping("/ganma")
 public class IndexController {
-
     @Autowired
     private ProductService productService;
 
     @GetMapping("/index")
     public String showIndexPage(Model model, HttpSession session) {
         User user = (User) session.getAttribute("loggedInUser");
-        model.addAttribute("isLoggedIn", user != null); // 如果user不为空，表示已登录
+        model.addAttribute("isLoggedIn", user != null);
 
-        List<Product> products = productService.findAllProducts(); // Assume this returns all products
+        List<Product> products = productService.findAllProducts();
         model.addAttribute("products", products);
 
         return "index";
@@ -39,8 +38,8 @@ public class IndexController {
     @GetMapping("/account")
     public String showAccountPage(Model model, HttpSession session) {
         User user = (User) session.getAttribute("loggedInUser");
-        model.addAttribute("isLoggedIn", user != null); // 如果user不为空，表示已登录
+        model.addAttribute("isLoggedIn", user != null);
 
-        return "account"; // Refers to the account.html page in the templates folder
+        return "account";
     }
 }

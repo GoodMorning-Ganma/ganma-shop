@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ganmashop.dao.ProductDao">
+    <resultMap id="BaseResultMap" type="com.ganmashop.entity.Product">
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="category_id" property="categoryId" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="description" property="description" jdbcType="VARCHAR" />
+        <result column="price" property="price" jdbcType="DOUBLE" />
+        <result column="image_name" property="imageName" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    </resultMap>
 
     <!-- Query to find product by ID -->
-    <select id="findProductId" resultType="com.ganmashop.entity.Product" parameterType="String">
+    <select id="findProductById" resultMap="BaseResultMap" parameterType="String">
         SELECT * FROM product WHERE id = #{id}
     </select>
 
     <!-- Query to find product by category ID -->
-    <select id="findCategoryId" resultType="com.ganmashop.entity.Product" parameterType="String">
+    <select id="findCategoryId" resultMap="BaseResultMap" parameterType="String">
         SELECT * FROM product WHERE category_id = #{categoryId}
     </select>
 
-
-    <select id="findAllProducts" resultType="com.ganmashop.entity.Product">
+    <select id="findAllProducts" resultMap="BaseResultMap">
         SELECT * FROM product
     </select>
 

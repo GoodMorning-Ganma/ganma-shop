@@ -29,8 +29,6 @@ public class RegisterController {
     @GetMapping("/register")
     public String showLoginPage(Model model) {
         model.addAttribute("user", new User());
-
-        // 展示登录界面，login.html
         return "register";
     }
 

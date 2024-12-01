@@ -19,8 +19,6 @@ public class AdminController {
     public String showIndexPage(Model model) {
         model.addAttribute("user", new User());
         System.out.println("Login successful");
-
-        // 展示admin主页（index.html)
         return "admin/index";
     }
 }

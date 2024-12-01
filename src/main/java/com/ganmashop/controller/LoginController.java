@@ -36,8 +36,6 @@ public class LoginController {
     @GetMapping("/login")
     public String showLoginPage(Model model) {
         model.addAttribute("user", new User());
-
-        // 展示登录界面，login.html
         return "login";
     }
 
@@ -75,7 +73,7 @@ public class LoginController {
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.invalidate(); // 清空会话
-        return "redirect:/ganma/index"; // 登出后重定向到首页
+        session.invalidate();
+        return "redirect:/ganma/index";
     }
 }

@@ -3,10 +3,12 @@ package com.ganmashop.service.impl;
 import com.ganmashop.dao.ProductDao;
 import com.ganmashop.entity.Product;
 import com.ganmashop.service.ProductService;
+import com.ganmashop.utils.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -14,8 +16,15 @@ public class ProductServiceImpl implements ProductService {
     ProductDao productDao;
 
     @Override
-    public Product findProductId(String id) {
-        return productDao.findProductId(id);
+    public Product findProductById(String productId) {
+        if (Objects.isNull(productId)) {
+            throw new BusinessException("ProductId cannot be null!");
+        }
+        try {
+            return productDao.findProductById(productId);
+        } catch (Exception e) {
+            throw new BusinessException("Product not found!");
+        }
     }
 
     @Override

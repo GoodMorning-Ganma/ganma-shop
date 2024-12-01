@@ -154,6 +154,8 @@ CREATE TABLE cart
   FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 );
 INSERT INTO cart(id, product_id, user_id,quantity,price)
-VALUES('1','2','2',1, 30.00);
+VALUES
+('1','2','2',1, 30.00),
+('2','4','2',2, 199.98);
 
 SET FOREIGN_KEY_CHECKS = 1;

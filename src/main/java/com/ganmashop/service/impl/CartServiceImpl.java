@@ -1,16 +1,16 @@
 package com.ganmashop.service.impl;
 
-import com.ganmashop.dao.CartDao;
-import com.ganmashop.entity.Cart;
-import com.ganmashop.service.CartService;
-import com.ganmashop.utils.BusinessException;
-import com.ganmashop.utils.GenUUID;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+        import com.ganmashop.dao.CartDao;
+        import com.ganmashop.entity.Cart;
+        import com.ganmashop.service.CartService;
+        import com.ganmashop.utils.BusinessException;
+        import com.ganmashop.utils.GenUUID;
+        import org.springframework.beans.factory.annotation.Autowired;
+        import org.springframework.stereotype.Service;
+        import java.util.Date;
+        import java.util.List;
+        import java.util.Objects;
+        import java.util.UUID;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -32,26 +32,26 @@ public class CartServiceImpl implements CartService {
     public void updateCart(Cart cart){
         cartDao.updateCart(cart);
     }
-    
+
     @Override
     public void save(Cart cart) {
         if (Objects.isNull(cart.getUserId()) || Objects.isNull(cart.getProductId())) {
             throw new BusinessException("UserId or ProductId cannot be null!");
         }
-
         try {
-            //TODO: 在把用户选好的product添加到cart table之前，
-            // 应该查询对应的物品是否已经存在，如果已存在那就只增加quantity
-            if(Objects.nonNull(cart.getProductId())){
-                cart.setQuantity(cart.getQuantity() + cart.getQuantity());
-                cartDao.updateCart(cart);
-            }else{
-                cart.setUserId(GenUUID.getUUID());
+            // 检查购物车里有没有存在当前用户已经选择的product
+            Cart existingCartItems = cartDao.findCartByUserAndProduct(cart.getUserId(), cart.getProductId());
+            if (Objects.nonNull(existingCartItems)) {
+                // 如果已存在就只增加product数量
+                existingCartItems.setQuantity(existingCartItems.getQuantity() + cart.getQuantity());
+                existingCartItems.setPrice(existingCartItems.getPrice() * cart.getQuantity());
+                cartDao.updateCart(existingCartItems);
+            } else {
+                cart.setId(GenUUID.getUUID());
                 cartDao.save(cart);
             }
-
         } catch (Exception e) {
-            throw new BusinessException("Internal server error. Please try again");
+            throw new BusinessException("Internal server error. Please try again.");
         }
     }
 
@@ -61,7 +61,6 @@ public class CartServiceImpl implements CartService {
             throw new BusinessException("UserId cannot be null!");
         }
         try {
-            System.out.println(userId);
             return cartDao.findCartItemsByUser(userId);
         } catch (Exception e) {
             throw new BusinessException("UserId invalid. Cart item not found");
