@@ -5,8 +5,10 @@ import com.ganmashop.entity.Cart;
 import com.ganmashop.service.CartService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.List;
  * @author Jasonlzc
  * Date: 16/11/2024
  */
+@Controller
+@RequestMapping("/ganma")
 public class CartController {
 
     @Autowired
@@ -31,7 +35,7 @@ public class CartController {
             model.addAttribute("isLoggedIn", true); // 如果user不为空，表示已登录
         }
 
-        List<Cart> cart = cartService.getCartItems(user.getId());
+        List<Cart> cart = cartService.getCartItems("2");
         model.addAttribute("carts", cart);
 
         if (cart == null) {

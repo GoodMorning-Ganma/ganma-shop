@@ -31,7 +31,6 @@ public class ProductController {
 
         Product product = productService.findProductId(id);
 
-
         if (product == null) {
             model.addAttribute("error", "Product not found!"); // 提示未找到
             return "error"; // 指向错误页面 (可选)

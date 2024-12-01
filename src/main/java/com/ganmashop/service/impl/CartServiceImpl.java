@@ -61,6 +61,7 @@ public class CartServiceImpl implements CartService {
             throw new BusinessException("UserId cannot be null!");
         }
         try {
+            System.out.println(userId);
             return cartDao.findCartItemsByUser(userId);
         } catch (Exception e) {
             throw new BusinessException("UserId invalid. Cart item not found");

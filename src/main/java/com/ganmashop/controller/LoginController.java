@@ -49,8 +49,8 @@ public class LoginController {
             SecurityContextUtil.saveSecurityContextToSession(request, authentication);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            session.setAttribute("loggedInUser", user);
             User foundUser = userService.findByUsername(user.getUsername());
+            session.setAttribute("loggedInUser", foundUser);
 
             switch (foundUser.getUserType()) {
                 case "admin":
