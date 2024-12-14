@@ -19,6 +19,9 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link" href="/ganma/cart">Cart</a></li>
+                <li class="nav-item" th:if="${isLoggedIn}">
+                    <a class="nav-link" href="/ganma/account">Account</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -37,16 +40,15 @@
             <p><strong>Price:</strong> RM<span th:text="${product.price}"></span></p>
             <p><strong>Description:</strong></p>
             <p th:text="${product.description}"></p>
-            <div class="d-flex flex-wrap align-items-center gap-2">
-                <!-- Quantity Selector -->
+            <form action="/ganma/cart/add" method="post">
+                <input type="hidden" name="productId" th:value="${product.id}">
                 <div class="input-group" style="width: 120px;">
-                    <button class="btn btn-outline-secondary" onclick="decrementQuantity()">-</button>
-                    <input type="number" id="quantity" class="form-control text-center" value="1" min="1">
-                    <button class="btn btn-outline-secondary" onclick="incrementQuantity()">+</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="decrementQuantity()">-</button>
+                    <input type="number" name="quantity" id="quantity" class="form-control text-center" value="1" min="1">
+                    <button type="button" class="btn btn-outline-secondary" onclick="incrementQuantity()">+</button>
                 </div>
-                <!-- Buttons -->
-                <a th:href="@{/cart/add(productId=${product.id}}" class="btn btn-primary flex-fill">Add to Cart</a>
-            </div>
+                <button type="submit" class="btn btn-primary mt-3">Add to Cart</button>
+            </form>
         </div>
     </div>
 </div>
@@ -79,18 +81,25 @@
 </footer>
 
 <script>
-    // Simple JavaScript to handle quantity changes
+    function updateCartUrl() {
+        const quantity = document.getElementById("quantity").value;
+        const url = event.currentTarget.href;
+        event.currentTarget.href = url.replace('quantity=null', `quantity=${quantity}`);
+        return true;
+    }
+</script>
+<script>
     function incrementQuantity() {
-        let quantityInput = document.getElementById('quantity');
-        quantityInput.value = parseInt(quantityInput.value) + 1;
-    }
+     let quantityInput = document.getElementById('quantity');
+     quantityInput.value = parseInt(quantityInput.value) + 1;
+ }
 
-    function decrementQuantity() {
-        let quantityInput = document.getElementById('quantity');
-        if (parseInt(quantityInput.value) > 1) {
-            quantityInput.value = parseInt(quantityInput.value) - 1;
-        }
-    }
+ function decrementQuantity() {
+     let quantityInput = document.getElementById('quantity');
+     if (parseInt(quantityInput.value) > 1) {
+         quantityInput.value = parseInt(quantityInput.value) - 1;
+     }
+ }
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

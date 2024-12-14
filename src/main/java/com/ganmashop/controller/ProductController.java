@@ -36,18 +36,4 @@ public class ProductController {
         model.addAttribute("product", product);
         return "product";
     }
-
-    /**
-     * Add to cart 不是在这边写，而是在cart controller
-     */
-//    @GetMapping("/add")
-//    public String addToCartViaGet(@ModelAttribute Cart cart,
-//                                  HttpSession session) {
-//        String userId = (String) session.getAttribute("loggedInUserId");
-//        if (userId == null) {
-//            return "redirect:/auth/login";
-//        }
-//        cartService.save(cart);
-//        return "redirect:/cart";
-//    }
 }

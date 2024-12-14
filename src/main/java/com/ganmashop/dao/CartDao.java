@@ -21,6 +21,8 @@ public interface CartDao {
     // Update existing cart item
     void updateCart(Cart cart);
 
+    void deleteSelectedItems(@Param("userId") String userId, @Param("productIds") List<String> productIds);
+
     // Find all cart items for a user
     List<Cart> findCartItemsByUser(@Param("userId") String userId);
 }

@@ -16,8 +16,6 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link" href="/ganma/index">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="/ganma/product">Products</a></li>
                 <li class="nav-item"><!-- Cart Link with Badge -->
                     <a class="nav-link position-relative" href="/ganma/cart">
                         Cart <span id="cart-badge" class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle"></span>
@@ -48,9 +46,13 @@
             <label for="select-all" class="form-check-label mb-0">Select All</label>
         </div>
         <!-- Delete Selected Icon -->
-        <button id="delete-selected" class="btn btn-danger btn-sm d-flex align-items-center">
-            <i class="bi bi-trash"></i>
-        </button>
+        <form id="delete-selected-form" method="post" th:action="@{/ganma/cart/deleteSelected}">
+            <input id="selected-product-ids" type="hidden" name="productIds">
+            <button type="submit" id="delete-selected" class="btn btn-danger btn-sm d-flex align-items-center ">
+                <i class="bi bi-trash">Delete</i>
+            </button>
+        </form>
+
     </div>
 
     <div class="card shadow-sm">
@@ -62,13 +64,13 @@
             </div>
 
             <div th:unless="${#lists.isEmpty(cartProductDetails)}">
-                <div th:each="item : ${cartProductDetails}" class="row align-items-center mb-3">
+                <div th:each="item : ${cartProductDetails}" class="row align-items-center mb-3" th:attr="data-productId=${item.cart.productId}">
                     <div class="col-2 text-center">
                         <input type="checkbox" class="form-check-input item-checkbox">
                     </div>
                     <div class="col-2">
-                        <img th:src="@{/images/{productId}.jpg(productId=${item.cart.productId})}" alt="Product Image"
-                             class="img-fluid rounded" style="width: 100%; height: auto; object-fit: cover;">
+                        <img th:src="@{/images/{productId}.jpg(productId=${item.cart.productId})}"
+                             alt="Product Image" class="img-fluid rounded" style="width: 100%; height: auto; object-fit: cover;">
                     </div>
                     <div class="col-5 text-center text-md-start">
                         <p class="mb-1 fw-bold" th:text="${item.product.name}">Product Name</p>
@@ -83,7 +85,7 @@
     </div>
 
     <!-- Footer -->
-    <div class="d-flex justify-content-between align-items-center mt-4" th:if="${!#lists.isEmpty(carts)}">
+    <div class="d-flex justify-content-between align-items-center mt-4">
         <span>Total Amount: RM0</span>
         <button class="btn btn-primary">Checkout</button>
     </div>
@@ -139,36 +141,37 @@
 </script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const selectAllCheckbox = document.getElementById("select-all");
-        const deleteButton = document.getElementById("delete-selected");
-        const itemCheckboxes = document.querySelectorAll(".item-checkbox");
-        const cartItemsContainer = document.getElementById("cart-items");
+    const selectAllCheckbox = document.getElementById("select-all");
+    const itemCheckboxes = document.querySelectorAll(".item-checkbox");
+    const deleteForm = document.getElementById("delete-selected-form");
+    const selectedProductIdsInput = document.getElementById("selected-product-ids");
 
-        // Handle Select All checkbox
-        selectAllCheckbox.addEventListener("change", () => {
-            const isChecked = selectAllCheckbox.checked;
-            itemCheckboxes.forEach(checkbox => checkbox.checked = isChecked);
-        });
-
-        // Update Select All if individual items are toggled
+    // Select All Checkbox Behavior
+    selectAllCheckbox.addEventListener("change", () => {
         itemCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener("change", () => {
-                selectAllCheckbox.checked = Array.from(itemCheckboxes).every(cb => cb.checked);
-            });
-        });
-
-        // Handle Delete Selected
-        deleteButton.addEventListener("click", () => {
-            const selectedItems = document.querySelectorAll(".item-checkbox:checked");
-            selectedItems.forEach(checkbox => {
-                const itemCard = checkbox.closest(".card");
-                if (itemCard) cartItemsContainer.removeChild(itemCard);
-            });
-
-            // Update Select All checkbox state
-            selectAllCheckbox.checked = false;
+            checkbox.checked = selectAllCheckbox.checked;
         });
     });
+
+    // Delete Selected Items
+    deleteForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        // Collect selected product IDs
+        const selectedProductIds = Array.from(itemCheckboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.closest(".row").dataset.productid);
+
+        if (selectedProductIds.length === 0) {
+            alert("Please select at least one item to delete.");
+            return;
+        }
+
+        // Set the hidden input value and submit the form
+        selectedProductIdsInput.value = selectedProductIds.join(",");
+        deleteForm.submit();
+    });
+});
 </script>
 
 </body>

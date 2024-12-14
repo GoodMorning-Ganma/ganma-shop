@@ -34,4 +34,13 @@
         SELECT * FROM cart WHERE user_id = #{userId}
     </select>
 
+    <delete id="deleteSelectedItems" parameterType="map">
+        DELETE FROM cart
+        WHERE user_id = #{userId}
+        AND product_id IN
+        <foreach item="productId" collection="productIds" open="(" separator="," close=")">
+            #{productId}
+        </foreach>
+    </delete>
+
 </mapper>

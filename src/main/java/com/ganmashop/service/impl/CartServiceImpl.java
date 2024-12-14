@@ -7,10 +7,8 @@ package com.ganmashop.service.impl;
         import com.ganmashop.utils.GenUUID;
         import org.springframework.beans.factory.annotation.Autowired;
         import org.springframework.stereotype.Service;
-        import java.util.Date;
         import java.util.List;
         import java.util.Objects;
-        import java.util.UUID;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -44,7 +42,7 @@ public class CartServiceImpl implements CartService {
             if (Objects.nonNull(existingCartItems)) {
                 // 如果已存在就只增加product数量
                 existingCartItems.setQuantity(existingCartItems.getQuantity() + cart.getQuantity());
-                existingCartItems.setPrice(existingCartItems.getPrice() * cart.getQuantity());
+                existingCartItems.setPrice(existingCartItems.getPrice() + cart.getPrice() * cart.getQuantity());
                 cartDao.updateCart(existingCartItems);
             } else {
                 cart.setId(GenUUID.getUUID());
@@ -66,4 +64,18 @@ public class CartServiceImpl implements CartService {
             throw new BusinessException("UserId invalid. Cart item not found");
         }
     }
+
+    @Override
+    public void deleteSelectedItems(String userId, List<String> productIds) {
+        if (Objects.isNull(userId) || productIds.isEmpty()) {
+            throw new BusinessException("UserId or ProductIds cannot be null!");
+        }
+        try {
+            cartDao.deleteSelectedItems(userId, productIds);
+        } catch (Exception e) {
+            throw new BusinessException("Failed to delete selected cart items.");
+        }
+    }
+
+
 }
