@@ -93,7 +93,6 @@ public class CartController {
         return "redirect:/ganma/cart"; // Redirect to the cart page
     }
 
-
     @PostMapping("/cart/deleteSelected")
     public String deleteSelectedItems(@RequestParam("productIds") List<String> productIds, HttpSession session, RedirectAttributes redirectAttributes) {
         User user = (User) session.getAttribute("loggedInUser");

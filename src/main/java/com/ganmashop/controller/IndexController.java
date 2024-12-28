@@ -35,11 +35,4 @@ public class IndexController {
 
         return "index";
     }
-    @GetMapping("/account")
-    public String showAccountPage(Model model, HttpSession session) {
-        User user = (User) session.getAttribute("loggedInUser");
-        model.addAttribute("isLoggedIn", user != null);
-
-        return "account";
-    }
 }

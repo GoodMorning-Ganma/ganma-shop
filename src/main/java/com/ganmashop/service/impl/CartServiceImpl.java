@@ -21,7 +21,7 @@ public class CartServiceImpl implements CartService {
             throw new BusinessException("UserId or ProductId cannot be null!");
         }
         try {
-            return cartDao.findCartByUserAndProduct(userId, productId);
+            return cartDao.findCartByProductIdAndUserId(userId, productId);
         } catch (Exception e) {
             throw new BusinessException("UserId or ProductId invalid. Cart item not found");
         }
@@ -38,7 +38,7 @@ public class CartServiceImpl implements CartService {
         }
         try {
             // 检查购物车里有没有存在当前用户已经选择的product
-            Cart existingCartItems = cartDao.findCartByUserAndProduct(cart.getUserId(), cart.getProductId());
+            Cart existingCartItems = cartDao.findCartByProductIdAndUserId(cart.getUserId(), cart.getProductId());
             if (Objects.nonNull(existingCartItems)) {
                 // 如果已存在就只增加product数量
                 existingCartItems.setQuantity(existingCartItems.getQuantity() + cart.getQuantity());

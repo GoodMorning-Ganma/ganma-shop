@@ -13,19 +13,19 @@
 
     <!-- Find cart by and productId -->
     <select id="findCartByProductIdAndUserId" parameterType="map" resultMap="BaseResultMap">
-        SELECT * FROM cart WHERE product_id = #{productId} AND user_id = #{user_id}
+        SELECT * FROM cart WHERE product_id = #{productId} AND user_id = #{userId}
     </select>
 
     <!-- Insert new cart item -->
-    <insert id="insertCart" parameterType="com.ganmashop.entity.Cart">
-        INSERT INTO cart (id, product_id, user_id, quantity, create_time, update_time)
-        VALUES (#{id}, #{productId}, #{userId}, #{quantity}, now(), now())
+    <insert id="save" parameterType="com.ganmashop.entity.Cart">
+        INSERT INTO cart (id, product_id, user_id, quantity, price, create_time, update_time)
+        VALUES (#{id}, #{productId}, #{userId}, #{quantity},#{price}, now(), now())
     </insert>
 
     <!-- Update existing cart item -->
     <update id="updateCart" parameterType="com.ganmashop.entity.Cart">
         UPDATE cart
-        SET quantity = #{quantity}, update_time = now();
+        SET quantity = #{quantity}, price = #{price}, update_time = now()
         WHERE id = #{id}
     </update>
 

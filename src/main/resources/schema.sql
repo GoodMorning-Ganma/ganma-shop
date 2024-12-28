@@ -21,10 +21,11 @@ CREATE TABLE user
   update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-INSERT INTO user(id, email, username, password, user_type)
+INSERT INTO user(id, email, username, password, phone, address, user_type)
 VALUES
-('1','admin@gmail.com', 'admin', '$2a$10$okh6g45A6PlC9EMWanGrMu/90OnVQm5H.mmZBXwAsmXkuBfaTmoua', 'admin'),       --password: 123
-('2','customer@gmail.com', 'customer', '$2a$10$okh6g45A6PlC9EMWanGrMu/90OnVQm5H.mmZBXwAsmXkuBfaTmoua', 'customer'); --password: 123
+('1','admin@gmail.com', 'admin', '$2a$10$okh6g45A6PlC9EMWanGrMu/90OnVQm5H.mmZBXwAsmXkuBfaTmoua', 012345, '5,jalan tuah', 'admin'),--password: 123
+('2','customer@gmail.com', 'customer', '$2a$10$okh6g45A6PlC9EMWanGrMu/90OnVQm5H.mmZBXwAsmXkuBfaTmoua',01234567, '10,jalan pelangi,7500,Johor', 'customer'),
+('3','jason@gmail.com', 'Jason', '$2a$10$okh6g45A6PlC9EMWanGrMu/90OnVQm5H.mmZBXwAsmXkuBfaTmoua', 0102355466, '2,Jalan Kan,Taman Kan,53211,Kuala Lumpur', 'customer');--password: 123
 -- ----------------------------
 -- Table structure for role
 -- ----------------------------
@@ -159,3 +160,5 @@ VALUES
 ('2','4','2',2, 199.98);
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+DROP

@@ -2,17 +2,13 @@ package com.ganmashop.dao;
 
 import com.ganmashop.entity.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
-/**
- * @author Desmondlzk
- * Date: 06/02/2024 - 8:17 PM
- */
 @Mapper
 public interface UserDao {
-    User findUserById(String id);
-    User findByUserEmail(String email);
-    User findByUsername(String username);
+    User findUserById(@Param("id") String id);
+    User findByUsername(@Param("username") String username);
+    User findByUserEmail(@Param("email") String email);
     void save(User user);
-    void deleteUserById(String userId);
     void updateUser(User user);
 }

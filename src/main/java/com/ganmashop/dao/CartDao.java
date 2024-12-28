@@ -13,7 +13,7 @@ import java.util.List;
 @Mapper
 public interface CartDao {
     // Find cart item by userId and productId
-    Cart findCartByUserAndProduct(@Param("userId") String userId, @Param("productId") String productId);
+    Cart findCartByProductIdAndUserId(@Param("userId") String userId, @Param("productId") String productId);
 
     // Insert new cart item
     void save(Cart cart);
