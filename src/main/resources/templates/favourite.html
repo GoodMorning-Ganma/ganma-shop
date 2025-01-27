@@ -83,88 +83,36 @@
             <h5>Account Menu</h5>
             <ul class="nav flex-column nav-pills">
                 <li class="nav-item">
-                    <a class="nav-link active" id="profile-tab" data-bs-toggle="pill" href="#profile" role="tab" aria-controls="profile" aria-selected="true">Profile Info</a>
+                    <a class="nav-link" id="profile-tab" href="/ganma/account" role="tab" aria-controls="profile" aria-selected="true">Profile Info</a>
                 </li>
-
                 <li class="nav-item">
-                    <a class="nav-link" id="favourite-tab" href="/ganma/favourite" role="tab" aria-controls="favourite" aria-selected="true">My Favourite</a>
+                    <a class="nav-link active" id="favourite-tab" href="#" role="tab" aria-controls="favourite" aria-selected="true">My Favourite</a>
                 </li>
-
                 <!-- Simple Inline Dropdown for My Order -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="orderInfoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">My Order</a>
                     <ul class="dropdown-menu" aria-labelledby="orderInfoDropdown">
-                        <li>
-                            <a class="dropdown-item" href="/ganma/order" role="tab" aria-selected="false">Order Info</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#" role="tab" aria-controls="payment" aria-selected="false">Payment</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#" role="tab" aria-controls="orderHistory" aria-selected="false">Order History</a>
-                        </li>
+                        <li><a class="dropdown-item" href="/ganma/order">Order Info</a></li>
+                        <li><a class="dropdown-item" href="#">Payment</a></li>
+                        <li><a class="dropdown-item" href="#">Order History</a></li>
                     </ul>
                 </li>
-
             </ul>
         </div>
 
+        <!-- My Favourites Section -->
         <div class="col-12 col-md-9">
-            <div class="tab-content" id="accountTabContent">
-                <!-- Profile Info -->
-                <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                    <h4>Profile Information</h4>
-                    <!-- Display Success Message -->
-                    <div th:if="${message}" class="alert alert-success" role="alert">
-                        <span th:text="${message}"></span>
-                    </div>
-                    <!-- User Information -->
-                    <div class="row">
-                        <div class="col-12 col-md-8 mb-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="card-text">Username: <strong th:text="${user?.username ?: 'N/A'}"></strong></p>
-                                    <p class="card-text">Email: <strong th:text="${user?.email ?: 'N/A'}"></strong></p>
-                                    <p class="card-text">Phone Number: <strong th:text="${user?.phone ?: 'N/A'}"></strong></p>
-                                    <p class="card-text">Address: <strong th:text="${user?.address ?: 'N/A'}"></strong></p>
-                                    <p th:if="${user == null}" class="text-danger">Error: User information is not available.</p>
-                                    <a href="#editProfileModal" class="btn btn-primary" data-bs-toggle="modal">Edit Profile</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modal for Editing Profile -->
-                <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form th:action="@{/ganma/account/edit}" method="post">
-                                    <div class="mb-3">
-                                        <label for="editName" class="form-label">Name</label>
-                                        <input type="text" class="form-control" id="editName" name="name" th:value="${user?.name}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="editEmail" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="editEmail" name="email" th:value="${user?.email}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="editPhone" class="form-label">Phone Number</label>
-                                        <input type="text" class="form-control" id="editPhone" name="phone" th:value="${user?.phone}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="editAddress" class="form-label">Address</label>
-                                        <input type="text" class="form-control" id="editAddress" name="address" th:value="${user?.address}">
-                                    </div>
-                                    <button type="submit" class="btn btn-success">Save Changes</button>
-                                </form>
-
-                            </div>
+            <h2>My Favourites</h2>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                <div class="col" th:each="product : ${favourites}">
+                    <div class="card h-100">
+                        <a th:href="@{/ganma/product/{id}(id=${product.id})}">
+                            <img th:src="@{/${product.imageName}}" class="card-img-top" alt="Product Image">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${product.name}"></h5>
+                            <p class="card-text" th:text="${product.description}"></p>
+                            <a th:href="@{/ganma/product/{id}(id=${product.id})}" class="btn btn-primary">View Details</a>
                         </div>
                     </div>
                 </div>
@@ -173,7 +121,7 @@
     </div>
 </div>
 
-<!-- Footer -->
+        <!-- Footer -->
 <footer class="py-4 bg-dark text-light">
     <div class="container text-center text-md-start">
         <div class="row">
@@ -204,3 +152,4 @@
 
 </body>
 </html>
+

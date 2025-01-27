@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ganmashop.dao.OrderDao">
+    <resultMap id="BaseResultMap"  type="com.ganmashop.entity.Order" >
+        <result column="id" property="id"  jdbcType="VARCHAR" />
+        <result column="user_id" property="userId"  jdbcType="VARCHAR" />
+        <result column="product_id" property="productId"  jdbcType="VARCHAR" />
+        <result column="quantity" property="quantity"  jdbcType="INTEGER" />
+        <result column="price" property="price"  jdbcType="DOUBLE" />
+        <result column="status" property="status"  jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime"  jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime"  jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <select id="getAllOrders" resultType="com.ganmashop.entity.Order">
+        SELECT * FROM orders;
+    </select>
+
+    <!-- Fetch orders by user ID -->
+    <select id="getOrdersByUserId" parameterType="String" resultType="com.ganmashop.entity.Order">
+        SELECT * FROM orders WHERE user_id = #{userId};
+    </select>
+
+    <!-- Insert a new order -->
+    <insert id="save" parameterType="com.ganmashop.entity.Order">
+        INSERT INTO orders (id, user_id, product_id, quantity, price, status, create_time)
+        VALUES (#{id}, #{userId}, #{productId}, #{quantity}, #{price}, #{status},#{now()});
+    </insert>
+</mapper>

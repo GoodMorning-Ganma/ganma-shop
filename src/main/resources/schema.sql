@@ -120,6 +120,7 @@ VALUES
 DROP TABLE IF EXISTS product;
 CREATE TABLE product (
   id                    VARCHAR(255) NOT NULL PRIMARY KEY COMMENT 'product ID',
+  user_id               VARCHAR(255) NOT NULL COMMENT 'user ID',
   category_id           VARCHAR(255) NOT NULL,
   name                  VARCHAR(255) NOT NULL COMMENT 'product name',
   description           VARCHAR(255) NOT NULL COMMENT 'Additional Information',
@@ -127,16 +128,17 @@ CREATE TABLE product (
   image_name            VARCHAR(255) NOT NULL,
   create_time           TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation Time',
   update_time           TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Update Time',
-  FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE
+  FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 );
-INSERT INTO product(id, category_id, name, description, price,image_name)
+INSERT INTO product(id, user_id, category_id, name, description, price,image_name)
 VALUES
-('1', '1', '18谷粮', '-', 188,'-'),
-('2', '1', 'GSure', '-', 30,'-'),
-('3', '1', '18谷粮高级版', '-', 50,'-'),
-('4', '1', 'VGrains', '-', 99.99,'-'),
-('5', '1', 'Shaker', '-', 100,'-'),
-('6', '1', 'Mask', '-', 150,'-');
+('1','2', '1', '18谷粮', '-', 188,'-'),
+('2','2', '1', 'GSure', '-', 30,'-'),
+('3','2', '1', '18谷粮高级版', '-', 50,'-'),
+('4','2', '1', 'VGrains', '-', 99.99,'-'),
+('5','2', '1', 'Shaker', '-', 100,'-'),
+('6','2', '1', 'Mask', '-', 150,'-');
 
 -- ----------------------------
 -- Table structure for cart
@@ -160,3 +162,41 @@ VALUES
 ('2','4','2',2, 199.98);
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+DROP TABLE IF EXISTS orders;
+CREATE TABLE orders
+(
+  id                         VARCHAR(255) NOT NULL PRIMARY KEY COMMENT 'order id',
+  user_id                    VARCHAR(255) COMMENT 'user id',
+  product_id                 VARCHAR(255) COMMENT 'product id',
+  quantity                   INTEGER COMMENT 'quantity',
+  price                      DOUBLE  COMMENT 'Price',
+  status                     VARCHAR(255) DEFAULT 'Pending' COMMENT 'Order Status',
+  create_time                TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation Time',
+  update_time               TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Update Time',
+  FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+);
+
+INSERT INTO orders(id,user_id,product_id,quantity,price)
+VALUES
+('1','2','2','2',60.00);
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+DROP TABLE IF EXISTS favourite;
+CREATE TABLE favourite
+(
+  id                         VARCHAR(255) NOT NULL PRIMARY KEY COMMENT 'favourite id',
+  user_id                    VARCHAR(255) COMMENT 'user id',
+  product_id                 VARCHAR(255) COMMENT 'product id',
+  FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+);
+
+INSERT INTO favourite(id,user_id,product_id)
+VALUES
+('1','2','2');
+
+SET FOREIGN_KEY_CHECKS = 1;
+

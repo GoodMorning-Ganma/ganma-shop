@@ -11,5 +11,5 @@ public interface ProductService {
     List<Product> findAllProducts();
     Product findCategoryId(String categoryId);
 
-
+    List<Product> getFavouritesByUserId(String userId);
 }

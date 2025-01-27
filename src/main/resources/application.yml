@@ -27,7 +27,7 @@ spring:
     prefix: classpath:/templates/   # 模板文件的位置
     suffix: .html                   # 模板文件的后缀
     mode: HTML                      # 模板解析模式
-    cache: true
+    cache: false
 
 server:
   port: 8081

@@ -9,4 +9,5 @@ public interface ProductDao {
    Product findProductById(String id);
     Product findCategoryId(String categoryId);
     List<Product> findAllProducts();
+    List<Product> getFavouritesByUserId(String userId);
 }

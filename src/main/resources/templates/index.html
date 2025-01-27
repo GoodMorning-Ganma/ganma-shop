@@ -104,8 +104,15 @@
                 <div class="card-body text-center">
                     <h5 class="card-title" th:text="${product.name}"></h5>
                     <p class="card-text" th:text="'Description:' + ${product.description}"></p>
-                    <!-- Favorite button -->
-                    <button class="btn btn-outline-secondary"><i class="bi bi-heart"></i></button>
+                    <!-- 收藏按钮 -->
+                    <button
+                            class="btn btn-outline-secondary"
+                            th:attr="onclick=|addToFavourite(${product.id})|"
+
+                    >
+                        <i class="bi bi-heart"></i>
+                    </button>
+
                 </div>
             </div>
         </div>
@@ -141,5 +148,18 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function addToFavourite(productId) {
+    console.log('test');
+        fetch(`/ganma/favourite/add/${productId}`, {
+            method: 'POST'
+        })
+        .then(response => response.text())
+        .then(message => alert(message))
+        .catch(error => console.error('Error:', error));
+    }
+</script>
+
 </body>
 </html>

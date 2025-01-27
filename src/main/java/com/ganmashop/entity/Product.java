@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class Product {
     private String id;
+    private String userId;
     private String categoryId;
     private String name;
     private String description;
@@ -16,8 +17,9 @@ public class Product {
 
     }
 
-    public Product(String id, String categoryId, String name, String description, Double price, String imageName, Date createTime, Date updateTime){
+    public Product(String id, String userId, String categoryId, String name, String description, Double price, String imageName, Date createTime, Date updateTime){
         this.id = id;
+        this.userId = userId;
         this.categoryId = categoryId;
         this.name = name;
         this.description = description;
@@ -33,6 +35,15 @@ public class Product {
     public void setId(String id){
         this.id=id;
     }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     public String getCategoryId(){
         return categoryId;
     }
