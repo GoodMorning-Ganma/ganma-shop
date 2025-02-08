@@ -41,7 +41,7 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthTokenFilter jwtAuthTokenFilter;
 
-    private static final String[] PUBLIC_URLS = new String[] {"/static/**", "/**", "/admin/**"};
+    private static final String[] PUBLIC_URLS = new String[] {"/images/**", "/uploads/**", "/static/**", "/**", "/admin/**"};
 
     @Bean
     public PasswordEncoder passwordEncoder(){

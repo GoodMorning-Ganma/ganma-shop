@@ -43,16 +43,5 @@ public class ProductController {
         return "product";
     }
 
-    @GetMapping("/favourite")
-    public String showFavourites(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("loggedInUser");
-        model.addAttribute("isLoggedIn", user != null);
-        if (user != null) {
-            List<Product> favourites = productService.getFavouritesByUserId(user.getId());
-            model.addAttribute("favourites", favourites);
-            return "favourite";
-        }
-        return "redirect:/auth/login";
-    }
 
 }

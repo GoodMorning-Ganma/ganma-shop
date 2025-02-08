@@ -1,5 +1,6 @@
 package com.ganmashop.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -22,10 +23,13 @@ public class WebConfig implements WebMvcConfigurer {
                 .maxAge(3600);
     }
 
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/uploads/", "classpath:/static/", "classpath:/templates/")
-                .setCachePeriod(0);
+        // 映射上传目录到静态资源路径
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations("file:" + uploadDir + "images/");
     }
 }

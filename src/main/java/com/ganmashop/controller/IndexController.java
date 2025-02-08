@@ -26,13 +26,13 @@ public class IndexController {
     private ProductService productService;
 
     @GetMapping("/index")
-    public String showIndexPage(Model model, HttpSession session) {
+    public String showHomePage(Model model, HttpSession session) {
         User user = (User) session.getAttribute("loggedInUser");
         model.addAttribute("isLoggedIn", user != null);
 
         List<Product> products = productService.findAllProducts();
         model.addAttribute("products", products);
 
-        return "index";
+        return "home";
     }
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -96,7 +96,7 @@
                 <!-- Link wrapper for the image -->
                 <a th:href="@{/ganma/product/{id}(id=${product.id})}" class="ratio ratio-4x3 rounded-top-4 d-block overflow-hidden">
                     <img
-                            th:src="@{/${product.imageName}}"
+                            th:src="@{'/images/' + ${product.imageName}}"
                             class="card-img-top img-fluid rounded-top-4 hover-effect"
                             alt="Product Image"
                             style="object-fit: cover;">

@@ -133,7 +133,7 @@ CREATE TABLE product (
 );
 INSERT INTO product(id, user_id, category_id, name, description, price,image_name)
 VALUES
-('1','2', '1', '18谷粮', '-', 188,'-'),
+('1','2', '1', '18谷粮', '-', 188,'18GU.jpg'),
 ('2','2', '1', 'GSure', '-', 30,'-'),
 ('3','2', '1', '18谷粮高级版', '-', 50,'-'),
 ('4','2', '1', 'VGrains', '-', 99.99,'-'),
