@@ -133,12 +133,12 @@ CREATE TABLE product (
 );
 INSERT INTO product(id, user_id, category_id, name, description, price,image_name)
 VALUES
-('1','2', '1', '18谷粮', '-', 188,'18GU.jpg'),
-('2','2', '1', 'GSure', '-', 30,'-'),
-('3','2', '1', '18谷粮高级版', '-', 50,'-'),
-('4','2', '1', 'VGrains', '-', 99.99,'-'),
-('5','2', '1', 'Shaker', '-', 100,'-'),
-('6','2', '1', 'Mask', '-', 150,'-');
+('1','2', '1', 'V18', '-', 97,'V18.jpg'),
+('2','2', '1', 'GSure', '-', 30,'GSure.jpg'),
+('3','2', '1', 'VPlus', '-', 50,'VPlus.jpg'),
+('4','2', '1', 'VGrains', '-', 99.99,'VGrains.jpg'),
+('5','2', '1', 'Fruit Drink (Mixed)', '-', 51,'MixedBerries.jpg'),
+('6','2', '1', 'Fruit Drink (Mango)', '-', 13.10,'Mango.jpg');
 
 -- ----------------------------
 -- Table structure for cart

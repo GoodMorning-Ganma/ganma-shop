@@ -23,13 +23,13 @@ public class WebConfig implements WebMvcConfigurer {
                 .maxAge(3600);
     }
 
-    @Value("${file.upload-dir}")
-    private String uploadDir;
+    @Value("${file.image-dir}")
+    private String imageDir;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // 映射上传目录到静态资源路径
         registry.addResourceHandler("/images/**")
-                .addResourceLocations("file:" + uploadDir + "images/");
+                .addResourceLocations("file:" + imageDir + "images/");
     }
 }

@@ -6,6 +6,21 @@
     <title>Online Shopping Site</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
+    <style>
+    /* 产品图片悬停放大效果 */
+    .hover-effect {
+      transition: transform 0.3s ease;
+    }
+    .hover-effect:hover {
+      transform: scale(1.05);
+    }
+    /* 限制 Banner 图片的显示大小 */
+    .banner-img {
+      max-height: 600px; /* 根据需要调整此高度 */
+      width: 100%;
+      object-fit: cover; /* 保持图片比例并裁剪多余部分 */
+    }
+  </style>
 </head>
 <body>
 
@@ -13,7 +28,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container">
         <a class="navbar-brand" href="/ganma/index">Ganma</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -38,18 +54,22 @@
 <div id="bannerCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
     <div class="carousel-inner">
         <div class="carousel-item active">
-            <img src="https://via.placeholder.com/1200x400" class="d-block w-100" alt="Banner 1">
-            <div class="carousel-caption d-none d-md-block">
-                <h5>Seasonal Sale!</h5>
-                <p>Get up to 50% off on select items.</p>
-            </div>
+            <img th:src="@{'/images/banner3.jpg'}"
+                 class="banner-img img-fluid rounded-top-4 hover-effect"
+                 alt="Banner 1">
+<!--            <div class="carousel-caption d-none d-md-block">-->
+<!--                <h5>Seasonal Sale!</h5>-->
+<!--                <p>Get up to 50% off on select items.</p>-->
+<!--            </div>-->
         </div>
         <div class="carousel-item">
-            <img src="https://via.placeholder.com/1200x400" class="d-block w-100" alt="Banner 2">
-            <div class="carousel-caption d-none d-md-block">
-                <h5>New Arrivals</h5>
-                <p>Check out the latest trends in fashion.</p>
-            </div>
+            <img th:src="@{'/images/banner2.jpg'}"
+                 class="banner-img img-fluid rounded-top-4 hover-effect"
+                 alt="Banner 2">
+<!--            <div class="carousel-caption d-none d-md-block">-->
+<!--                <h5>New Arrivals</h5>-->
+<!--                <p>Check out the latest trends in fashion.</p>-->
+<!--            </div>-->
         </div>
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
@@ -93,26 +113,21 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
         <div class="col" th:each="product : ${products}">
             <div class="card border-secondary rounded-4 shadow-sm" style="max-width: 95%; margin: auto;">
-                <!-- Link wrapper for the image -->
-                <a th:href="@{/ganma/product/{id}(id=${product.id})}" class="ratio ratio-4x3 rounded-top-4 d-block overflow-hidden">
-                    <img
-                            th:src="@{'/images/' + ${product.imageName}}"
-                            class="card-img-top img-fluid rounded-top-4 hover-effect"
-                            alt="Product Image"
-                            style="object-fit: cover;">
+                <!-- 使用 ratio-1x1 确保图片为正方形 -->
+                <a th:href="@{/ganma/product/{id}(id=${product.id})}"
+                   class="ratio ratio-1x1 rounded-top-4 d-block overflow-hidden">
+                    <img th:src="@{'/images/' + ${product.imageName}}"
+                         class="card-img-top img-fluid rounded-top-4 hover-effect"
+                         alt="Product Image"
+                         style="object-fit: cover;">
                 </a>
                 <div class="card-body text-center">
                     <h5 class="card-title" th:text="${product.name}"></h5>
-                    <p class="card-text" th:text="'Description:' + ${product.description}"></p>
+                    <p class="card-text" th:text="'RM' + ${product.price}"></p>
                     <!-- 收藏按钮 -->
-                    <button
-                            class="btn btn-outline-secondary"
-                            th:attr="onclick=|addToFavourite(${product.id})|"
-
-                    >
+                    <button class="btn btn-outline-secondary" th:attr="onclick=|addToFavourite(${product.id})|">
                         <i class="bi bi-heart"></i>
                     </button>
-
                 </div>
             </div>
         </div>
@@ -148,17 +163,16 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-
 <script>
-    function addToFavourite(productId) {
+  function addToFavourite(productId) {
     console.log('test');
-        fetch(`/ganma/favourite/add/${productId}`, {
-            method: 'POST'
-        })
-        .then(response => response.text())
-        .then(message => alert(message))
-        .catch(error => console.error('Error:', error));
-    }
+    fetch(`/ganma/favourite/add/${productId}`, {
+      method: 'POST'
+    })
+    .then(response => response.text())
+    .then(message => alert(message))
+    .catch(error => console.error('Error:', error));
+  }
 </script>
 
 </body>

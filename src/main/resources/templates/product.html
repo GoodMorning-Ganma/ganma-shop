@@ -6,6 +6,17 @@
     <title th:text="${product.name}">Product Details</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
+    <style>
+        /* 更小的产品图片显示 */
+        .product-image {
+            max-width: 60%; /* 调整这里的百分比即可进一步缩小图片 */
+            height: auto;
+        }
+        .price-text {
+            color: red !important;  /* 直接使用红色 */
+            font-weight: bold !important;  /* 直接设置粗体 */
+        }
+    </style>
 </head>
 <body>
 
@@ -31,13 +42,18 @@
 <div class="container my-5">
     <div class="row">
         <!-- Product Image -->
-        <div class="col-md-6 mb-4">
-            <img th:src="@{/${product.imageName}}" class="img-fluid rounded" alt="Product Image">
+        <div class="col-md-6 mb-4 d-flex justify-content-center">
+            <img th:src="@{'/images/' + ${product.imageName}}"
+                 class="img-fluid product-image rounded-top-4 hover-effect"
+                 alt="Product Image">
         </div>
         <!-- Product Details -->
         <div class="col-md-6">
             <h1 th:text="${product.name}" class="mb-3"></h1>
-            <p><strong>Price:</strong> RM<span th:text="${product.price}"></span></p>
+            <!-- 突出显示价格 -->
+            <p class="price-text fs-3">
+                RM <span th:text="${product.price}"></span>
+            </p>
             <p><strong>Description:</strong></p>
             <p th:text="${product.description}"></p>
             <form action="/ganma/cart/add" method="post">
@@ -90,16 +106,16 @@
 </script>
 <script>
     function incrementQuantity() {
-     let quantityInput = document.getElementById('quantity');
-     quantityInput.value = parseInt(quantityInput.value) + 1;
- }
+        let quantityInput = document.getElementById('quantity');
+        quantityInput.value = parseInt(quantityInput.value) + 1;
+    }
 
- function decrementQuantity() {
-     let quantityInput = document.getElementById('quantity');
-     if (parseInt(quantityInput.value) > 1) {
-         quantityInput.value = parseInt(quantityInput.value) - 1;
-     }
- }
+    function decrementQuantity() {
+        let quantityInput = document.getElementById('quantity');
+        if (parseInt(quantityInput.value) > 1) {
+            quantityInput.value = parseInt(quantityInput.value) - 1;
+        }
+    }
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

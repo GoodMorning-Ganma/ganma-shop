@@ -37,4 +37,4 @@ mybatis:
   mapper-locations: classpath:mybatis/*.xml      # mybatis mapper映射文件位置
 
 file:
-  upload-dir: src/main/resources/static/
+  image-dir: src/main/resources/static/
