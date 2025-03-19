@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!-- Payment Info -->
+<div class="tab-pane fade" id="payment" role="tabpanel" aria-labelledby="payment-tab">
+    <h4>Pending Payment</h4>
+    <div>
+        <div class="row">
+            <div class="col-12 col-md-8 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Your Order XXX</h5>
+                        <p class="card-text">Product Name: <strong>XXX</strong></p>
+                        <p class="card-text">Quantity: <strong>XXX</strong></p>
+                        <p class="card-text">Total Amount: <strong>RMXXX.XX</strong></p>
+                        <p class="card-text">Date/Time: <strong>DD-MM-YYYY</strong></p>
+                        <p class="card-text">Status: <span class="badge bg-success">Pending</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal for Cart Information -->
+<div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cartModalLabel">Cart Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Cart Items List -->
+                <div class="row">
+                    <div class="col-12 col-md-4 mb-3">
+                        <div class="card">
+                            <img src="item_image_url.jpg" class="card-img-top" alt="Item Image">
+                            <div class="card-body">
+                                <h5 class="card-title">Item Name</h5>
+                                <p class="card-text">Quantity: <strong>2</strong></p>
+                                <p class="card-text">Price: <strong>$60.00</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- You can repeat the card for each item -->
+                    <div class="col-12 col-md-4 mb-3">
+                        <div class="card">
+                            <img src="item_image_url_2.jpg" class="card-img-top" alt="Item Image">
+                            <div class="card-body">
+                                <h5 class="card-title">Another Item</h5>
+                                <p class="card-text">Quantity: <strong>1</strong></p>
+                                <p class="card-text">Price: <strong>$60.00</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Total Amount -->
+                <div class="d-flex justify-content-between">
+                    <h5>Total Amount: <strong>$120.00</strong></h5>
+                    <p>Status: <span class="badge bg-success">Pending</span></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="#" class="btn btn-primary">Proceed to Checkout</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

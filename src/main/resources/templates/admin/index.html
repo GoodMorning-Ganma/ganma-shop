@@ -1,103 +1,305 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <!-- Bootstrap CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>管理面板</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
+        :root {
+            --sidebar-width: 250px;
+        }
+
         body {
-            display: flex;
             min-height: 100vh;
             background-color: #f8f9fa;
+            overflow-x: hidden;
         }
+
+        /* 侧边栏优化 */
         #sidebar {
-            width: 250px;
-            background-color: #343a40;
-            color: white;
-            transition: width 0.3s;
+            width: var(--sidebar-width);
+            height: 100vh;
+            transition: transform 0.3s ease;
+            z-index: 1000;
         }
-        #sidebar.collapsed {
-            width: 0;
+
+        .sidebar-collapsed {
+            transform: translateX(calc(-1 * var(--sidebar-width)));
+        }
+
+        /* 移动端遮罩 */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 999;
+            display: none;
+        }
+
+        /* 主内容区优化 */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            transition: margin 0.3s ease;
             overflow: hidden;
         }
-        #sidebar a {
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            display: block;
+
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+            }
         }
-        #sidebar a:hover {
-            background-color: #495057;
+
+        /* 订单卡片样式 */
+        .order-card {
+            transition: box-shadow 0.2s;
         }
-        .content {
-            flex-grow: 1;
-            padding: 20px;
-            background-color: #f8f9fa;
+
+        .order-card:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
         }
-        .navbar-dark .navbar-brand {
-            color: #fff;
+
+        /* 移动端表格优化 */
+        .order-mobile-view {
+            display: none;
         }
-        .navbar-dark .navbar-nav .nav-link {
-            color: rgba(255, 255, 255, 0.8);
-        }
-        .navbar-dark .navbar-nav .nav-link:hover {
-            color: #fff;
-        }
-        .carousel-caption {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 10px;
-        }
+
         @media (max-width: 768px) {
-            #sidebar {
-                position: absolute;
-                height: 100vh;
-                z-index: 1050;
+            .order-desktop-view {
+                display: none;
             }
-            #sidebar.collapsed {
-                position: static;
-                width: 0;
-                height: auto;
+            .order-mobile-view {
+                display: block;
             }
         }
+
     </style>
 </head>
-<body>
-
-<!-- Sidebar -->
-<div id="sidebar" class="d-flex flex-column">
-    <h3 class="text-center py-3">Admin Dashboard</h3>
-    <a href="#cartManagement">Cart Management</a>
-    <a href="#userManagement">User Management</a>
+<body class="d-flex">
+<!-- 侧边栏 -->
+<div id="sidebar" class="bg-dark text-white position-fixed sidebar-collapsed">
+    <div class="d-flex flex-column h-100">
+        <h3 class="text-center py-3 mb-4 border-bottom">
+            <a href="/admin/index" class="text-white text-decoration-none">管理面板</a>
+        </h3>
+        <nav class="flex-grow-1 px-3">
+            <div class="list-group list-group-flush">
+                <a href="/admin/users" class="list-group-item list-group-item-action bg-dark text-white border-0">
+                    <i class="bi bi-people me-2"></i>管理员列表
+                </a>
+                <a href="/admin/products" class="list-group-item list-group-item-action bg-dark text-white border-0">
+                    <i class="bi bi-box-seam me-2"></i>商品管理
+                </a>
+            </div>
+        </nav>
+        <div class="p-3 border-top">
+            <a th:href="${isLoggedIn ? '/auth/logout' : '/auth/login'}"
+               class="btn btn-outline-light w-100">
+                <i th:class="${isLoggedIn ? 'bi-box-arrow-right' : 'bi-box-arrow-in-right'}" class="bi me-2"></i>
+                <span th:text="${isLoggedIn ? '登出' : '登录'}"></span>
+            </a>
+        </div>
+    </div>
 </div>
 
+<!-- 移动端遮罩 -->
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-<!-- Main Content -->
-<div class="content">
-    <button class="btn btn-dark d-lg-none mb-3" id="toggleSidebar">Toggle Sidebar</button>
+<!-- 主内容区 -->
+<div class="main-content flex-grow-1">
+    <div class="container-fluid p-3 p-lg-4">
+        <!-- 移动端菜单按钮 -->
+        <button class="btn btn-dark d-lg-none" onclick="toggleSidebar()">
+            菜单
+        </button>
 
-    <!-- Sample Sections -->
+        <!-- 订单列表 -->
+        <div class="card border-0 shadow">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="bi bi-receipt me-2"></i>订单管理</h5>
+            </div>
 
-    <section id="cartManagement" class="my-5">
-        <h2>Cart Management</h2>
-        <p>Manage carts here.</p>
-    </section>
+            <!-- 桌面视图 -->
+            <div class="card-body order-desktop-view">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                        <tr>
+                            <th>用户</th>
+                            <th>商品</th>
+                            <th class="text-end">数量</th>
+                            <th class="text-end">金额</th>
+                            <th>联系方式</th>
+                            <th>状态</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="orderDTO : ${orderDetails}">
+                            <td>
+                                <div class="fw-semibold" th:text="${orderDTO.user.username}"></div>
+                                <small class="text-muted" th:text="${orderDTO.user.email}"></small>
+                            </td>
+                            <td th:text="${orderDTO.product.name}"></td>
+                            <td class="text-end" th:text="${orderDTO.order.quantity}"></td>
+                            <td class="text-end" th:text="'RM' + ${#numbers.formatDecimal(orderDTO.order.price, 1, 2)}"></td>
+                            <td>
+                                <div th:text="${orderDTO.user.phone}"></div>
+                                <small class="text-muted" th:text="${orderDTO.user.address}"></small>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                            <span th:text="${orderDTO.order.status}"
+                                                  th:classappend="${orderDTO.order.status == 'delivered'} ?
+                                                    'badge bg-success' : 'badge bg-warning'"
+                                                  class="badge"></span>
+                                    <button th:if="${orderDTO.order.status == 'pending'}"
+                                            class="btn btn-sm btn-outline-success"
+                                            th:data-orderid="${orderDTO.order.id}"
+                                            onclick="updateOrderStatus(this)">
+                                        <i class="bi bi-truck"></i>
+                                    </button>
+                                    <button th:if="${orderDTO.order.status == 'delivered'}"
+                                            class="btn btn-sm btn-outline-secondary"
+                                            disabled>
+                                        <i class="bi bi-check2"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-    <section id="userManagement" class="my-5">
-        <h2>User Management</h2>
-        <p>Manage users here.</p>
-    </section>
+            <!-- 移动端视图 -->
+            <div class="card-body order-mobile-view">
+                <div class="row g-3">
+                    <div th:each="orderDTO : ${orderDetails}" class="col-12">
+                        <div class="order-card card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <div class="fw-semibold" th:text="${orderDTO.user.username}"></div>
+                                    <span th:text="${orderDTO.order.status}"
+                                          th:classappend="${orderDTO.order.status == 'delivered'} ?
+                                                'badge bg-success' : 'badge bg-warning'"
+                                          class="badge align-self-start"></span>
+                                </div>
+                                <div class="mb-2">
+                                    <i class="bi bi-box-seam me-2"></i>
+                                    <span th:text="${orderDTO.product.name}"></span>
+                                </div>
+                                <div class="row small text-muted">
+                                    <div class="col-6">
+                                        <i class="bi bi-hash"></i>
+                                        <span th:text="${orderDTO.order.quantity}"></span>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        RM<span th:text="${#numbers.formatDecimal(orderDTO.order.price, 1, 2)}"></span>
+                                    </div>
+                                </div>
+                                <hr class="my-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <button th:if="${orderDTO.order.status == 'pending'}"
+                                                class="btn btn-sm btn-outline-success"
+                                                th:data-orderid="${orderDTO.order.id}"
+                                                onclick="updateOrderStatus(this)">
+                                            <i class="bi bi-truck me-1"></i>发货
+                                        </button>
+                                        <button th:if="${orderDTO.order.status == 'delivered'}"
+                                                class="btn btn-sm btn-outline-secondary"
+                                                disabled>
+                                            <i class="bi bi-check2 me-1"></i>已完成
+                                        </button>
+                                    </div>
+                                    <a href="#" class="text-decoration-none small"
+                                       data-bs-toggle="collapse"
+                                       th:data-bs-target="'#details-'+${orderDTO.order.id}">
+                                        详细信息 <i class="bi bi-chevron-down"></i>
+                                    </a>
+                                </div>
+                                <div class="collapse" th:id="'details-'+${orderDTO.order.id}">
+                                    <div class="mt-2 small">
+                                        <div><i class="bi bi-telephone me-2"></i><span th:text="${orderDTO.user.phone}"></span></div>
+                                        <div><i class="bi bi-geo-alt me-2"></i><span th:text="${orderDTO.user.address}"></span></div>
+                                        <div><i class="bi bi-envelope me-2"></i><span th:text="${orderDTO.user.email}"></span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(orderDetails)}" class="card-body text-center py-5">
+                <i class="bi bi-inbox fs-1 text-muted"></i>
+                <p class="text-muted mt-3">当前没有订单记录</p>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Bootstrap JavaScript Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const sidebar = document.getElementById('sidebar');
-    const toggleSidebar = document.getElementById('toggleSidebar');
+    // 初始化侧边栏状态（强化移动端处理）
+    function initSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const isMobile = window.innerWidth <= 992;
 
-    toggleSidebar.addEventListener('click', () => {
-        sidebar.classList.toggle('collapsed');
+        // 强制移除所有可能冲突的样式
+        sidebar.classList.remove('sidebar-collapsed');
+        void sidebar.offsetWidth; // 触发重绘
+
+        // 根据设备类型应用正确状态
+        if (isMobile) {
+            sidebar.style.transform = `translateX(-${window.innerWidth}px)`; // 确保完全移出屏幕
+            setTimeout(() => {
+                sidebar.classList.add('sidebar-collapsed');
+            }, 10);
+        } else {
+            sidebar.classList.remove('sidebar-collapsed');
+        }
+    }
+
+    // 页面加载时强制初始化
+    document.addEventListener('DOMContentLoaded', function() {
+        initSidebar();
+        window.addEventListener('load', initSidebar); // 双保险确保执行
+    });
+
+    // 优化后的侧边栏切换函数
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        const isMobile = window.innerWidth <= 992;
+
+        if (isMobile) {
+            const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
+            sidebar.style.transform = isCollapsed ? 'translateX(0)' : `translateX(-${sidebar.offsetWidth}px)`;
+            sidebar.classList.toggle('sidebar-collapsed');
+            overlay.style.display = isCollapsed ? 'block' : 'none';
+        }
+    }
+
+    // 增强的resize监听
+    window.addEventListener('resize', () => {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+
+        if (window.innerWidth > 992) {
+            sidebar.classList.remove('sidebar-collapsed');
+            sidebar.style.transform = '';
+            overlay.style.display = 'none';
+        } else {
+            if (!sidebar.classList.contains('sidebar-collapsed')) {
+                sidebar.style.transform = `translateX(-${sidebar.offsetWidth}px)`;
+                sidebar.classList.add('sidebar-collapsed');
+            }
+        }
     });
 </script>
 </body>

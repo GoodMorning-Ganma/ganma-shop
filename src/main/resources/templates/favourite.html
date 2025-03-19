@@ -3,55 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Shopping Site</title>
+    <title>My Favourites</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
 
     <style>
-        /* Custom style to give a minimalist dropdown without box */
-        .dropdown-menu {
+        :root {
+            --primary-color: #6f42c1;
+            --secondary-color: #0d6efd;
+            --accent-color: #dc3545;
+        }
+
+        /* 统一导航栏样式 */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #5a32a3 100%);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        /* 侧边栏优化 */
+        .account-sidebar {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .account-sidebar .nav-link {
+            color: var(--primary-color) !important;
+            border-radius: 0.75rem;
+            margin: 0.25rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .account-sidebar .nav-link.active {
+            background: var(--primary-color) !important;
+            color: white !important;
+        }
+
+        .account-sidebar .nav-link:hover:not(.active) {
+            background: rgba(111, 66, 193, 0.1);
+        }
+
+        /* 商品卡片优化 */
+        .product-card {
+            border: none !important;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        }
+
+        .card-img-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem 1rem 0 0;
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .card-img-top {
+            transform: scale(1.05);
+        }
+
+        .card-title {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .card-img-top {
+                height: 150px;
+            }
+
+            .account-sidebar {
+                margin-bottom: 1rem;
+            }
+        }
+
+        /* 统一按钮样式 */
+        .btn-primary {
+            background: var(--primary-color);
             border: none;
-            box-shadow: none;
-            padding: 0;
-            background-color: transparent;
+            border-radius: 0.75rem;
+            padding: 0.5rem 1.25rem;
         }
 
-        .dropdown-item {
-            color: #007bff;
-            padding: 5px 10px;
-            transition: background-color 0.3s ease;
+        .btn-primary:hover {
+            background: #5a32a3;
         }
 
-        .dropdown-item:hover {
-            background-color: rgba(0, 123, 255, 0.1);
-            color: #0056b3;
-        }
-
-        .nav-link {
-            cursor: pointer;
-            padding-right: 20px;
-        }
-
-        .dropdown-toggle::after {
-            display: inline-block;
-            margin-left: 0.255em;
-            vertical-align: 0.255em;
-            content: "";
-            border-top: 0.3em solid;
-            border-right: 0.3em solid transparent;
-            border-bottom: 0;
-            border-left: 0.3em solid transparent;
-        }
-
-        .dropdown-toggle[aria-expanded="true"]::after {
-            transform: rotate(180deg);
+        .empty-state {
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
         }
     </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+<!-- 统一导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container">
         <a class="navbar-brand" href="/ganma/index">Ganma</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,44 +139,78 @@
     </div>
 </nav>
 
-<!-- Account Section -->
+<!-- Main Content -->
 <div class="container my-5">
     <div class="row">
-        <!-- Sidebar Menu -->
-        <div class="col-12 col-md-3 mb-4">
-            <h5>Account Menu</h5>
-            <ul class="nav flex-column nav-pills">
-                <li class="nav-item">
-                    <a class="nav-link" id="profile-tab" href="/ganma/account" role="tab" aria-controls="profile" aria-selected="true">Profile Info</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" id="favourite-tab" href="#" role="tab" aria-controls="favourite" aria-selected="true">My Favourite</a>
-                </li>
-                <!-- Simple Inline Dropdown for My Order -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="orderInfoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">My Order</a>
-                    <ul class="dropdown-menu" aria-labelledby="orderInfoDropdown">
-                        <li><a class="dropdown-item" href="/ganma/order">Order Info</a></li>
-                        <li><a class="dropdown-item" href="#">Payment</a></li>
-                        <li><a class="dropdown-item" href="#">Order History</a></li>
-                    </ul>
-                </li>
-            </ul>
+        <!-- 侧边栏菜单 -->
+        <div class="col-12 col-md-3">
+            <div class="account-sidebar">
+                <h5 class="mb-3 text-primary"><i class="bi bi-person-circle me-2"></i>Account Menu</h5>
+                <ul class="nav flex-column nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/ganma/account">
+                            <i class="bi bi-person me-2"></i>Profile Info
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/ganma/favourite">
+                            <i class="bi bi-heart-fill me-2"></i>My Favourite
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#orderCollapse">
+                            <i class="bi bi-bag me-2"></i>My Order
+                        </a>
+                        <div class="collapse ps-3" id="orderCollapse">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/ganma/order">Order Info</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Payment</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/ganma/orderHistory">Order History</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
 
-        <!-- My Favourites Section -->
+        <!-- 收藏商品列表 -->
         <div class="col-12 col-md-9">
-            <h2>My Favourites</h2>
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-                <div class="col" th:each="product : ${favourites}">
-                    <div class="card h-100">
-                        <a th:href="@{/ganma/product/{id}(id=${product.id})}">
-                            <img th:src="@{/${product.imageName}}" class="card-img-top" alt="Product Image">
-                        </a>
+            <h3 class="mb-4"><i class="bi bi-heart-fill me-2 text-primary"></i>My Favourites</h3>
+
+            <div th:if="${favourites.isEmpty()}" class="empty-state">
+                <i class="bi bi-heartbreak display-4 text-muted mb-3"></i>
+                <h4 class="text-muted">No favourite items yet</h4>
+                <a href="/ganma/index" class="btn btn-primary mt-3">Start Shopping</a>
+            </div>
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+                <div class="col" th:each="product : ${favourites}" data-product-id="${product.id}">
+                    <div class="card product-card h-100">
+                        <div class="card-img-container">
+                            <a th:href="@{/ganma/product/{id}(id=${product.id})}">
+                                <img th:src="@{'/images/' + ${product.imageName}}"
+                                     class="card-img-top"
+                                     alt="Product Image">
+                            </a>
+                        </div>
                         <div class="card-body">
-                            <h5 class="card-title" th:text="${product.name}"></h5>
-                            <p class="card-text" th:text="${product.description}"></p>
-                            <a th:href="@{/ganma/product/{id}(id=${product.id})}" class="btn btn-primary">View Details</a>
+                            <h5 class="card-title mb-3" th:text="${product.name}"></h5>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a th:href="@{/ganma/product/{id}(id=${product.id})}"
+                                   class="btn btn-primary btn-sm">
+                                    <i class="bi bi-eye me-2"></i>View Details
+                                </a>
+                                <button class="btn btn-outline-danger btn-sm"
+                                        th:attr="onclick=|removeFavourite(${product.id})|">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -121,15 +219,15 @@
     </div>
 </div>
 
-        <!-- Footer -->
-<footer class="py-4 bg-dark text-light">
+<!-- 统一页脚 -->
+<footer class="py-4 bg-dark text-light mt-5">
     <div class="container text-center text-md-start">
         <div class="row">
-            <div class="col-12 col-md-4 mb-3">
+            <div class="col-md-4 mb-3">
                 <h5>About Us</h5>
                 <p>Your one-stop shop for the best products at unbeatable prices.</p>
             </div>
-            <div class="col-12 col-md-4 mb-3">
+            <div class="col-md-4 mb-3">
                 <h5>Customer Service</h5>
                 <ul class="list-unstyled">
                     <li><a href="#" class="text-light">Contact Us</a></li>
@@ -137,7 +235,7 @@
                     <li><a href="#" class="text-light">FAQs</a></li>
                 </ul>
             </div>
-            <div class="col-12 col-md-4 mb-3">
+            <div class="col-md-4 mb-3">
                 <h5>Follow Us</h5>
                 <a href="#" class="text-light me-3"><i class="bi bi-facebook"></i></a>
                 <a href="#" class="text-light me-3"><i class="bi bi-instagram"></i></a>
@@ -149,7 +247,39 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    // 修改后的removeFavourite函数
+function removeFavourite(productId) {
+    if(confirm('确定要移除收藏吗？')) {
+        fetch(`/ganma/favourite/remove/${productId}`, {
+            method: 'POST',
+            headers: {
+                // 如果使用CSRF保护需要添加token
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if(response.ok) {
+                const item = document.querySelector(`[data-product-id="${productId}"]`);
+                if(item) {
+                    item.remove();
+                    // 检查是否所有商品都被移除了
+                    if(!document.querySelector('.col[data-product-id]')) {
+                        document.querySelector('.empty-state').style.display = 'flex';
+                    }
+                }
+            } else {
+                // 处理HTTP错误状态
+                return response.text().then(text => { throw new Error(text) });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('操作失败: ' + error.message);
+        });
+    }
+}
+</script>
 
 </body>
 </html>
-

@@ -52,7 +52,7 @@ public class LoginController {
 
             switch (foundUser.getUserType()) {
                 case "admin":
-                    return "redirect:/admin/";
+                    return "redirect:/admin/index";
                 case "customer":
                     return "redirect:/ganma/index";
                 default:

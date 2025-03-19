@@ -23,9 +23,11 @@ CREATE TABLE user
 
 INSERT INTO user(id, email, username, password, phone, address, user_type)
 VALUES
-('1','admin@gmail.com', 'admin', '$2a$10$okh6g45A6PlC9EMWanGrMu/90OnVQm5H.mmZBXwAsmXkuBfaTmoua', 012345, '5,jalan tuah', 'admin'),--password: 123
-('2','customer@gmail.com', 'customer', '$2a$10$okh6g45A6PlC9EMWanGrMu/90OnVQm5H.mmZBXwAsmXkuBfaTmoua',01234567, '10,jalan pelangi,7500,Johor', 'customer'),
-('3','jason@gmail.com', 'Jason', '$2a$10$okh6g45A6PlC9EMWanGrMu/90OnVQm5H.mmZBXwAsmXkuBfaTmoua', 0102355466, '2,Jalan Kan,Taman Kan,53211,Kuala Lumpur', 'customer');--password: 123
+('AD1','admin@gmail.com', 'admin', '$2a$10$okh6g45A6PlC9EMWanGrMu/90OnVQm5H.mmZBXwAsmXkuBfaTmoua', 012345, '5,jalan tuah', 'admin'),--password: 123
+('AD2','admin_2@gmail.com', 'admin2', '$2a$10$okh6g45A6PlC9EMWanGrMu/90OnVQm5H.mmZBXwAsmXkuBfaTmoua', 1331354002, '5,jalan tuah kuala lumpur', 'admin'),
+('AD3','admin_3@gmail.com', 'admin3', '$2a$10$okh6g45A6PlC9EMWanGrMu/90OnVQm5H.mmZBXwAsmXkuBfaTmoua', 11335566441, '11-10,jalan klang,kuala lumpur', 'admin'),
+('3','customer@gmail.com', 'customer', '$2a$10$okh6g45A6PlC9EMWanGrMu/90OnVQm5H.mmZBXwAsmXkuBfaTmoua',01234567, '10,jalan pelangi,7500,Johor', 'customer'),
+('2','jason@gmail.com', 'Jason', '$2a$10$okh6g45A6PlC9EMWanGrMu/90OnVQm5H.mmZBXwAsmXkuBfaTmoua', 0102355466, '2,Jalan Kan,Taman Kan,53211,Kuala Lumpur', 'customer');--password: 123
 -- ----------------------------
 -- Table structure for role
 -- ----------------------------
@@ -133,12 +135,12 @@ CREATE TABLE product (
 );
 INSERT INTO product(id, user_id, category_id, name, description, price,image_name)
 VALUES
-('1','2', '1', 'V18', '-', 97,'V18.jpg'),
-('2','2', '1', 'GSure', '-', 30,'GSure.jpg'),
-('3','2', '1', 'VPlus', '-', 50,'VPlus.jpg'),
-('4','2', '1', 'VGrains', '-', 99.99,'VGrains.jpg'),
-('5','2', '1', 'Fruit Drink (Mixed)', '-', 51,'MixedBerries.jpg'),
-('6','2', '1', 'Fruit Drink (Mango)', '-', 13.10,'Mango.jpg');
+('1','AD1', '1', 'V18', '-', 97,'V18.jpg'),
+('2','AD1', '1', 'GSure', '-', 30,'GSure.jpg'),
+('3','AD1', '1', 'VPlus', '-', 50,'VPlus.jpg'),
+('4','AD1', '1', 'VGrains', '-', 99.99,'VGrains.jpg'),
+('5','AD1', '1', 'Fruit Drink (Mixed)', '-', 51,'MixedBerries.jpg'),
+('6','AD1', '1', 'Fruit Drink (Mango)', '-', 13.10,'Mango.jpg');
 
 -- ----------------------------
 -- Table structure for cart
@@ -158,7 +160,7 @@ CREATE TABLE cart
 );
 INSERT INTO cart(id, product_id, user_id,quantity,price)
 VALUES
-('1','2','2',1, 30.00),
+('1','2','1',1, 30.00),
 ('2','4','2',2, 199.98);
 
 SET FOREIGN_KEY_CHECKS = 1;
@@ -180,7 +182,12 @@ CREATE TABLE orders
 
 INSERT INTO orders(id,user_id,product_id,quantity,price)
 VALUES
-('1','2','2','2',60.00);
+('1','2','2','2',60.00),
+('2','3','6','3',39.30),
+('3','2','4','1',99.99),
+('4','3','3','1',50.00),
+('5','2','1','1',97.00);
+
 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -196,7 +203,9 @@ CREATE TABLE favourite
 
 INSERT INTO favourite(id,user_id,product_id)
 VALUES
-('1','2','2');
+('1','2','2'),
+('2','2','3'),
+('3','2','4');
 
 SET FOREIGN_KEY_CHECKS = 1;
 

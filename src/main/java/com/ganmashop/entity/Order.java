@@ -16,6 +16,8 @@ public class Order {
     private Date createTime;
     private Date updateTime;
 
+    public Order() {} // 必须有无参构造函数
+
     public Order(String id, String productId, String userId, int quantity, double price, String status, Date createTime, Date updateTime){
         this.id = id;
         this.productId = productId;

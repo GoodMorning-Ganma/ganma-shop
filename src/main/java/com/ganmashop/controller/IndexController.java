@@ -7,13 +7,12 @@ import com.ganmashop.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Desmondlzk
@@ -26,13 +25,27 @@ public class IndexController {
     private ProductService productService;
 
     @GetMapping("/index")
-    public String showHomePage(Model model, HttpSession session) {
+    public String showHomePage(Model model, HttpSession session, @RequestParam(required = false) String keyword, @RequestParam(required = false) String category, @RequestParam(defaultValue = "newest") String sort) {
         User user = (User) session.getAttribute("loggedInUser");
         model.addAttribute("isLoggedIn", user != null);
 
-        List<Product> products = productService.findAllProducts();
+        // 构建查询参数
+        Map<String, Object> params = new HashMap<>();
+        params.put("keyword", keyword);
+        params.put("category", category);
+        params.put("sort", sort);
+
+        //只查询一次
+        List<Product> products = productService.searchProducts(params);
         model.addAttribute("products", products);
+
+        // 其他参数
+        model.addAttribute("selectedCategory", category);
+        model.addAttribute("selectedSort", sort);
+        model.addAttribute("searchKeyword", keyword);
+        model.addAttribute("categories", productService.getAllCategories());
 
         return "home";
     }
+
 }

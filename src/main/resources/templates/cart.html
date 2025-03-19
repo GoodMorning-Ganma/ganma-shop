@@ -6,12 +6,54 @@
     <title>Shopping Cart</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons （用于垃圾桶等图标，如果需要） -->
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #6f42c1;
+            --secondary-color: #0d6efd;
+            --accent-color: #dc3545;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #5a32a3 100%);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        .cart-item-card {
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border: none !important;
+            border-radius: 1rem !important;
+        }
+
+        .cart-item-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .quantity-badge {
+            background: var(--primary-color);
+            font-size: 0.9rem;
+            padding: 0.5rem 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            .product-image {
+                max-width: 80px;
+                margin: 0 auto;
+            }
+
+            .cart-item-card .btn {
+                font-size: 0.9rem;
+                padding: 0.375rem 0.75rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+<!-- Navbar (与主页完全一致) -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container">
         <a class="navbar-brand" href="/ganma/index">Ganma</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -20,14 +62,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item"><!-- Cart Link with Badge -->
-                    <a class="nav-link position-relative" href="/ganma/cart">
-                        Cart
-                        <span id="cart-badge"
-                              class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle">
-                        </span>
-                    </a>
-                </li>
+                <li class="nav-item"><a class="nav-link" href="/ganma/cart">Cart</a></li>
                 <li class="nav-item" th:if="${isLoggedIn}">
                     <a class="nav-link" href="/ganma/account">Account</a>
                 </li>
@@ -44,80 +79,89 @@
 </nav>
 
 <div class="container my-4">
-
-    <!-- Toolbar: Select All and Delete Selected -->
-    <div class="d-flex justify-content-between align-items-center bg-light py-2 px-3 rounded shadow-sm mb-3">
-        <!-- Select All -->
-        <div>
-            <input id="select-all" type="checkbox" class="form-check-input me-2">
-            <label for="select-all" class="form-check-label mb-0">Select All</label>
+    <!-- 工具条 -->
+    <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-3 shadow-sm mb-4">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="select-all">
+            <label class="form-check-label" for="select-all">Select All</label>
         </div>
-        <!-- Delete Selected Icon -->
         <form id="delete-selected-form" method="post" th:action="@{/ganma/cart/deleteSelected}">
             <input id="selected-product-ids" type="hidden" name="productIds">
-            <button type="submit" id="delete-selected" class="btn btn-danger btn-sm d-flex align-items-center">
-                <i class="bi bi-trash me-1"></i>Delete
+            <button type="submit" id="delete-selected" class="btn btn-danger btn-sm">
+                <i class="bi bi-trash me-1"></i>Delete Selected
             </button>
         </form>
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-body" id="cart-items">
-            <!-- 检查购物车是否为空 -->
-            <div th:if="${#lists.isEmpty(cartProductDetails)}" class="text-center py-5">
-                <p class="fs-5 text-muted">🛒 Your cart is still empty. Start shopping now and fill it with awesome products! 🎉</p>
-                <a href="/ganma/index" class="btn btn-primary">Shop Now</a>
+    <!-- 购物车商品列表 -->
+    <div th:if="${#lists.isEmpty(cartProductDetails)}" class="text-center py-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-body py-5">
+                <i class="bi bi-cart-x display-4 text-muted mb-4"></i>
+                <h4 class="mb-3">Your cart is empty</h4>
+                <a href="/ganma/index" class="btn btn-primary px-4 rounded-pill">
+                    <i class="bi bi-arrow-left me-2"></i>Start Shopping
+                </a>
             </div>
+        </div>
+    </div>
 
-            <!-- 如果购物车不为空，循环渲染商品 -->
-            <div th:unless="${#lists.isEmpty(cartProductDetails)}">
-                <div th:each="item : ${cartProductDetails}"
-                     class="row align-items-center mb-3"
-                     th:attr="
-                        data-productId=${item.cart.productId},
-                        data-price=${item.cart.price},
-                        data-quantity=${item.cart.quantity}">
-
-                    <!-- 勾选复选框 -->
-                    <div class="col-2 text-center">
-                        <input type="checkbox" class="form-check-input item-checkbox">
-                    </div>
-
-                    <!-- 商品图片 -->
-                    <div class="col-2">
-                        <img th:src="@{/images/{productId}.jpg(productId=${item.cart.productId})}"
-                             alt="Product Image"
-                             class="img-fluid rounded"
-                             style="width: 100%; height: auto; object-fit: cover;">
-                    </div>
-
-                    <!-- 商品名称 & 价格 -->
-                    <div class="col-5 text-center text-md-start">
-                        <p class="mb-1 fw-bold" th:text="${item.product.name}">Product Name</p>
-                        <small class="text-muted" th:text="${item.cart.price}">Price</small>
-                    </div>
-
-                    <!-- 商品数量 -->
-                    <div class="col-3 text-end">
-                        <span th:text="'x' + ${item.cart.quantity}">x1</span>
+    <div th:unless="${#lists.isEmpty(cartProductDetails)}">
+        <div class="row g-3">
+            <div th:each="item : ${cartProductDetails}" class="col-12">
+                <div class="card cart-item-card shadow-sm p-3"
+                     th:attr="data-productId=${item.cart.productId},
+                              data-price=${item.cart.price},
+                              data-quantity=${item.cart.quantity}">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <input type="checkbox" class="form-check-input item-checkbox">
+                        </div>
+                        <div class="col-4 col-md-2">
+                            <img th:src="@{'/images/' + ${item.product.imageName}}"
+                                 class="img-fluid rounded-3 product-image"
+                                 alt="Product Image">
+                        </div>
+                        <div class="col-12 col-md-5 mt-3 mt-md-0">
+                            <h5 class="mb-1" th:text="${item.product.name}"></h5>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="text-muted">Price:</span>
+                                <span class="text-primary fw-bold" th:text="'RM' + ${item.cart.price}"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-3 text-md-end mt-3 mt-md-0">
+                            <span class="badge quantity-badge text-white">
+                                Qty: <span th:text="${item.cart.quantity}"></span>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer: 显示总价、Checkout 按钮 -->
-    <div class="d-flex justify-content-between align-items-center mt-4">
-        <span>
-            Total Amount: RM<span id="total-amount">0.00</span>
-        </span>
-        <button class="btn btn-primary" id="checkout-btn">Checkout</button>
+    <!-- 总计栏 -->
+    <div class="card shadow-sm border-0 mt-4 bg-primary text-white">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0">Total Amount</h5>
+                    <small class="opacity-75">Inclusive of all taxes</small>
+                </div>
+                <div>
+                    <h3 class="mb-0">RM<span id="total-amount">0.00</span></h3>
+                </div>
+            </div>
+            <button class="btn btn-light w-100 mt-3 rounded-pill fw-bold" id="checkout-btn">
+                Proceed to Checkout
+            </button>
+        </div>
     </div>
 </div>
 
-<!-- Footer -->
+<!-- 统一页脚 -->
 <footer class="py-4 bg-dark text-light mt-5">
-    <div class="container">
+    <div class="container text-center text-md-start">
         <div class="row">
             <div class="col-md-4 mb-3">
                 <h5>About Us</h5>
@@ -144,9 +188,8 @@
     </div>
 </footer>
 
-<!-- Bootstrap JS + Bundle -->
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <!-- ============= 脚本部分，动态计算总价 + 选择操作 ============= -->
 <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -176,7 +219,7 @@
             event.preventDefault();
             const selectedProductIds = Array.from(itemCheckboxes)
                 .filter(checkbox => checkbox.checked)
-                .map(checkbox => checkbox.closest(".row").dataset.productid);
+                .map(checkbox => checkbox.closest(".cart-item-card").dataset.productid);
 
             if (selectedProductIds.length === 0) {
                 alert("Please select at least one item to delete.");
@@ -192,40 +235,37 @@
         // ------------------- 计算总价 相关 -------------------
         const totalAmountEl = document.getElementById("total-amount");
 
-        // 当用户勾选或取消勾选商品时，计算并更新总价
-        itemCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener("change", () => {
-                updateTotalAmount();
-            });
-        });
-
-        // 计算函数
         function updateTotalAmount() {
             let total = 0;
             itemCheckboxes.forEach(checkbox => {
                 if (checkbox.checked) {
-                    const productRow = checkbox.closest(".row");
-                    // 从 data-price 获取商品单价
-                    const price = parseFloat(productRow.dataset.price) || 0;
-                    // 从 data-quantity 获取数量
-                    const quantity = parseInt(productRow.dataset.quantity) || 1;
+                    const card = checkbox.closest(".cart-item-card");
+                    const price = parseFloat(card.dataset.price) || 0;
+                    const quantity = parseInt(card.dataset.quantity) || 1;
                     total += price * quantity;
                 }
             });
-            // 显示到页面
             totalAmountEl.textContent = total.toFixed(2);
         }
 
-        // 如需在初始载入页面就自动计算（若一些商品默认勾选），可在此处调用：
-        // updateTotalAmount();
+        // 初始化总价计算
+        updateTotalAmount();
+
+        // 绑定单个复选框事件
+        itemCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", () => {
+                updateTotalAmount();
+                // 自动更新全选状态
+                const allChecked = [...itemCheckboxes].every(cb => cb.checked);
+                selectAllCheckbox.checked = allChecked;
+            });
+        });
 
         // ------------------- Checkout 按钮示例 -------------------
         const checkoutBtn = document.getElementById("checkout-btn");
         checkoutBtn.addEventListener("click", () => {
-            // 仅展示一个获取当前总价的示例
             const totalAmount = totalAmountEl.textContent;
-            // TODO: 可以使用 fetch 或者表单提交把 totalAmount 传给后端处理支付等逻辑
-            alert("Total to pay: $" + totalAmount);
+            alert("Total to pay: RM" + totalAmount);
         });
     });
 </script>

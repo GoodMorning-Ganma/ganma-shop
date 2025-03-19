@@ -12,17 +12,10 @@ import java.util.List;
  */
 @Mapper
 public interface CartDao {
-    // Find cart item by userId and productId
     Cart findCartByProductIdAndUserId(@Param("userId") String userId, @Param("productId") String productId);
-
-    // Insert new cart item
     void save(Cart cart);
-
-    // Update existing cart item
     void updateCart(Cart cart);
-
     void deleteSelectedItems(@Param("userId") String userId, @Param("productIds") List<String> productIds);
-
-    // Find all cart items for a user
     List<Cart> findCartItemsByUser(@Param("userId") String userId);
+
 }

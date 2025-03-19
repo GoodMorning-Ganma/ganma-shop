@@ -9,6 +9,7 @@ import com.ganmashop.utils.GenUUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -29,6 +30,10 @@ public class FavouriteServiceImpl implements FavouriteService {
         if (Objects.isNull(productId) || Objects.isNull(userId)) {
             throw new BusinessException("Invalid user or product ID");
         }
+        int exists = favouriteDao.checkFavouriteExists(userId, productId);
+        if (exists > 0) {
+            throw new BusinessException("Product already in favourites");
+        }
         try{
             Favourite favourite = new Favourite();
             favourite.setId(GenUUID.getUUID());
@@ -37,6 +42,18 @@ public class FavouriteServiceImpl implements FavouriteService {
             favouriteDao.addToFavourite(favourite);
         }catch(Exception e){
             throw new BusinessException("Internal server error. Please try again.");
+        }
+    }
+
+    @Override
+    public void deleteFavouriteItems(String userId, String productId) {
+        if (Objects.isNull(userId) || productId.isEmpty()) {
+            throw new BusinessException("UserId or ProductIds cannot be null!");
+        }
+        try {
+            favouriteDao.deleteFavouriteItems(userId, productId);
+        } catch (Exception e) {
+            throw new BusinessException("Failed to delete selected cart items.");
         }
     }
 }

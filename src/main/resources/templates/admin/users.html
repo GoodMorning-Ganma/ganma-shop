@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>管理员管理</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --sidebar-width: 250px;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            overflow-x: hidden;
+        }
+
+        /* 侧边栏优化 */
+        #sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-collapsed {
+            transform: translateX(calc(-1 * var(--sidebar-width)));
+        }
+
+        /* 移动端遮罩 */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 999;
+            display: none;
+        }
+
+        /* 主内容区优化 */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            transition: margin 0.3s ease;
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* 用户管理专属样式（保留原有样式） */
+        .table-responsive {
+            overflow-x: auto;
+            min-height: 300px;
+        }
+
+        .action-buttons {
+            gap: 0.5rem;
+            flex-wrap: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-card {
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                margin-bottom: 12px;
+                padding: 16px;
+            }
+
+            .data-label {
+                color: #6c757d;
+                font-size: 0.875rem;
+                margin-bottom: 4px;
+            }
+
+            .data-value {
+                font-weight: 500;
+                margin-bottom: 12px;
+                word-break: break-word;
+            }
+
+            .mobile-action-btn {
+                padding: 8px 12px;
+                font-size: 0.875rem;
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body class="d-flex">
+<!-- 侧边栏（与index.html完全一致） -->
+<div id="sidebar" class="bg-dark text-white position-fixed sidebar-collapsed">
+    <div class="d-flex flex-column h-100">
+        <h3 class="text-center py-3 mb-4 border-bottom">
+            <a href="/admin/index" class="text-white text-decoration-none">管理面板</a>
+        </h3>
+        <nav class="flex-grow-1 px-3">
+            <div class="list-group list-group-flush">
+                <a href="/admin/users" class="list-group-item list-group-item-action bg-dark text-white border-0">
+                    <i class="bi bi-people me-2"></i>管理员列表
+                </a>
+                <a href="/admin/products" class="list-group-item list-group-item-action bg-dark text-white border-0">
+                    <i class="bi bi-box-seam me-2"></i>商品管理
+                </a>
+            </div>
+        </nav>
+        <div class="p-3 border-top">
+            <a th:href="${isLoggedIn ? '/auth/logout' : '/auth/login'}"
+               class="btn btn-outline-light w-100">
+                <i th:class="${isLoggedIn ? 'bi-box-arrow-right' : 'bi-box-arrow-in-right'}" class="bi me-2"></i>
+                <span th:text="${isLoggedIn ? '登出' : '登录'}"></span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- 移动端遮罩 -->
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<!-- 主内容区 -->
+<div class="main-content flex-grow-1">
+    <div class="container-fluid p-3 p-lg-4">
+        <!-- 移动端菜单按钮 -->
+        <button class="btn btn-dark d-lg-none" onclick="toggleSidebar()">
+            菜单
+        </button>
+
+        <!-- 用户列表内容（保持原有结构不变） -->
+        <div class="card d-none d-md-block shadow-sm">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">管理员列表</h5>
+                <a href="/admin/addAdmin" class="btn btn-primary">
+                    <i class="bi bi-plus-lg"></i> 新增
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                    <tr>
+                        <th style="width: 5%">ID</th>
+                        <th style="width: 20%">用户名</th>
+                        <th style="width: 30%">邮箱</th>
+                        <th style="width: 20%">手机号</th>
+                        <th style="width: 25%">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}"></td>
+                        <td th:text="${user.username}"></td>
+                        <td th:text="${user.email}"></td>
+                        <td th:text="${user.phone}"></td>
+                        <td>
+                            <div class="d-flex action-buttons">
+                                <a th:href="@{/admin/users/editUser/{id}(id=${user.id})}"
+                                   class="btn btn-sm btn-outline-primary flex-grow-1">
+                                    编辑
+                                </a>
+                                <a th:href="@{/admin/users/deleteUser/{id}(id=${user.id})}"
+                                   class="btn btn-sm btn-outline-danger flex-grow-1"
+                                   onclick="return confirm('确认删除该管理员？')">
+                                    删除
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 移动端卡片布局 -->
+        <div class="d-md-none">
+            <div class="mb-3">
+                <h3>管理员列表</h3>
+                <a href="/admin/addAdmin" class="btn btn-primary w-100">
+                    <i class="bi bi-plus-lg"></i> 新增管理员
+                </a>
+            </div>
+
+            <div th:each="user : ${users}" class="mobile-card">
+                <div class="row g-2">
+                    <div class="col-12">
+                        <div class="data-label">ID</div>
+                        <div class="data-value" th:text="${user.id}"></div>
+                    </div>
+                    <div class="col-12">
+                        <div class="data-label">用户名</div>
+                        <div class="data-value" th:text="${user.username}"></div>
+                    </div>
+                    <div class="col-12">
+                        <div class="data-label">邮箱</div>
+                        <div class="data-value" th:text="${user.email}"></div>
+                    </div>
+                    <div class="col-12">
+                        <div class="data-label">手机号</div>
+                        <div class="data-value" th:text="${user.phone}"></div>
+                    </div>
+                    <div class="col-12">
+                        <div class="d-flex action-buttons gap-2 mt-2">
+                            <a th:href="@{/admin/users/editUser/{id}(id=${user.id})}"
+                               class="btn btn-outline-primary mobile-action-btn">
+                                <i class="bi bi-pencil"></i> 编辑
+                            </a>
+                            <a th:href="@{/admin/users/deleteUser/{id}(id=${user.id})}"
+                               class="btn btn-outline-danger mobile-action-btn"
+                               onclick="return confirm('确认删除？')">
+                                <i class="bi bi-trash"></i> 删除
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // 使用与index.html完全相同的侧边栏控制逻辑
+    function initSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const isMobile = window.innerWidth <= 992;
+
+        sidebar.classList.remove('sidebar-collapsed');
+        void sidebar.offsetWidth;
+
+        if (isMobile) {
+            sidebar.style.transform = `translateX(-${window.innerWidth}px)`;
+            setTimeout(() => {
+                sidebar.classList.add('sidebar-collapsed');
+            }, 10);
+        } else {
+            sidebar.classList.remove('sidebar-collapsed');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initSidebar();
+        window.addEventListener('load', initSidebar);
+    });
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        const isMobile = window.innerWidth <= 992;
+
+        if (isMobile) {
+            const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
+            sidebar.style.transform = isCollapsed ? 'translateX(0)' : `translateX(-${sidebar.offsetWidth}px)`;
+            sidebar.classList.toggle('sidebar-collapsed');
+            overlay.style.display = isCollapsed ? 'block' : 'none';
+        }
+    }
+
+    window.addEventListener('resize', () => {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+
+        if (window.innerWidth > 992) {
+            sidebar.classList.remove('sidebar-collapsed');
+            sidebar.style.transform = '';
+            overlay.style.display = 'none';
+        } else {
+            if (!sidebar.classList.contains('sidebar-collapsed')) {
+                sidebar.style.transform = `translateX(-${sidebar.offsetWidth}px)`;
+                sidebar.classList.add('sidebar-collapsed');
+            }
+        }
+    });
+</script>
+</body>
+</html>

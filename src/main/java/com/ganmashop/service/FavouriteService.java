@@ -1,6 +1,9 @@
 package com.ganmashop.service;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author Jasonlzc
@@ -9,4 +12,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface FavouriteService {
     void addToFavourite(String userId, String productId);
+    void deleteFavouriteItems(String userId, String productId);
 }

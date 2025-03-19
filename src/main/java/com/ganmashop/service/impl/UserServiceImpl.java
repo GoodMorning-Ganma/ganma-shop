@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author Desmondlzk
  * Date: 07/02/2024 - 5:33 PM
@@ -31,10 +33,6 @@ public class UserServiceImpl implements UserService {
         return userDao.findByUsername(username);
     }
 
-    @Override
-    public User findByUserEmail(String email) {
-        return userDao.findByUserEmail(email);
-    }
 
     @Override
     public User save(User user) {
@@ -45,13 +43,34 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+
+
+    @Override
+    public User adminUser(User admin) {
+        admin.setId(GenUUID.getUUID());
+        admin.setUserType("admin");
+        admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+        userDao.save(admin);
+        return admin;
+    }
+
+    @Override
+    public List<User> findAllAdmins() {
+        return userDao.findAllAdmins();
+    }
+
     @Override
     public void deleteUserById(String userId) {
-
+        userDao.deleteUserById(userId);
     }
 
     @Override
     public void updateUser(User user) {
         userDao.updateUser(user);
+    }
+
+    @Override
+    public List<User> findAllUsers() {
+        return userDao.findAllUsers();
     }
 }

@@ -7,31 +7,100 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
     <style>
-        /* 更小的产品图片显示 */
-        .product-image {
-            max-width: 60%; /* 调整这里的百分比即可进一步缩小图片 */
-            height: auto;
+        :root {
+            --primary-color: #6f42c1;
+            --secondary-color: #0d6efd;
+            --accent-color: #dc3545;
         }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #5a32a3 100%);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        .product-card {
+            border: none !important;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .product-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 1rem;
+            object-fit: cover;
+        }
+
         .price-text {
-            color: red !important;  /* 直接使用红色 */
-            font-weight: bold !important;  /* 直接设置粗体 */
+            color: var(--accent-color) !important;
+            font-weight: 700;
+            font-size: 1.75rem;
+        }
+
+        .quantity-input {
+            width: 120px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            padding: 0.75rem 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #5a32a3;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .product-image {
+                max-width: 80%;
+                margin-bottom: 1.5rem;
+            }
+            .price-text {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+<!-- Navbar (保持与home页面一致) -->
+<!-- 修改后的导航栏部分 -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container">
         <a class="navbar-brand" href="/ganma/index">Ganma</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <!-- 新增的返回按钮 -->
+        <div class="d-flex align-items-center">
+            <a href="javascript:void(0)" class="btn btn-link text-light me-2 d-lg-none" onclick="goBack()">
+                <i class="bi bi-arrow-left fs-5"></i>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
+                <!-- 桌面端的返回按钮 -->
+                <li class="nav-item d-none d-lg-block">
+                    <a class="nav-link" href="javascript:void(0)" onclick="goBack()">
+                        <i class="bi bi-arrow-left-short me-1"></i>Back
+                    </a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="/ganma/cart">Cart</a></li>
                 <li class="nav-item" th:if="${isLoggedIn}">
                     <a class="nav-link" href="/ganma/account">Account</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="${isLoggedIn ? '/auth/logout' : '/auth/login'}">
+                        <span th:text="${isLoggedIn ? 'Logout' : 'Login'}"></span>
+                    </a>
                 </li>
             </ul>
         </div>
@@ -40,37 +109,53 @@
 
 <!-- Product Details Section -->
 <div class="container my-5">
-    <div class="row">
-        <!-- Product Image -->
-        <div class="col-md-6 mb-4 d-flex justify-content-center">
-            <img th:src="@{'/images/' + ${product.imageName}}"
-                 class="img-fluid product-image rounded-top-4 hover-effect"
-                 alt="Product Image">
-        </div>
-        <!-- Product Details -->
-        <div class="col-md-6">
-            <h1 th:text="${product.name}" class="mb-3"></h1>
-            <!-- 突出显示价格 -->
-            <p class="price-text fs-3">
-                RM <span th:text="${product.price}"></span>
-            </p>
-            <p><strong>Description:</strong></p>
-            <p th:text="${product.description}"></p>
-            <form action="/ganma/cart/add" method="post">
-                <input type="hidden" name="productId" th:value="${product.id}">
-                <div class="input-group" style="width: 120px;">
-                    <button type="button" class="btn btn-outline-secondary" onclick="decrementQuantity()">-</button>
-                    <input type="number" name="quantity" id="quantity" class="form-control text-center" value="1" min="1">
-                    <button type="button" class="btn btn-outline-secondary" onclick="incrementQuantity()">+</button>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="product-card p-4">
+                <div class="row g-4">
+                    <!-- Product Image -->
+                    <div class="col-md-6 d-flex align-items-center">
+                        <img th:src="@{'/images/' + ${product.imageName}}"
+                             class="img-fluid product-image"
+                             alt="Product Image">
+                    </div>
+
+                    <!-- Product Details -->
+                    <div class="col-md-6">
+                        <h1 th:text="${product.name}" class="mb-3 fs-2"></h1>
+                        <p class="price-text mb-4">RM <span th:text="${product.price}"></span></p>
+
+                        <div class="mb-4">
+                            <h5 class="text-primary">Description</h5>
+                            <p th:text="${product.description}" class="text-muted"></p>
+                        </div>
+
+                        <form action="/ganma/cart/add" method="post">
+                            <input type="hidden" name="productId" th:value="${product.id}">
+
+                            <div class="d-flex align-items-center gap-3 mb-4">
+                                <div class="input-group quantity-input">
+                                    <button type="button" class="btn btn-outline-secondary"
+                                            onclick="decrementQuantity()">-</button>
+                                    <input type="number" name="quantity" id="quantity"
+                                           class="form-control text-center" value="1" min="1">
+                                    <button type="button" class="btn btn-outline-secondary"
+                                            onclick="incrementQuantity()">+</button>
+                                </div>
+                                <button type="submit" class="btn btn-primary flex-grow-1">
+                                    <i class="bi bi-cart-plus me-2"></i>Add to Cart
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary mt-3">Add to Cart</button>
-            </form>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Footer -->
-<footer class="py-4 bg-dark text-light">
+<!-- Footer (保持与home页面一致) -->
+<footer class="py-4 bg-dark text-light mt-5">
     <div class="container text-center text-md-start">
         <div class="row">
             <div class="col-md-4 mb-3">
@@ -97,14 +182,6 @@
 </footer>
 
 <script>
-    function updateCartUrl() {
-        const quantity = document.getElementById("quantity").value;
-        const url = event.currentTarget.href;
-        event.currentTarget.href = url.replace('quantity=null', `quantity=${quantity}`);
-        return true;
-    }
-</script>
-<script>
     function incrementQuantity() {
         let quantityInput = document.getElementById('quantity');
         quantityInput.value = parseInt(quantityInput.value) + 1;
@@ -116,6 +193,18 @@
             quantityInput.value = parseInt(quantityInput.value) - 1;
         }
     }
+
+    // 新增返回函数
+    function goBack() {
+        window.history.back();
+    }
+
+    // 可选：添加键盘快捷键支持（ESC键返回）
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            goBack();
+        }
+    });
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>

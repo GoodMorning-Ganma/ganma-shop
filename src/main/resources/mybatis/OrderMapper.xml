@@ -12,12 +12,40 @@
         <result column="update_time" property="updateTime"  jdbcType="TIMESTAMP" />
     </resultMap>
 
+    <resultMap id="OrderDTORMap" type="com.ganmashop.dto.OrderDTO" autoMapping="false">
+        <!-- 映射 Order 对象 -->
+        <association property="order" javaType="com.ganmashop.entity.Order">
+            <id     property="id"         column="orderId"/>
+            <result property="quantity"   column="orderQuantity"/>
+            <result property="price"      column="orderPrice"/>
+            <result property="status"     column="orderStatus"/>
+            <result property="createTime" column="orderCreateTime"/>
+        </association>
+
+        <!-- 映射 Product 对象 -->
+        <association property="product" javaType="com.ganmashop.entity.Product">
+            <id     property="id"          column="productId"/>
+            <result property="name"        column="productName"/>
+            <result property="description" column="productDescription"/>
+            <result property="price"       column="productPrice"/>
+        </association>
+
+        <!-- 映射 User 对象 -->
+        <association property="user" javaType="com.ganmashop.entity.User">
+            <id     property="id"      column="userId"/>
+            <result property="username" column="userUsername"/>
+            <result property="email"   column="userEmail"/>
+            <result property="phone"   column="userPhone"/>
+            <result property="address" column="userAddress"/>
+        </association>
+    </resultMap>
+
     <select id="getAllOrders" resultType="com.ganmashop.entity.Order">
         SELECT * FROM orders;
     </select>
 
     <!-- Fetch orders by user ID -->
-    <select id="getOrdersByUserId" parameterType="String" resultType="com.ganmashop.entity.Order">
+    <select id="getOrdersByUserId" parameterType="String" resultMap="BaseResultMap">
         SELECT * FROM orders WHERE user_id = #{userId};
     </select>
 
@@ -26,4 +54,39 @@
         INSERT INTO orders (id, user_id, product_id, quantity, price, status, create_time)
         VALUES (#{id}, #{userId}, #{productId}, #{quantity}, #{price}, #{status},#{now()});
     </insert>
+
+    <select id="getOrderById" resultMap="BaseResultMap">
+        SELECT * FROM orders WHERE id = #{id}
+    </select>
+
+    <update id="updateOrder" parameterType="com.ganmashop.entity.Order">
+        UPDATE orders
+        SET
+        status = #{status},
+        update_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <select id="getAllOrderDetails" resultMap="OrderDTORMap">
+        SELECT
+        o.id          AS orderId,
+        o.quantity    AS orderQuantity,
+        o.price       AS orderPrice,
+        o.status      AS orderStatus,
+        o.create_time AS orderCreateTime,
+        p.id          AS productId,
+        p.name        AS productName,
+        p.description AS productDescription,
+        p.price      AS productPrice,
+        u.id         AS userId,
+        u.username   AS userUsername,  -- 保持与resultMap一致
+        u.email       AS userEmail,
+        u.phone       AS userPhone,
+        u.address     AS userAddress
+        FROM orders o
+        LEFT JOIN product p ON o.product_id = p.id
+        LEFT JOIN `user` u ON o.user_id = u.id
+        ORDER BY o.create_time DESC
+    </select>
+
 </mapper>

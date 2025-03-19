@@ -11,4 +11,16 @@
         INSERT INTO favourite (id, user_id, product_id) VALUES (#{id},#{userId}, #{productId})
     </insert>
 
+    <delete id="deleteFavouriteItems" parameterType="map">
+        DELETE FROM favourite
+        WHERE user_id = #{userId}
+        AND product_id = #{productId}
+    </delete>
+
+    <select id="checkFavouriteExists" resultType="int">
+        SELECT COUNT(*) FROM favourite
+        WHERE user_id = #{userId}
+        AND product_id = #{productId}
+    </select>
+
 </mapper>

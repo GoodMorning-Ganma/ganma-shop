@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>商品管理</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --sidebar-width: 250px;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            overflow-x: hidden;
+        }
+
+        /* 侧边栏优化 */
+        #sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-collapsed {
+            transform: translateX(calc(-1 * var(--sidebar-width)));
+        }
+
+        /* 移动端遮罩 */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 999;
+            display: none;
+        }
+
+        /* 主内容区优化 */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            transition: margin 0.3s ease;
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* 商品管理专属样式（保留原有样式） */
+        .product-image {
+            max-width: 120px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .mobile-image {
+            max-width: 100px;
+        }
+    </style>
+</head>
+<body class="d-flex">
+<!-- 侧边栏（与index.html完全一致） -->
+<div id="sidebar" class="bg-dark text-white position-fixed sidebar-collapsed">
+    <div class="d-flex flex-column h-100">
+        <h3 class="text-center py-3 mb-4 border-bottom">
+            <a href="/admin/index" class="text-white text-decoration-none">管理面板</a>
+        </h3>
+        <nav class="flex-grow-1 px-3">
+            <div class="list-group list-group-flush">
+                <a href="/admin/users" class="list-group-item list-group-item-action bg-dark text-white border-0">
+                    <i class="bi bi-people me-2"></i>管理员列表
+                </a>
+                <a href="/admin/products" class="list-group-item list-group-item-action bg-dark text-white border-0">
+                    <i class="bi bi-box-seam me-2"></i>商品管理
+                </a>
+            </div>
+        </nav>
+        <div class="p-3 border-top">
+            <a th:href="${isLoggedIn ? '/auth/logout' : '/auth/login'}"
+               class="btn btn-outline-light w-100">
+                <i th:class="${isLoggedIn ? 'bi-box-arrow-right' : 'bi-box-arrow-in-right'}" class="bi me-2"></i>
+                <span th:text="${isLoggedIn ? '登出' : '登录'}"></span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- 移动端遮罩 -->
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<!-- 主内容区 -->
+<div class="main-content flex-grow-1">
+    <div class="container-fluid p-3 p-lg-4">
+        <!-- 移动端菜单按钮 -->
+        <button class="btn btn-dark d-lg-none" onclick="toggleSidebar()">
+            菜单
+        </button>
+
+        <!-- 商品列表内容（保持原有结构不变） -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-dark text-white d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <h5 class="mb-2 mb-md-0">商品列表</h5>
+                <a class="btn btn-primary" th:href="@{/admin/products/addProduct}">
+                    <i class="bi bi-plus-circle"></i> 新增商品
+                </a>
+            </div>
+
+            <div class="card-body">
+                <!-- 成功提示消息 -->
+                <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span th:text="${message}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- 桌面表格视图 -->
+                <div class="table-responsive d-none d-md-block">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                        <tr>
+                            <th style="width: 150px">图片</th>
+                            <th>产品名称</th>
+                            <th>价格</th>
+                            <th class="text-nowrap">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="product : ${product}">
+                            <td>
+                                <img th:src="@{'/images/' + ${product.imageName.split(',')[0]}}"
+                                     class="product-image img-thumbnail"
+                                     alt="商品图片">
+                            </td>
+                            <td>
+                                <div class="fw-bold" th:text="${product.name}"></div>
+                                <small class="text-muted" th:text="'ID: ' + ${product.id}"></small>
+                                <small class="text-muted" th:text="'Description: ' + ${product.description}"></small>
+                            </td>
+                            <td class="text-danger fw-bold" th:text="'RM' + ${#numbers.formatDecimal(product.price, 1, 2)}"></td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a th:href="@{/admin/products/editProduct/{id}(id=${product.id})}"
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i>编辑
+                                    </a>
+                                    <a th:href="@{/admin/products/deleteProduct/{id}(id=${product.id})}"
+                                       class="btn btn-sm btn-outline-danger"
+                                       onclick="return confirm('确定删除该商品？')">
+                                        <i class="bi bi-trash"></i>删除
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 移动端卡片视图 -->
+                <div class="mobile-card-view d-md-none">
+                    <div class="row g-3">
+                        <div th:each="product : ${product}" class="col-12">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <div class="row g-3 align-items-center">
+                                        <div class="col-4">
+                                            <img th:src="@{'/images/' + ${product.imageName.split(',')[0]}}"
+                                                 class="mobile-image img-thumbnail w-100"
+                                                 alt="商品图片">
+                                        </div>
+                                        <div class="col-8">
+                                            <h6 class="card-title mb-1" th:text="${product.name}"></h6>
+                                            <div class="text-muted small mb-1" th:text="'ID: ' + ${product.id}"></div>
+                                            <div class="text-muted small mb-1" th:text="'Description: ' + ${product.description}"></div>
+                                            <div class="text-danger fw-bold mb-2"
+                                                 th:text="'RM' + ${#numbers.formatDecimal(product.price, 1, 2)}"></div>
+                                            <div class="d-grid gap-2">
+                                                <a th:href="@{/admin/products/editProduct/{id}(id=${product.id})}"
+                                                   class="btn btn-sm btn-primary">
+                                                    <i class="bi bi-pencil"></i>编辑
+                                                </a>
+                                                <a th:href="@{/admin/products/deleteProduct/{id}(id=${product.id})}"
+                                                   class="btn btn-sm btn-danger"
+                                                   onclick="return confirm('确定要删除该商品吗？');">
+                                                    <i class="bi bi-trash"></i>删除
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // 使用与index.html完全相同的侧边栏控制逻辑
+    function initSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const isMobile = window.innerWidth <= 992;
+
+        sidebar.classList.remove('sidebar-collapsed');
+        void sidebar.offsetWidth;
+
+        if (isMobile) {
+            sidebar.style.transform = `translateX(-${window.innerWidth}px)`;
+            setTimeout(() => {
+                sidebar.classList.add('sidebar-collapsed');
+            }, 10);
+        } else {
+            sidebar.classList.remove('sidebar-collapsed');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initSidebar();
+        window.addEventListener('load', initSidebar);
+    });
+
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        const isMobile = window.innerWidth <= 992;
+
+        if (isMobile) {
+            const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
+            sidebar.style.transform = isCollapsed ? 'translateX(0)' : `translateX(-${sidebar.offsetWidth}px)`;
+            sidebar.classList.toggle('sidebar-collapsed');
+            overlay.style.display = isCollapsed ? 'block' : 'none';
+        }
+    }
+
+    window.addEventListener('resize', () => {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+
+        if (window.innerWidth > 992) {
+            sidebar.classList.remove('sidebar-collapsed');
+            sidebar.style.transform = '';
+            overlay.style.display = 'none';
+        } else {
+            if (!sidebar.classList.contains('sidebar-collapsed')) {
+                sidebar.style.transform = `translateX(-${sidebar.offsetWidth}px)`;
+                sidebar.classList.add('sidebar-collapsed');
+            }
+        }
+    });
+
+    // 保留原有表单验证逻辑
+    document.querySelector('form')?.addEventListener('submit', function(e) {
+        const inputs = this.querySelectorAll('input[required]');
+        let isValid = true;
+
+        inputs.forEach(input => {
+            if (!input.value.trim()) {
+                input.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+
+        if (!isValid) {
+            e.preventDefault();
+            this.querySelector('.is-invalid')?.focus();
+        }
+    });
+</script>
+</body>
+</html>

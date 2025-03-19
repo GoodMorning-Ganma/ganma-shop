@@ -34,4 +34,49 @@
         WHERE f.user_id = #{userId}
     </select>
 
+    <insert id="save">
+        INSERT INTO product (id, user_id, category_id, name, description, price, image_name, create_time, update_time)
+        VALUES (#{id}, #{userId}, #{categoryId}, #{name}, #{description}, #{price}, #{imageName}, NOW(), NOW())
+    </insert>
+
+    <update id="updateProduct">
+        update product set
+        name = #{name},
+        category_id = #{categoryId},
+        price = #{price},
+        description = #{description},
+        image_name = #{imageName}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProductById">
+        delete from product where id = #{id}
+    </delete>
+
+    <!-- ✅ 所有查询统一使用product表 -->
+    <select id="searchProducts" resultMap="BaseResultMap">
+        SELECT * FROM product
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (name LIKE CONCAT('%', #{keyword}, '%')
+                OR description LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="category != null and category != ''">
+                <!-- 注意：这里应使用category_id字段 -->
+                AND category_id = #{category}
+            </if>
+        </where>
+        <choose>
+            <when test="sort == 'price_asc'">ORDER BY price ASC</when>
+            <when test="sort == 'price_desc'">ORDER BY price DESC</when>
+            <when test="sort == 'popularity'">ORDER BY sales_volume DESC</when>
+            <otherwise>ORDER BY create_time DESC</otherwise> <!-- 使用实际字段名 -->
+        </choose>
+    </select>
+
+    <!-- ✅ 修正分类查询 -->
+    <select id="selectAllCategories" resultType="string">
+        SELECT DISTINCT category_id FROM product <!-- 使用实际分类字段 -->
+    </select>
+
 </mapper>

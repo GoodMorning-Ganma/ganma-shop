@@ -8,50 +8,104 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
 
     <style>
-        /* Custom style to give a minimalist dropdown without box */
-        .dropdown-menu {
+        html, body {
+            overflow-x: hidden; /* 禁止横向滚动 */
+            max-width: 100vw;  /* 最大宽度限制为视口宽度 */
+        }
+
+        .container {
+            overflow-x: hidden; /* 容器禁止横向溢出 */
+            padding-right: calc(var(--bs-gutter-x) * 0.5); /* 修复Bootstrap容器边距问题 */
+            padding-left: calc(var(--bs-gutter-x) * 0.5);
+        }
+        :root {
+            --primary-color: #6f42c1;
+            --secondary-color: #0d6efd;
+            --accent-color: #dc3545;
+        }
+
+        /* 统一导航栏样式 */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #5a32a3 100%);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        /* 侧边栏优化 */
+        .account-sidebar {
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+        }
+
+        .account-sidebar .nav-link {
+            color: var(--primary-color) !important;
+            border-radius: 0.75rem;
+            margin: 0.25rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .account-sidebar .nav-link.active {
+            background: var(--primary-color) !important;
+            color: white !important;
+        }
+
+        .account-sidebar .nav-link:hover:not(.active) {
+            background: rgba(111, 66, 193, 0.1);
+        }
+
+        /* 信息卡片优化 */
+        .profile-card {
             border: none;
-            box-shadow: none;
-            padding: 0;
-            background-color: transparent;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-radius: 1rem;
+            transition: transform 0.3s ease;
         }
 
-        .dropdown-item {
-            color: #007bff;
-            padding: 5px 10px;
-            transition: background-color 0.3s ease;
+        .profile-card:hover {
+            transform: translateY(-5px);
         }
 
-        .dropdown-item:hover {
-            background-color: rgba(0, 123, 255, 0.1);
-            color: #0056b3;
+        .info-label {
+            color: #6c757d;
+            font-size: 0.9rem;
         }
 
-        .nav-link {
-            cursor: pointer;
-            padding-right: 20px;
+        .info-value {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.1rem;
         }
 
-        .dropdown-toggle::after {
-            display: inline-block;
-            margin-left: 0.255em;
-            vertical-align: 0.255em;
-            content: "";
-            border-top: 0.3em solid;
-            border-right: 0.3em solid transparent;
-            border-bottom: 0;
-            border-left: 0.3em solid transparent;
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .account-sidebar {
+                margin-bottom: 1.5rem;
+            }
+
+            .profile-card {
+                margin-top: 1rem;
+            }
         }
 
-        .dropdown-toggle[aria-expanded="true"]::after {
-            transform: rotate(180deg);
+        /* 统一按钮样式 */
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.75rem;
+        }
+
+        .btn-primary:hover {
+            background: #5a32a3;
         }
     </style>
 </head>
 <body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+<!-- 统一导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container">
         <a class="navbar-brand" href="/ganma/index">Ganma</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,96 +132,123 @@
 <!-- Account Section -->
 <div class="container my-5">
     <div class="row">
-        <!-- Sidebar Menu -->
-        <div class="col-12 col-md-3 mb-4">
-            <h5>Account Menu</h5>
-            <ul class="nav flex-column nav-pills">
-                <li class="nav-item">
-                    <a class="nav-link active" id="profile-tab" data-bs-toggle="pill" href="#profile" role="tab" aria-controls="profile" aria-selected="true">Profile Info</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" id="favourite-tab" href="/ganma/favourite" role="tab" aria-controls="favourite" aria-selected="true">My Favourite</a>
-                </li>
-
-                <!-- Simple Inline Dropdown for My Order -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="orderInfoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">My Order</a>
-                    <ul class="dropdown-menu" aria-labelledby="orderInfoDropdown">
-                        <li>
-                            <a class="dropdown-item" href="/ganma/order" role="tab" aria-selected="false">Order Info</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#" role="tab" aria-controls="payment" aria-selected="false">Payment</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#" role="tab" aria-controls="orderHistory" aria-selected="false">Order History</a>
-                        </li>
-                    </ul>
-                </li>
-
-            </ul>
+        <!-- 优化后的侧边栏 -->
+        <div class="col-12 col-md-3">
+            <div class="account-sidebar">
+                <h5 class="mb-3 text-primary"><i class="bi bi-person-circle me-2"></i>Account Menu</h5>
+                <ul class="nav flex-column nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#profile">
+                            <i class="bi bi-person me-2"></i>Profile Info
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/ganma/favourite">
+                            <i class="bi bi-heart me-2"></i>My Favourite
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="collapse" href="#orderCollapse">
+                            <i class="bi bi-bag me-2"></i>My Order
+                        </a>
+                        <div class="collapse ps-3" id="orderCollapse">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/ganma/order">Order Info</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Payment</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/ganma/orderHistory">Order History</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <div class="col-12 col-md-9">
-            <div class="tab-content" id="accountTabContent">
-                <!-- Profile Info -->
-                <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                    <h4>Profile Information</h4>
-                    <!-- Display Success Message -->
+            <!-- 优化后的内容区域 -->
+            <div class="profile-card">
+                <div class="card-body p-4">
+                    <h4 class="mb-4"><i class="bi bi-person-badge me-2"></i>Profile Information</h4>
                     <div th:if="${message}" class="alert alert-success" role="alert">
                         <span th:text="${message}"></span>
                     </div>
-                    <!-- User Information -->
-                    <div class="row">
-                        <div class="col-12 col-md-8 mb-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="card-text">Username: <strong th:text="${user?.username ?: 'N/A'}"></strong></p>
-                                    <p class="card-text">Email: <strong th:text="${user?.email ?: 'N/A'}"></strong></p>
-                                    <p class="card-text">Phone Number: <strong th:text="${user?.phone ?: 'N/A'}"></strong></p>
-                                    <p class="card-text">Address: <strong th:text="${user?.address ?: 'N/A'}"></strong></p>
-                                    <p th:if="${user == null}" class="text-danger">Error: User information is not available.</p>
-                                    <a href="#editProfileModal" class="btn btn-primary" data-bs-toggle="modal">Edit Profile</a>
+
+                    <div class="row g-4">
+                        <div class="col-12 col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-person me-3 fs-5 text-primary"></i>
+                                <div>
+                                    <div class="info-label">Username</div>
+                                    <div class="info-value" th:text="${user?.username ?: 'N/A'}"></div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-envelope me-3 fs-5 text-primary"></i>
+                                <div>
+                                    <div class="info-label">Email</div>
+                                    <div class="info-value" th:text="${user?.email ?: 'N/A'}"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-telephone me-3 fs-5 text-primary"></i>
+                                <div>
+                                    <div class="info-label">Phone Number</div>
+                                    <div class="info-value" th:text="${user?.phone ?: 'N/A'}"></div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-geo-alt me-3 fs-5 text-primary"></i>
+                                <div>
+                                    <div class="info-label">Address</div>
+                                    <div class="info-value" th:text="${user?.address ?: 'N/A'}"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                        <i class="bi bi-pencil-square me-2"></i>Edit Profile
+                    </button>
                 </div>
-
-                <!-- Modal for Editing Profile -->
-                <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form th:action="@{/ganma/account/edit}" method="post">
-                                    <div class="mb-3">
-                                        <label for="editName" class="form-label">Name</label>
-                                        <input type="text" class="form-control" id="editName" name="name" th:value="${user?.name}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="editEmail" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="editEmail" name="email" th:value="${user?.email}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="editPhone" class="form-label">Phone Number</label>
-                                        <input type="text" class="form-control" id="editPhone" name="phone" th:value="${user?.phone}">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="editAddress" class="form-label">Address</label>
-                                        <input type="text" class="form-control" id="editAddress" name="address" th:value="${user?.address}">
-                                    </div>
-                                    <button type="submit" class="btn btn-success">Save Changes</button>
-                                </form>
-
-                            </div>
-                        </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal for Editing Profile -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/ganma/account/edit}" method="post">
+                    <div class="mb-3">
+                        <label for="editName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="editName" name="name" th:value="${user?.name}">
                     </div>
-                </div>
+                    <div class="mb-3">
+                        <label for="editEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="editEmail" name="email" th:value="${user?.email}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPhone" class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" id="editPhone" name="phone" th:value="${user?.phone}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editAddress" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="editAddress" name="address" th:value="${user?.address}">
+                    </div>
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                </form>
             </div>
         </div>
     </div>

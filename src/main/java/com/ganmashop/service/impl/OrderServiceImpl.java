@@ -2,6 +2,7 @@ package com.ganmashop.service.impl;
 
 import com.ganmashop.dao.CartDao;
 import com.ganmashop.dao.OrderDao;
+import com.ganmashop.dto.OrderDTO;
 import com.ganmashop.entity.Order;
 import com.ganmashop.service.OrderService;
 import com.ganmashop.utils.BusinessException;
@@ -36,6 +37,25 @@ public class OrderServiceImpl implements OrderService {
         } catch (Exception e) {
             throw new BusinessException("UserId and ProductId invalid. Order item not found");
         }
+    }
+
+    @Override
+    public void updateOrderStatus(String orderId, String status) {
+        Order order = orderDao.getOrderById(orderId);
+        if (order == null) {
+            throw new BusinessException("订单不存在");
+        }
+        order.setStatus(status);
+        orderDao.updateOrder(order);
+    }
+
+    public List<OrderDTO> getAllOrderDetails() {
+        return orderDao.getAllOrderDetails();
+    }
+
+    @Override
+    public List<OrderDTO> getOrderDetailsByUserId(String userId) {
+        return orderDao.getOrderDetailsByUserId(userId);
     }
 
     @Override

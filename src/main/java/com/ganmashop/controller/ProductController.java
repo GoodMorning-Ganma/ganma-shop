@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Objects;
@@ -33,14 +34,21 @@ public class ProductController {
     private FavouriteService favouriteService;
 
     @GetMapping("/product/{id}")
-    public String showProductDetail(HttpSession session, @PathVariable("id") String id, Model model) {
-        Product product = productService.findProductById(id);
-        if (Objects.isNull(product)) {
-            model.addAttribute("error", "Product not found!");
-            return "error";
+    public String showProductDetail(HttpSession session, @PathVariable("id") String id, Model model,RedirectAttributes redirectAttributes) {
+        User user = (User) session.getAttribute("loggedInUser");
+        if(user==null){
+            redirectAttributes.addFlashAttribute("error", "You are required to login.");
+            return "redirect:/auth/login";
+        }else{
+            model.addAttribute("isLoggedIn", true);
+            Product product = productService.findProductById(id);
+            if (Objects.isNull(product)) {
+                model.addAttribute("error", "Product not found!");
+                return "error";
+            }
+            model.addAttribute("product", product);
+            return "product";
         }
-        model.addAttribute("product", product);
-        return "product";
     }
 
 

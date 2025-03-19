@@ -12,13 +12,15 @@ public interface UserService {
 
     User findUserById(String id);
 
-    User findByUserEmail(String email);
-
     User findByUsername(String username);
 
     User save(User user);
+    List<User> findAllAdmins();
+
+    User adminUser(User admin);
 
     void deleteUserById(String userId);
 
     void updateUser(User user);
+    List<User> findAllUsers();
 }

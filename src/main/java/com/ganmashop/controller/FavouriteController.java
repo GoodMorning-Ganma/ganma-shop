@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Jasonlzc
@@ -46,10 +48,28 @@ public class FavouriteController {
                 favouriteService.addToFavourite(loggedInUser.getId(), productId);
                 return "Product added to favourites!";
             } catch (Exception e) {
-                return "Invalid Add Favourite";
+                return "The product is already existed!!!";
             }
         }
         return "Please Login to Add Favourite";
+    }
+
+    @PostMapping("/favourite/remove/{productId}")
+    public String deleteFavouriteItems(@PathVariable("productId") String productId, HttpSession session, RedirectAttributes redirectAttributes) {
+        User user = (User) session.getAttribute("loggedInUser");
+        if (Objects.isNull(user)) {
+            redirectAttributes.addFlashAttribute("error", "You are required to login.");
+            return "redirect:/auth/login";
+        }
+
+        try {
+            favouriteService.deleteFavouriteItems(user.getId(),productId);
+            redirectAttributes.addFlashAttribute("success", "Selected items removed from the cart.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to delete selected items.");
+        }
+
+        return "redirect:/ganma/favourite";
     }
 
 
