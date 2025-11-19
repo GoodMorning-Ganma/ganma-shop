@@ -143,10 +143,10 @@
                                     <a class="nav-link" href="/ganma/order">Order Info</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Payment</a>
+                                    <a class="nav-link" href="/ganma/orderPayment">Payment</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link active" href="#">Order History</a>
+                                    <a class="nav-link active" href="/ganma/orderHistory">Order History</a>
                                 </li>
                             </ul>
                         </div>
@@ -157,7 +157,7 @@
 
         <!-- 订单内容区域 -->
         <div class="col-12 col-md-9">
-            <h3 class="mb-4"><i class="bi bi-receipt me-2 text-primary"></i>Order Information</h3>
+            <h3 class="mb-4"><i class="bi bi-receipt me-2 text-primary"></i>Order History</h3>
 
             <div th:if="${orders == null or orders.isEmpty()}" class="text-center py-5">
                 <i class="bi bi-box-seam display-4 text-muted mb-3"></i>
@@ -171,7 +171,7 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="mb-0">Order #<span th:text="${order.id}"></span></h5>
                             <span class="status-badge"
-                                  th:classappend="'bg-' + (${order.status == 'Pending' ? 'warning' : (order.status == 'Completed' ? 'success' : 'danger')})"
+                                  th:classappend="'bg-' + (${order.status == 'Pending' ? 'warning' : (order.status == 'Delivered' ? 'success' : 'danger')})"
                                   th:text="${order.status}"></span>
                         </div>
 
@@ -195,13 +195,39 @@
                             <button class="btn btn-outline-primary btn-sm me-2">
                                 <i class="bi bi-repeat me-2"></i>Reorder
                             </button>
-                            <button class="btn btn-primary btn-sm">
+                            <button class="btn btn-primary btn-sm"
+                                    th:attr="data-order-id=${order.id}"
+                                    onclick="showOrderDetails(this)">
                                 <i class="bi bi-eye me-2"></i>View Details
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Product Detail Modal -->
+<div class="modal fade" id="orderDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Product Details</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <img id="modalProductImage" class="img-fluid mb-3 rounded" alt="Product">
+
+                <p><strong>Name:</strong> <span id="modalProductName"></span></p>
+                <p><strong>Quantity:</strong> <span id="modalQuantity"></span></p>
+                <p><strong>Total Price:</strong> RM <span id="modalTotalPrice"></span></p>
+
+            </div>
+
         </div>
     </div>
 </div>
@@ -234,6 +260,29 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    function showOrderDetails(btn) {
+        const orderId = btn.getAttribute("data-order-id");
+
+        fetch(`/ganma/order/details/${orderId}`)
+            .then(res => res.json())
+            .then(data => {
+                // Set product info
+                document.getElementById("modalProductName").textContent = data.product.name;
+                document.getElementById("modalTotalPrice").textContent = (data.product.price * data.order.quantity).toFixed(2);
+
+                document.getElementById("modalQuantity").textContent = data.order.quantity;
+
+                // Product image
+                document.getElementById("modalProductImage").src = "/images/" + data.product.imageName;
+
+
+                // Open bootstrap modal
+                let modal = new bootstrap.Modal(document.getElementById("orderDetailModal"));
+                modal.show();
+            });
+    }
+</script>
 
 </body>
 </html>

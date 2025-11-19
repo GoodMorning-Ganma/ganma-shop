@@ -11,6 +11,13 @@
             --primary-color: #6f42c1;
             --secondary-color: #0d6efd;
             --accent-color: #dc3545;
+            --light-bg: #f8f9fa;
+            --dark-bg: #212529;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .navbar {
@@ -18,23 +25,48 @@
             box-shadow: 0 2px 15px rgba(0,0,0,0.1);
         }
 
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
         .product-card {
-            border: none !important;
-            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            border: none;
+            background: white;
             border-radius: 1rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+
+        .product-image-container {
+            padding: 1.5rem;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
         }
 
         .product-image {
             max-width: 100%;
             height: auto;
-            border-radius: 1rem;
+            border-radius: 0.75rem;
             object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-image:hover {
+            transform: scale(1.03);
         }
 
         .price-text {
-            color: var(--accent-color) !important;
+            color: var(--accent-color);
             font-weight: 700;
             font-size: 1.75rem;
         }
@@ -48,35 +80,100 @@
             border: none;
             padding: 0.75rem 2rem;
             transition: all 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
 
         .btn-primary:hover {
             background: #5a32a3;
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
+        .btn-outline-secondary {
+            border-color: #dee2e6;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #f8f9fa;
+        }
+
+        .description-box {
+            background-color: rgba(248, 249, 250, 0.5);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        footer {
+            background: var(--dark-bg);
+            color: white;
+        }
+
+        footer a {
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .social-icon {
+            font-size: 1.25rem;
+            transition: transform 0.3s ease;
+        }
+
+        .social-icon:hover {
+            transform: translateY(-3px);
+            color: var(--primary-color) !important;
+        }
+
+        /* 响应式调整 */
         @media (max-width: 768px) {
-            .product-image {
-                max-width: 80%;
-                margin-bottom: 1.5rem;
+            .product-image-container {
+                padding: 1rem;
             }
+
             .price-text {
                 font-size: 1.5rem;
+            }
+
+            .product-card {
+                margin: 0 0.5rem;
+            }
+
+            .description-box {
+                padding: 1rem;
+            }
+
+            .btn-primary {
+                padding: 0.75rem 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar-brand {
+                font-size: 1.25rem;
+            }
+
+            .product-card {
+                border-radius: 0.75rem;
             }
         }
     </style>
 </head>
 <body>
 
-<!-- Navbar (保持与home页面一致) -->
-<!-- 修改后的导航栏部分 -->
+<!-- 导航栏 -->
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container">
         <a class="navbar-brand" href="/ganma/index">Ganma</a>
-        <!-- 新增的返回按钮 -->
+
         <div class="d-flex align-items-center">
-            <a href="javascript:void(0)" class="btn btn-link text-light me-2 d-lg-none" onclick="goBack()">
-                <i class="bi bi-arrow-left fs-5"></i>
+            <!-- 移动端返回按钮 -->
+            <a href="javascript:void(0)" class="btn btn-sm btn-outline-light me-2 d-lg-none" onclick="goBack()">
+                <i class="bi bi-arrow-left"></i>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -85,7 +182,7 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
-                <!-- 桌面端的返回按钮 -->
+                <!-- 桌面端返回按钮 -->
                 <li class="nav-item d-none d-lg-block">
                     <a class="nav-link" href="javascript:void(0)" onclick="goBack()">
                         <i class="bi bi-arrow-left-short me-1"></i>Back
@@ -107,33 +204,38 @@
     </div>
 </nav>
 
-<!-- Product Details Section -->
+<!-- 产品详情部分 -->
 <div class="container my-5">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="product-card p-4">
-                <div class="row g-4">
-                    <!-- Product Image -->
-                    <div class="col-md-6 d-flex align-items-center">
-                        <img th:src="@{'/images/' + ${product.imageName}}"
-                             class="img-fluid product-image"
-                             alt="Product Image">
+        <div class="col-lg-10">
+            <div class="product-card">
+                <div class="row g-0">
+                    <!-- 产品图片 -->
+                    <div class="col-md-6">
+                        <div class="product-image-container">
+                            <img th:src="@{'/images/' + ${product.imageName}}"
+                                 class="img-fluid product-image"
+                                 alt="Product Image">
+                        </div>
                     </div>
 
-                    <!-- Product Details -->
-                    <div class="col-md-6">
-                        <h1 th:text="${product.name}" class="mb-3 fs-2"></h1>
-                        <p class="price-text mb-4">RM <span th:text="${product.price}"></span></p>
+                    <!-- 产品详情 -->
+                    <div class="col-md-6 p-4 d-flex flex-column">
+                        <h1 th:text="${product.name}" class="mb-3 fs-2 fw-bold"></h1>
 
-                        <div class="mb-4">
-                            <h5 class="text-primary">Description</h5>
-                            <p th:text="${product.description}" class="text-muted"></p>
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="price-text me-3">RM <span th:text="${product.price}"></span></span>
                         </div>
 
-                        <form action="/ganma/cart/add" method="post">
+                        <div class="description-box mb-4 flex-grow-1">
+                            <h5 class="text-primary mb-3">Description</h5>
+                            <p th:text="${product.description}" class="text-muted mb-0"></p>
+                        </div>
+
+                        <form action="/ganma/cart/add" method="post" class="mt-auto">
                             <input type="hidden" name="productId" th:value="${product.id}">
 
-                            <div class="d-flex align-items-center gap-3 mb-4">
+                            <div class="d-flex align-items-center gap-3 mb-3">
                                 <div class="input-group quantity-input">
                                     <button type="button" class="btn btn-outline-secondary"
                                             onclick="decrementQuantity()">-</button>
@@ -147,39 +249,17 @@
                                 </button>
                             </div>
                         </form>
+
+                        <div class="d-flex align-items-center justify-content-between">
+                            <small class="text-muted"><i class="bi bi-shield-check me-1"></i> Secure checkout</small>
+                            <small class="text-muted"><i class="bi bi-truck me-1"></i> Free shipping</small>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Footer (保持与home页面一致) -->
-<footer class="py-4 bg-dark text-light mt-5">
-    <div class="container text-center text-md-start">
-        <div class="row">
-            <div class="col-md-4 mb-3">
-                <h5>About Us</h5>
-                <p>Your one-stop shop for the best products at unbeatable prices.</p>
-            </div>
-            <div class="col-md-4 mb-3">
-                <h5>Customer Service</h5>
-                <ul class="list-unstyled">
-                    <li><a href="#" class="text-light">Contact Us</a></li>
-                    <li><a href="#" class="text-light">Returns</a></li>
-                    <li><a href="#" class="text-light">FAQs</a></li>
-                </ul>
-            </div>
-            <div class="col-md-4 mb-3">
-                <h5>Follow Us</h5>
-                <a href="#" class="text-light me-3"><i class="bi bi-facebook"></i></a>
-                <a href="#" class="text-light me-3"><i class="bi bi-instagram"></i></a>
-                <a href="#" class="text-light me-3"><i class="bi bi-twitter"></i></a>
-            </div>
-        </div>
-        <p class="text-center mt-3">&copy; 2024 Ganma Shop. All Rights Reserved.</p>
-    </div>
-</footer>
 
 <script>
     function incrementQuantity() {
@@ -194,12 +274,10 @@
         }
     }
 
-    // 新增返回函数
     function goBack() {
         window.history.back();
     }
 
-    // 可选：添加键盘快捷键支持（ESC键返回）
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             goBack();

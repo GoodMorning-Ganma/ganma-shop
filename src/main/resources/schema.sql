@@ -180,13 +180,13 @@ CREATE TABLE orders
   FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 );
 
-INSERT INTO orders(id,user_id,product_id,quantity,price)
+INSERT INTO orders(id,user_id,product_id,quantity,price,status)
 VALUES
-('1','2','2','2',60.00),
-('2','3','6','3',39.30),
-('3','2','4','1',99.99),
-('4','3','3','1',50.00),
-('5','2','1','1',97.00);
+('1','2','2','2',60.00,'Delivered'),
+('2','3','6','3',39.30,'Pending'),
+('3','2','4','1',99.99,'Paid'),
+('4','3','3','1',50.00,'Paid'),
+('6','2','5','2',100.00,'Paid');
 
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -1,75 +1,274 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Payment</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
+
+    <style>
+        :root {
+            --primary-color: #6f42c1;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #5a32a3 100%);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        /* SIDEBAR */
+        .account-sidebar {
+            background: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 1.25rem;
+        }
+
+        /* nav link */
+        .account-sidebar .nav-link {
+            color: var(--primary-color);
+            border-radius: .75rem;
+        }
+
+        .account-sidebar .nav-link.active {
+            background: var(--primary-color);
+            color: #fff !important;
+        }
+
+        /* Payment Card */
+        .payment-card {
+            border-radius: 1rem;
+            background: #fff;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+        }
+
+        .price-tag {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* RESPONSIVE FIXES */
+        @media (max-width: 768px) {
+
+            /* Sidebar spacing fix – avoid squeezing */
+            .account-sidebar {
+                padding: 1rem;
+                margin-bottom: 15px;
+            }
+
+            /* Sidebar nav smaller font */
+            .account-sidebar .nav-link {
+                font-size: 15px;
+                padding: 10px 12px;
+            }
+
+            /* Avoid content overflow */
+            .payment-card {
+                padding: 1.2rem;
+            }
+
+            /* Make order header stack vertically on small screens */
+            .payment-card .d-flex {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 5px;
+            }
+        }
+
+    </style>
 </head>
+
 <body>
-<!-- Payment Info -->
-<div class="tab-pane fade" id="payment" role="tabpanel" aria-labelledby="payment-tab">
-    <h4>Pending Payment</h4>
-    <div>
-        <div class="row">
-            <div class="col-12 col-md-8 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Your Order XXX</h5>
-                        <p class="card-text">Product Name: <strong>XXX</strong></p>
-                        <p class="card-text">Quantity: <strong>XXX</strong></p>
-                        <p class="card-text">Total Amount: <strong>RMXXX.XX</strong></p>
-                        <p class="card-text">Date/Time: <strong>DD-MM-YYYY</strong></p>
-                        <p class="card-text">Status: <span class="badge bg-success">Pending</span></p>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="/ganma/index">Ganma</a>
+        <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="/ganma/cart">Carts</a></li>
+                <li class="nav-item" th:if="${isLoggedIn}">
+                    <a class="nav-link" href="/ganma/account">Account</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="${isLoggedIn ? '/auth/logout' : '/auth/login'}">
+                        <span th:text="${isLoggedIn ? 'Logout' : 'Login'}"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- MAIN -->
+<div class="container my-4">
+    <div class="row gy-4">
+
+        <!-- SIDEBAR -->
+        <div class="col-12 col-md-3">
+            <div class="account-sidebar">
+                <h5 class="mb-3 text-primary"><i class="bi bi-person-circle me-2"></i>Account Menu</h5>
+
+                <ul class="nav flex-column nav-pills">
+                    <li class="nav-item"><a class="nav-link" href="/ganma/account"><i class="bi bi-person me-2"></i>Profile Info</a></li>
+
+                    <li class="nav-item"><a class="nav-link" href="/ganma/favourite"><i class="bi bi-heart me-2"></i>My Favourite</a></li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="collapse" href="#orderCollapse">
+                            <i class="bi bi-bag-fill me-2"></i>My Order
+                        </a>
+
+                        <div class="collapse show ps-3" id="orderCollapse">
+                            <ul class="nav flex-column">
+                                <li class="nav-item"><a class="nav-link" href="/ganma/order">Order Info</a></li>
+                                <li class="nav-item"><a class="nav-link active" href="/ganma/orderPayment">Payment</a></li>
+                                <li class="nav-item"><a class="nav-link" href="/ganma/orderHistory">Order History</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="col-12 col-md-9">
+
+            <h3 class="mb-4"><i class="bi bi-credit-card text-primary me-2"></i>Order Payment</h3>
+
+            <div th:if="${orders == null or orders.isEmpty()}" class="text-center py-5">
+                <i class="bi bi-box-seam display-4 text-muted"></i>
+                <h4 class="text-muted mt-3">No pending payments</h4>
+                <a href="/ganma/index" class="btn btn-primary mt-3">Start Shopping</a>
+            </div>
+
+            <!-- ORDER LIST -->
+            <div th:each="order : ${orders}">
+                <div class="payment-card mb-4">
+
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between mb-3">
+                        <h5 class="mb-1">Order #<span th:text="${order.id}"></span></h5>
+                        <span class="badge bg-danger px-3 py-2" th:text="${order.status}"></span>
                     </div>
+
+                    <!-- Details -->
+                    <div class="d-flex justify-content-between border-bottom py-2">
+                        <span class="label"><i class="bi bi-box-seam me-2"></i>Product ID</span>
+                        <span th:text="${order.productId}"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between border-bottom py-2">
+                        <span class="label"><i class="bi bi-calendar me-2"></i>Order Date</span>
+                        <span th:text="${#dates.format(order.createTime, 'dd MMM yyyy HH:mm')}"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between py-3">
+                        <span class="label fw-bold">Total Amount</span>
+                        <span class="price-tag">RM <span th:text="${order.price}"></span></span>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="mt-3 d-flex gap-2 flex-wrap">
+
+                        <form th:action="@{/ganma/checkout}" method="get" class="flex-grow-1">
+                            <input type="hidden" name="productIds" th:value="${order.productId}">
+                            <button class="btn btn-success w-100 py-2">
+                                <i class="bi bi-wallet2 me-1"></i>Continue Payment
+                            </button>
+                        </form>
+
+                        <button class="btn btn-outline-primary flex-grow-1 py-2"
+                                onclick="showOrderDetails(this)"
+                                th:attr="data-order-id=${order.id}">
+                            <i class="bi bi-eye me-1"></i>View Details
+                        </button>
+
+                    </div>
+
                 </div>
             </div>
+
         </div>
     </div>
 </div>
-<!-- Modal for Cart Information -->
-<div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+
+<!-- MODAL -->
+<div class="modal fade" id="orderDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3">
+
             <div class="modal-header">
-                <h5 class="modal-title" id="cartModalLabel">Cart Information</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title">Product Details</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+
             <div class="modal-body">
-                <!-- Cart Items List -->
-                <div class="row">
-                    <div class="col-12 col-md-4 mb-3">
-                        <div class="card">
-                            <img src="item_image_url.jpg" class="card-img-top" alt="Item Image">
-                            <div class="card-body">
-                                <h5 class="card-title">Item Name</h5>
-                                <p class="card-text">Quantity: <strong>2</strong></p>
-                                <p class="card-text">Price: <strong>$60.00</strong></p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- You can repeat the card for each item -->
-                    <div class="col-12 col-md-4 mb-3">
-                        <div class="card">
-                            <img src="item_image_url_2.jpg" class="card-img-top" alt="Item Image">
-                            <div class="card-body">
-                                <h5 class="card-title">Another Item</h5>
-                                <p class="card-text">Quantity: <strong>1</strong></p>
-                                <p class="card-text">Price: <strong>$60.00</strong></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Total Amount -->
-                <div class="d-flex justify-content-between">
-                    <h5>Total Amount: <strong>$120.00</strong></h5>
-                    <p>Status: <span class="badge bg-success">Pending</span></p>
-                </div>
+                <img id="modalProductImage" class="img-fluid rounded mb-3" alt="Product">
+                <p><strong>Name:</strong> <span id="modalProductName"></span></p>
+                <p><strong>Quantity:</strong> <span id="modalQuantity"></span></p>
+                <p><strong>Total Price:</strong> RM <span id="modalTotalPrice"></span></p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <a href="#" class="btn btn-primary">Proceed to Checkout</a>
-            </div>
+
         </div>
     </div>
 </div>
+
+<!-- Footer -->
+<footer class="py-4 bg-dark text-light">
+    <div class="container text-center text-md-start">
+        <div class="row">
+            <div class="col-12 col-md-4 mb-3">
+                <h5>About Us</h5>
+                <p>Your one-stop shop for the best products at unbeatable prices.</p>
+            </div>
+            <div class="col-12 col-md-4 mb-3">
+                <h5>Customer Service</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-light">Contact Us</a></li>
+                    <li><a href="#" class="text-light">Returns</a></li>
+                    <li><a href="#" class="text-light">FAQs</a></li>
+                </ul>
+            </div>
+            <div class="col-12 col-md-4 mb-3">
+                <h5>Follow Us</h5>
+                <a href="#" class="text-light me-3"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="text-light me-3"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="text-light me-3"><i class="bi bi-twitter"></i></a>
+            </div>
+        </div>
+        <p class="text-center mt-3">&copy; 2024 Ganma Shop. All Rights Reserved.</p>
+    </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function showOrderDetails(btn) {
+        const id = btn.getAttribute("data-order-id");
+        fetch(`/ganma/order/details/${id}`)
+            .then(r => r.json())
+            .then(d => {
+                document.getElementById("modalProductName").textContent = d.product.name;
+                document.getElementById("modalQuantity").textContent = d.order.quantity;
+                document.getElementById("modalTotalPrice").textContent = (d.product.price * d.order.quantity).toFixed(2);
+                document.getElementById("modalProductImage").src = "/images/" + d.product.imageName;
+                new bootstrap.Modal(document.getElementById("orderDetailModal")).show();
+            });
+    }
+</script>
+
 </body>
 </html>

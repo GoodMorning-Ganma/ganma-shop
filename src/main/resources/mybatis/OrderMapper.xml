@@ -28,6 +28,8 @@
             <result property="name"        column="productName"/>
             <result property="description" column="productDescription"/>
             <result property="price"       column="productPrice"/>
+            <result property="imageName"   column="productImage"/>
+
         </association>
 
         <!-- 映射 User 对象 -->
@@ -52,12 +54,27 @@
     <!-- Insert a new order -->
     <insert id="save" parameterType="com.ganmashop.entity.Order">
         INSERT INTO orders (id, user_id, product_id, quantity, price, status, create_time)
-        VALUES (#{id}, #{userId}, #{productId}, #{quantity}, #{price}, #{status},#{now()});
+        VALUES (#{id}, #{userId}, #{productId}, #{quantity}, #{price}, #{status}, NOW())
     </insert>
+
+    <insert id="insertOrder">
+        INSERT INTO orders(id, user_id, product_id, quantity, price, status, create_time)
+        VALUES(#{id}, #{userId}, #{productId}, #{quantity}, #{price}, #{status}, NOW());
+    </insert>
+
 
     <select id="getOrderById" resultMap="BaseResultMap">
         SELECT * FROM orders WHERE id = #{id}
     </select>
+
+    <select id="getPendingOrdersByUserId" parameterType="String" resultMap="BaseResultMap">
+        SELECT * FROM orders WHERE user_id = #{userId} AND status = 'Paid';
+    </select>
+
+    <select id="getDeliveredOrdersByUserId" parameterType="String" resultMap="BaseResultMap">
+        SELECT * FROM orders WHERE user_id = #{userId} AND status = 'Delivered';
+    </select>
+
 
     <update id="updateOrder" parameterType="com.ganmashop.entity.Order">
         UPDATE orders
@@ -88,5 +105,65 @@
         LEFT JOIN `user` u ON o.user_id = u.id
         ORDER BY o.create_time DESC
     </select>
+
+    <select id="getRecentOrderDetails" resultMap="OrderDTORMap">
+        SELECT
+        o.id          AS orderId,
+        o.quantity    AS orderQuantity,
+        o.price       AS orderPrice,
+        o.status      AS orderStatus,
+        o.create_time AS orderCreateTime,
+        p.id          AS productId,
+        p.name        AS productName,
+        p.description AS productDescription,
+        p.price       AS productPrice,
+        u.id          AS userId,
+        u.username    AS userUsername,
+        u.email       AS userEmail,
+        u.phone       AS userPhone,
+        u.address     AS userAddress
+        FROM orders o
+        LEFT JOIN product p ON o.product_id = p.id
+        LEFT JOIN `user` u ON o.user_id = u.id
+        WHERE o.create_time >= DATE_SUB(NOW(), INTERVAL 1 HOUR)
+        ORDER BY o.create_time DESC;
+    </select>
+
+    <select id="getOrderDetailsById" resultMap="OrderDTORMap">
+        SELECT
+        o.id          AS orderId,
+        o.quantity    AS orderQuantity,
+        o.price       AS orderPrice,
+        o.status      AS orderStatus,
+        o.create_time AS orderCreateTime,
+
+        p.id          AS productId,
+        p.name        AS productName,
+        p.description AS productDescription,
+        p.price       AS productPrice,
+        p.image_name  AS productImage,
+
+        u.id         AS userId,
+        u.username   AS userUsername,
+        u.email      AS userEmail,
+        u.phone      AS userPhone,
+        u.address    AS userAddress
+
+        FROM orders o
+        LEFT JOIN product p ON o.product_id = p.id
+        LEFT JOIN user u ON o.user_id = u.id
+        WHERE o.id = #{orderId}
+    </select>
+
+    <select id="getPendingPaymentOrders" resultMap="BaseResultMap">
+        SELECT * FROM orders WHERE user_id = #{userId} AND status = 'Pending'
+    </select>
+
+    <delete id="deletePendingPaymentOrders">
+        DELETE FROM orders
+        WHERE user_id = #{userId}
+        AND status = 'Pending'
+    </delete>
+
 
 </mapper>

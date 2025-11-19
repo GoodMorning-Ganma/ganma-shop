@@ -1,5 +1,6 @@
 package com.ganmashop.controller;
 
+import com.ganmashop.dto.OrderDTO;
 import com.ganmashop.entity.Order;
 import com.ganmashop.entity.User;
 import com.ganmashop.service.OrderService;
@@ -7,9 +8,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -35,7 +34,8 @@ public class OrderController {
         }
         model.addAttribute("isLoggedIn", true);
         try {
-            List<Order> orders = orderService.getOrdersByUserId(user.getId());
+
+            List<Order> orders = orderService.getPendingOrdersByUserId(user.getId());
             if (orders == null || orders.isEmpty()) {
                 model.addAttribute("message", "No orders found.");
             } else {
@@ -48,6 +48,29 @@ public class OrderController {
         }
     }
 
+    @GetMapping("/order/details/{orderId}")
+    @ResponseBody
+    public OrderDTO getOrderDetails(@PathVariable String orderId) {
+        return orderService.getOrderDetailsById(orderId);
+    }
+
+    @GetMapping("/orderPayment")
+    public String showOrderPayment(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        User user = (User) session.getAttribute("loggedInUser");
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("error", "You are required to login.");
+            return "redirect:/auth/login";
+        }
+
+        model.addAttribute("isLoggedIn", true);
+
+        List<Order> pendingPaymentOrders = orderService.getPendingPaymentOrders(user.getId());
+
+        model.addAttribute("orders", pendingPaymentOrders);
+
+        return "orderPayment";
+    }
+
     @GetMapping("/orderHistory")
     public String showOrderHistory(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         User user = (User) session.getAttribute("loggedInUser");
@@ -57,7 +80,7 @@ public class OrderController {
         }
         model.addAttribute("isLoggedIn", true);
         try {
-            List<Order> orders = orderService.getOrdersByUserId(user.getId());
+            List<Order> orders = orderService.getDeliveredOrdersByUserId(user.getId());
             if (orders == null || orders.isEmpty()) {
                 model.addAttribute("message", "No orders found.");
             } else {
@@ -69,4 +92,5 @@ public class OrderController {
             return "orderHistory";
         }
     }
+
 }

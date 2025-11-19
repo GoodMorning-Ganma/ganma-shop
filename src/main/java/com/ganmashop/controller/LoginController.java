@@ -60,8 +60,6 @@ public class LoginController {
                     return "login";
             }
 
-
-
         } catch (AuthenticationException e) {
             model.addAttribute("error", "Invalid email or password");
             return "login";

@@ -64,8 +64,46 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<OrderDTO> getRecentOrderDetails() {
+        return orderDao.getRecentOrderDetails();
+    }
+
+    @Override
     public List<Order> getOrdersByUserId(String userId) {
         return orderDao.getOrdersByUserId(userId);
+    }
+
+    public List<Order> getPendingOrdersByUserId(String userId) {
+        return orderDao.getPendingOrdersByUserId(userId);
+    }
+
+    @Override
+    public List<Order> getDeliveredOrdersByUserId(String userId) {
+        return orderDao.getDeliveredOrdersByUserId(userId);
+    }
+
+    @Override
+    public OrderDTO getOrderDetailsById(String orderId) {
+        return orderDao.getOrderDetailsById(orderId);
+    }
+
+    @Override
+    public String createOrder(String userId, String productId, int quantity, double price, String status) {
+
+        String id = GenUUID.getUUID();  // auto-generate order ID
+
+        orderDao.insertOrder(id, userId, productId, quantity, price, status);
+        return id;
+    }
+
+    @Override
+    public List<Order> getPendingPaymentOrders(String userId) {
+        return orderDao.getPendingPaymentOrders(userId);
+    }
+
+    @Override
+    public void deletePendingPaymentOrders(String userId) {
+        orderDao.deletePendingPaymentOrders(userId);
     }
 
 }
