@@ -23,7 +23,6 @@ public interface OrderDao {
                      @Param("status") String status);
 
     void updateOrder(Order order);
-    void deletePendingPaymentOrders(String userId);
     Order getOrderById(String orderId);
     OrderDTO getOrderDetailsById(String orderId);
     List<OrderDTO> getOrderDetailsByUserId(String userId);
@@ -34,5 +33,6 @@ public interface OrderDao {
     List<Order> getPendingOrdersByUserId(String userId);
     List<Order> getDeliveredOrdersByUserId(String userId);
     List<Order> getPendingPaymentOrders(String userId);
+    Order getPendingOrderByUserAndProduct(String userId, String productId);
 
 }

@@ -146,30 +146,38 @@
 <!-- Search + Sort -->
 <div class="container">
     <div class="card mb-4 p-3 shadow-sm">
-        <form class="row g-2 align-items-center" method="get" th:action="@{/ganma/index}">
-            <div class="col-md-3 col-6">
-                <select class="form-select" name="category">
-                    <option value="">All Categories</option>
-                    <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"
-                            th:selected="${selectedCategory == cat}"></option>
+
+        <!-- Search Form -->
+        <form class="row gy-2 gx-2 align-items-center" method="get" th:action="@{/ganma/index}">
+            <!-- Sort Dropdown -->
+            <div class="col-6 col-md-3 order-2 order-md-1">
+                <select class="form-select" name="sort" onchange="this.form.submit()">
+                    <option value="" th:selected="${selectedSort == null || selectedSort == ''}">Sort By</option>
+                    <option value="price_asc" th:selected="${selectedSort == 'price_asc'}">Price: Low to High</option>
+                    <option value="price_desc" th:selected="${selectedSort == 'price_desc'}">Price: High to Low</option>
+                    <option value="newest" th:selected="${selectedSort == 'newest'}">Newest</option>
                 </select>
             </div>
-            <div class="col-md-5 col-6">
-                <input class="form-control" type="search" name="keyword"
-                       placeholder="Search" th:value="${searchKeyword}">
+
+            <!-- Search Bar (Full width on mobile) -->
+            <div class="col-12 col-md-6 order-1 order-md-2">
+                <div class="input-group">
+                    <span class="input-group-text bg-white">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="search" class="form-control" name="keyword"
+                           placeholder="Search products..." th:value="${searchKeyword}">
+                </div>
             </div>
-            <div class="col-md-2 col-6">
-                <select class="form-select" name="sort" onchange="this.form.submit()"
-                        th:value="${selectedSort}">
-                    <option value="popularity">Popularity</option>
-                    <option value="price_asc">Price: Low to High</option>
-                    <option value="price_desc">Price: High to Low</option>
-                    <option value="newest">Newest</option>
-                </select>
+
+            <!-- Search Button -->
+            <div class="col-6 col-md-3 order-3">
+                <button class="btn btn-primary w-100" type="submit">
+                    <i class="bi bi-arrow-return-right me-1"></i>Search
+                </button>
             </div>
-            <div class="col-md-2 col-6">
-                <button class="btn btn-primary w-100" type="submit">Search</button>
-            </div>
+
+
         </form>
     </div>
 

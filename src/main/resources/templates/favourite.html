@@ -190,7 +190,8 @@
             </div>
 
             <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-                <div class="col" th:each="product : ${favourites}" data-product-id="${product.id}">
+                <div class="col" th:each="product : ${favourites}"
+                     th:attr="data-product-id=${product.id}">
                     <div class="card product-card h-100">
                         <div class="card-img-container">
                             <a th:href="@{/ganma/product/{id}(id=${product.id})}">
@@ -206,8 +207,10 @@
                                    class="btn btn-primary btn-sm">
                                     <i class="bi bi-eye me-2"></i>View Details
                                 </a>
+
+                                <!-- FIXED onclick -->
                                 <button class="btn btn-outline-danger btn-sm"
-                                        th:attr="onclick=|removeFavourite(${product.id})|">
+                                        th:attr="onclick=|removeFavourite('${product.id}')|">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </div>
@@ -248,37 +251,39 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script>
-    // 修改后的removeFavourite函数
-function removeFavourite(productId) {
-    if(confirm('确定要移除收藏吗？')) {
+    function removeFavourite(productId) {
+
+        if (!confirm('确定要移除收藏吗？')) {
+            return;
+        }
+
         fetch(`/ganma/favourite/remove/${productId}`, {
-            method: 'POST',
-            headers: {
-                // 如果使用CSRF保护需要添加token
-                'Content-Type': 'application/json'
-            }
+            method: 'POST'
         })
-        .then(response => {
-            if(response.ok) {
+        .then(response => response.text())
+        .then(result => {
+            if (result === "SUCCESS") {
+
+                // Remove card automatically from page
                 const item = document.querySelector(`[data-product-id="${productId}"]`);
-                if(item) {
+                if (item) {
                     item.remove();
-                    // 检查是否所有商品都被移除了
-                    if(!document.querySelector('.col[data-product-id]')) {
-                        document.querySelector('.empty-state').style.display = 'flex';
-                    }
                 }
+
+                // If no more items, show empty-state block
+                if (document.querySelectorAll('[data-product-id]').length === 0) {
+                    document.querySelector('.empty-state').style.display = 'flex';
+                }
+
+            } else if (result === "NOT_LOGGED_IN") {
+                alert("You must login first");
+                window.location.href = "/auth/login";
             } else {
-                // 处理HTTP错误状态
-                return response.text().then(text => { throw new Error(text) });
+                alert("Failed to remove favourite.");
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('操作失败: ' + error.message);
-        });
+        .catch(err => console.error(err));
     }
-}
 </script>
 
 </body>

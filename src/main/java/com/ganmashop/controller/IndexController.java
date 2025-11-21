@@ -25,7 +25,10 @@ public class IndexController {
     private ProductService productService;
 
     @GetMapping("/index")
-    public String showHomePage(Model model, HttpSession session, @RequestParam(required = false) String keyword, @RequestParam(required = false) String category, @RequestParam(defaultValue = "newest") String sort) {
+    public String showHomePage(Model model, HttpSession session,
+                               @RequestParam(required = false) String keyword,
+                               @RequestParam(required = false) String category,
+                               @RequestParam(required = false) String sort) {
         User user = (User) session.getAttribute("loggedInUser");
         model.addAttribute("isLoggedIn", user != null);
 

@@ -76,9 +76,6 @@ public class CheckoutController {
     // -----------------------------
     @PostMapping("/checkout/submit")
     public String submitOrder(
-            @RequestParam String fullName,
-            @RequestParam String phone,
-            @RequestParam String address,
             @RequestParam List<String> productIds,
             HttpSession session,
             RedirectAttributes redirectAttributes,
@@ -94,18 +91,25 @@ public class CheckoutController {
         for (Cart c : cartItems) {
             if (productIds.contains(c.getProductId())) {
 
-                // CREATE order and get order ID
-                lastOrderId = orderService.createOrder(
-                        user.getId(),
-                        c.getProductId(),
-                        c.getQuantity(),
-                        c.getPrice() +2,
-                        "Pending"   // Or SUCCESS
-                );
+                // ✅ Check if a pending order already exists
+                Order existingOrder = orderService.getPendingOrderByUserAndProduct(user.getId(), c.getProductId());
+                if (existingOrder != null) {
+                    lastOrderId = existingOrder.getId();// reuse existing pending order
+
+                } else {
+                    // CREATE new pending order
+                    lastOrderId = orderService.createOrder(
+                            user.getId(),
+                            c.getProductId(),
+                            c.getQuantity(),
+                            c.getPrice() + 2,
+                            "Pending"
+                    );
+                }
             }
         }
 
-        // Remove purchased items from cart
+        // Remove selected items from cart
         cartService.deleteSelectedItems(user.getId(), productIds);
 
         if (lastOrderId != null) {
@@ -115,6 +119,8 @@ public class CheckoutController {
         redirectAttributes.addFlashAttribute("error", "Order error occurred.");
         return "redirect:/ganma/checkout";
     }
+
+
 
 
     @GetMapping("/order/payment/{orderId}")
@@ -151,7 +157,9 @@ public class CheckoutController {
             RedirectAttributes redirectAttributes
     ) {
         User user = (User) session.getAttribute("loggedInUser");
-        if (user == null) return "redirect:/auth/login";
+        if (user == null) {
+            return "redirect:/auth/login";
+        }
 
         List<Cart> cartItems = cartService.getCartItems(user.getId());
 
@@ -185,17 +193,18 @@ public class CheckoutController {
             RedirectAttributes redirectAttributes
     ) {
         User user = (User) session.getAttribute("loggedInUser");
-        if (user == null) return "redirect:/auth/login";
+        if (user == null){
+            return "redirect:/auth/login";
+        }
 
-        // Step 1: update the status of the paid order
+        // Step 2: update the status of the paid order
         orderService.updateOrderStatus(orderId, "Paid");
-
-        // Step 2: delete all pending payment orders for this user
-        orderService.deletePendingPaymentOrders(user.getId());
 
         // Step 3: redirect to order page
         redirectAttributes.addFlashAttribute("success", "Payment successful!");
         return "redirect:/ganma/order";
+
+
     }
 
 

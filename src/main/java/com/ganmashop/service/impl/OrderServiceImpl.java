@@ -95,15 +95,23 @@ public class OrderServiceImpl implements OrderService {
         orderDao.insertOrder(id, userId, productId, quantity, price, status);
         return id;
     }
-
     @Override
     public List<Order> getPendingPaymentOrders(String userId) {
         return orderDao.getPendingPaymentOrders(userId);
     }
 
     @Override
-    public void deletePendingPaymentOrders(String userId) {
-        orderDao.deletePendingPaymentOrders(userId);
+    public Order getPendingOrderByUserAndProduct(String userId, String productId) {
+        List<Order> pendingOrders = orderDao.getPendingPaymentOrders(userId);
+        if (pendingOrders != null) {
+            for (Order o : pendingOrders) {
+                if (o.getProductId().equals(productId)) {
+                    return o;  // return existing pending order
+                }
+            }
+        }
+        return null; // no pending order exists
     }
+
 
 }

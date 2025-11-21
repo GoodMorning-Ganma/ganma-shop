@@ -185,8 +185,9 @@
                             <div class="card-body">
                                 <h5 class="card-title mb-2 d-flex justify-content-between align-items-center">
                                     <span th:text="${orderDTO.product.name}"></span>
+
                                     <span th:text="${orderDTO.order.status}"
-                                          th:classappend="${orderDTO.order.status == 'Delivered'} ? 'badge bg-success' : 'badge bg-warning'"
+                                          th:classappend="${orderDTO.order.status == 'Paid'} ? ' bg-primary' : (${orderDTO.order.status == 'Pending'} ? ' bg-warning' : ' bg-success')"
                                           class="badge order-status-badge"></span>
                                 </h5>
 
@@ -222,7 +223,7 @@
                                 </div>
 
                                 <div class="mt-3">
-                                    <button th:if="${orderDTO.order.status == 'Pending'}"
+                                    <button th:if="${orderDTO.order.status == 'Paid'}"
                                             class="btn btn-sm btn-outline-success w-100 rounded-pill"
                                             th:data-orderid="${orderDTO.order.id}"
                                             onclick="updateOrderStatus(this)">

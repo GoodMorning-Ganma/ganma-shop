@@ -64,16 +64,27 @@
 
 
     <select id="getOrderById" resultMap="BaseResultMap">
-        SELECT * FROM orders WHERE id = #{id}
+        SELECT * FROM orders WHERE id = #{id};
     </select>
 
     <select id="getPendingOrdersByUserId" parameterType="String" resultMap="BaseResultMap">
-        SELECT * FROM orders WHERE user_id = #{userId} AND status = 'Paid';
+        SELECT * FROM orders WHERE user_id = #{userId} AND status = 'Paid' ORDER BY create_time DESC;
     </select>
 
     <select id="getDeliveredOrdersByUserId" parameterType="String" resultMap="BaseResultMap">
-        SELECT * FROM orders WHERE user_id = #{userId} AND status = 'Delivered';
+        SELECT * FROM orders WHERE user_id = #{userId} AND status = 'Delivered' ORDER BY create_time DESC;
     </select>
+
+    <select id="getPendingPaymentOrders" resultMap="BaseResultMap">
+        SELECT * FROM orders WHERE user_id = #{userId} AND status = 'Pending' ORDER BY create_time DESC;
+    </select>
+
+    <select id="getPendingOrderByUserAndProduct" resultMap="BaseResultMap">
+        SELECT * FROM orders
+        WHERE user_id = #{userId} AND product_id = #{productId} AND status = 'Pending'
+        LIMIT 1
+    </select>
+
 
 
     <update id="updateOrder" parameterType="com.ganmashop.entity.Order">
@@ -154,16 +165,5 @@
         LEFT JOIN user u ON o.user_id = u.id
         WHERE o.id = #{orderId}
     </select>
-
-    <select id="getPendingPaymentOrders" resultMap="BaseResultMap">
-        SELECT * FROM orders WHERE user_id = #{userId} AND status = 'Pending'
-    </select>
-
-    <delete id="deletePendingPaymentOrders">
-        DELETE FROM orders
-        WHERE user_id = #{userId}
-        AND status = 'Pending'
-    </delete>
-
 
 </mapper>

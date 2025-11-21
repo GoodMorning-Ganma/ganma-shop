@@ -17,7 +17,6 @@ public interface OrderService {
     String createOrder(String userId, String productId, int quantity, double price, String status);
 
     void updateOrderStatus(String orderId, String status);
-    void deletePendingPaymentOrders(String userId);
     List<OrderDTO> getAllOrderDetails();
     List<OrderDTO> getRecentOrderDetails();
     List<OrderDTO> getOrderDetailsByUserId(String userId);
@@ -27,5 +26,7 @@ public interface OrderService {
     List<Order> getPendingOrdersByUserId(String userId);
     List<Order> getDeliveredOrdersByUserId(String userId);
     List<Order> getPendingPaymentOrders(String userId);
+    Order getPendingOrderByUserAndProduct(String userId, String productId);
+
 
 }

@@ -55,22 +55,18 @@ public class FavouriteController {
     }
 
     @PostMapping("/favourite/remove/{productId}")
-    public String deleteFavouriteItems(@PathVariable("productId") String productId, HttpSession session, RedirectAttributes redirectAttributes) {
+    @ResponseBody
+    public String deleteFavouriteItems(@PathVariable("productId") String productId, HttpSession session) {
         User user = (User) session.getAttribute("loggedInUser");
-        if (Objects.isNull(user)) {
-            redirectAttributes.addFlashAttribute("error", "You are required to login.");
-            return "redirect:/auth/login";
+        if (user == null) {
+            return "NOT_LOGGED_IN";
         }
 
         try {
-            favouriteService.deleteFavouriteItems(user.getId(),productId);
-            redirectAttributes.addFlashAttribute("success", "Selected items removed from the cart.");
+            favouriteService.deleteFavouriteItems(user.getId(), productId);
+            return "SUCCESS";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to delete selected items.");
+            return "ERROR";
         }
-
-        return "redirect:/ganma/favourite";
     }
-
-
 }

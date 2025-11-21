@@ -1,8 +1,10 @@
 package com.ganmashop.controller;
 
 import com.ganmashop.dto.OrderDTO;
+import com.ganmashop.entity.Cart;
 import com.ganmashop.entity.Order;
 import com.ganmashop.entity.User;
+import com.ganmashop.service.CartService;
 import com.ganmashop.service.OrderService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ import java.util.Objects;
 public class OrderController {
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private CartService cartService;
 
 
     @GetMapping("/order")
@@ -90,6 +94,43 @@ public class OrderController {
         } catch (Exception e) {
             model.addAttribute("error", "Failed to fetch orders. Please try again later.");
             return "orderHistory";
+        }
+    }
+
+    @PostMapping("/order/reorder/{orderId}")
+    public String reorder(
+            @PathVariable String orderId,
+            HttpSession session,
+            RedirectAttributes redirectAttributes
+    ) {
+        User user = (User) session.getAttribute("loggedInUser");
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("error", "You need to login first.");
+            return "redirect:/auth/login";
+        }
+
+        try {
+            // Get order details
+            OrderDTO orderDTO = orderService.getOrderDetailsById(orderId);
+            if (orderDTO == null) {
+                redirectAttributes.addFlashAttribute("error", "Order not found.");
+                return "redirect:/ganma/orderHistory";
+            }
+
+            // Add product to cart
+            Cart cart = new Cart();
+            cart.setUserId(user.getId());
+            cart.setProductId(orderDTO.getProduct().getId());
+            cart.setQuantity(orderDTO.getOrder().getQuantity());
+            cart.setPrice(orderDTO.getProduct().getPrice() * orderDTO.getOrder().getQuantity());
+
+            cartService.save(cart);
+
+            redirectAttributes.addFlashAttribute("success", "Order added to cart successfully.");
+            return "redirect:/ganma/cart";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to reorder: " + e.getMessage());
+            return "redirect:/ganma/orderHistory";
         }
     }
 

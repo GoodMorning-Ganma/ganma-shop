@@ -61,17 +61,21 @@
                 AND (name LIKE CONCAT('%', #{keyword}, '%')
                 OR description LIKE CONCAT('%', #{keyword}, '%'))
             </if>
-            <if test="category != null and category != ''">
-                <!-- 注意：这里应使用category_id字段 -->
-                AND category_id = #{category}
-            </if>
+
         </where>
+
         <choose>
-            <when test="sort == 'price_asc'">ORDER BY price ASC</when>
-            <when test="sort == 'price_desc'">ORDER BY price DESC</when>
-            <when test="sort == 'popularity'">ORDER BY sales_volume DESC</when>
-            <otherwise>ORDER BY create_time DESC</otherwise> <!-- 使用实际字段名 -->
+            <when test="sort == 'price_asc'">
+                ORDER BY price ASC
+            </when>
+            <when test="sort == 'price_desc'">
+                ORDER BY price DESC
+            </when>
+            <otherwise>
+                ORDER BY create_time DESC
+            </otherwise>
         </choose>
+
     </select>
 
     <!-- ✅ 修正分类查询 -->
