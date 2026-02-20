@@ -235,16 +235,8 @@
 <!-- ============= 脚本部分，动态计算总价 + 选择操作 ============= -->
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        // ------------------- cart-badge 逻辑（如果需要） -------------------
-        // 如果你希望添加其它交互，例如点击 + 或 - 来更改数量，就可以改写此处
-        // 以下只是示例演示如何让 Badge 数量变化
-
         const cartBadge = document.getElementById("cart-badge");
-        // 如果后端渲染时能带过来购物车当前数量，可直接赋值
-        // cartBadge.textContent = '2';
-        // cartBadge.style.display = 'inline-block'; // 如果 >=1 才显示
 
-        // ------------------- 全选、多选删除 相关 -------------------
         const selectAllCheckbox = document.getElementById("select-all");
         const itemCheckboxes = document.querySelectorAll(".item-checkbox");
         const deleteForm = document.getElementById("delete-selected-form");
@@ -269,13 +261,13 @@
                 return;
             }
 
-            // 设置隐藏域的值，将选中的商品 ID 用逗号拼接
+
             selectedProductIdsInput.value = selectedProductIds.join(",");
-            // 提交表单
+
             deleteForm.submit();
         });
 
-        // ------------------- 计算总价 相关 -------------------
+
         const totalAmountEl = document.getElementById("total-amount");
 
         function updateTotalAmount() {
@@ -291,20 +283,19 @@
             totalAmountEl.textContent = total.toFixed(2);
         }
 
-        // 初始化总价计算
+
         updateTotalAmount();
 
-        // 绑定单个复选框事件
+
         itemCheckboxes.forEach(checkbox => {
             checkbox.addEventListener("change", () => {
                 updateTotalAmount();
-                // 自动更新全选状态
+
                 const allChecked = [...itemCheckboxes].every(cb => cb.checked);
                 selectAllCheckbox.checked = allChecked;
             });
         });
 
-        // ------------------- Checkout 按钮示例 -------------------
         checkoutBtn.addEventListener("click", () => {
         const selectedProductIds = Array.from(itemCheckboxes)
         .filter(cb => cb.checked)

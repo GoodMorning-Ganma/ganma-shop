@@ -5,6 +5,7 @@ import com.ganmashop.entity.Order;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -19,10 +20,12 @@ public interface OrderDao {
                      @Param("userId") String userId,
                      @Param("productId") String productId,
                      @Param("quantity") int quantity,
-                     @Param("price") double price,
+                     @Param("price") BigDecimal price,
                      @Param("status") String status);
 
     void updateOrder(Order order);
+    void updateOrdersToPaid(List<String> orderIds);
+
     Order getOrderById(String orderId);
     OrderDTO getOrderDetailsById(String orderId);
     List<OrderDTO> getOrderDetailsByUserId(String userId);
@@ -30,7 +33,7 @@ public interface OrderDao {
     List<OrderDTO> getRecentOrderDetails();
     List<Order> getAllOrders();
     List<Order> getOrdersByUserId(String userId);
-    List<Order> getPendingOrdersByUserId(String userId);
+    List<Order> getPaidOrdersByUserId(String userId);
     List<Order> getDeliveredOrdersByUserId(String userId);
     List<Order> getPendingPaymentOrders(String userId);
     Order getPendingOrderByUserAndProduct(String userId, String productId);

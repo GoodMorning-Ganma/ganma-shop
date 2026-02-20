@@ -160,7 +160,7 @@
 
                     <!-- Header -->
                     <div class="d-flex justify-content-between mb-3">
-                        <h5 class="mb-1">Order #<span th:text="${order.id}"></span></h5>
+                        <h5 class="mb-1">Order #<span th:text="${#strings.substring(order.id,0,8)} + '...'"></span></h5>
                         <span class="badge bg-danger px-3 py-2" th:text="${order.status}"></span>
                     </div>
 

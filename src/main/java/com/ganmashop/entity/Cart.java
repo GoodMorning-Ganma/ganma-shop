@@ -1,5 +1,7 @@
 package com.ganmashop.entity;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Date;
 
 public class Cart {
@@ -7,14 +9,14 @@ public class Cart {
     private String productId;
     private String userId;
     private int quantity;
-    private double price;
+    private BigDecimal price;
     private Date createTime;
     private Date updateTime;
 
     public Cart(){
 
     }
-    public Cart(String id, String productId, String userId, int quantity, double price, Date createTime, Date updateTime){
+    public Cart(String id, String productId, String userId, int quantity, BigDecimal price, Date createTime, Date updateTime){
         this.id=id;
         this.productId=productId;
         this.userId=userId;
@@ -54,12 +56,14 @@ public class Cart {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-    public double getPrice(){
+    public BigDecimal getPrice(){
         return price;
     }
-    public void setPrice(double price){
-        this.price=price;
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
+
     public Date getCreateTime() {
         return createTime;
     }

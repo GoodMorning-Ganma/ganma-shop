@@ -32,17 +32,17 @@ public class IndexController {
         User user = (User) session.getAttribute("loggedInUser");
         model.addAttribute("isLoggedIn", user != null);
 
-        // 构建查询参数
+
         Map<String, Object> params = new HashMap<>();
         params.put("keyword", keyword);
         params.put("category", category);
         params.put("sort", sort);
 
-        //只查询一次
+
         List<Product> products = productService.searchProducts(params);
         model.addAttribute("products", products);
 
-        // 其他参数
+
         model.addAttribute("selectedCategory", category);
         model.addAttribute("selectedSort", sort);
         model.addAttribute("searchKeyword", keyword);

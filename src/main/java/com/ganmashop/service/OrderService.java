@@ -5,6 +5,7 @@ import com.ganmashop.entity.Order;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -14,16 +15,18 @@ import java.util.List;
 @Service
 public interface OrderService {
     void save(Order order);
-    String createOrder(String userId, String productId, int quantity, double price, String status);
+    String createOrder(String userId, String productId, int quantity, BigDecimal price, String status);
 
     void updateOrderStatus(String orderId, String status);
+    void updateOrdersToPaid(List<String> orderIds);
+
     List<OrderDTO> getAllOrderDetails();
     List<OrderDTO> getRecentOrderDetails();
     List<OrderDTO> getOrderDetailsByUserId(String userId);
     OrderDTO getOrderDetailsById(String orderId);
     List<Order> getAllOrders();
     List<Order> getOrdersByUserId(String userId);
-    List<Order> getPendingOrdersByUserId(String userId);
+    List<Order> getPaidOrdersByUserId(String userId);
     List<Order> getDeliveredOrdersByUserId(String userId);
     List<Order> getPendingPaymentOrders(String userId);
     Order getPendingOrderByUserAndProduct(String userId, String productId);

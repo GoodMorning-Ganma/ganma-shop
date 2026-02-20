@@ -125,8 +125,8 @@ CREATE TABLE product (
   user_id               VARCHAR(255) NOT NULL COMMENT 'user ID',
   category_id           VARCHAR(255) NOT NULL,
   name                  VARCHAR(255) NOT NULL COMMENT 'product name',
-  description           VARCHAR(255) NOT NULL COMMENT 'Additional Information',
-  price                 DOUBLE NOT NULL COMMENT 'Items price',
+  description           VARCHAR(1000) NOT NULL COMMENT 'Additional Information',
+  price                 DECIMAL(10,2) NOT NULL COMMENT 'Items price',
   image_name            VARCHAR(255) NOT NULL,
   create_time           TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation Time',
   update_time           TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Update Time',
@@ -136,9 +136,9 @@ CREATE TABLE product (
 INSERT INTO product(id, user_id, category_id, name, description, price,image_name)
 VALUES
 ('1','AD1', '1', 'V18', '-', 97,'V18.jpg'),
-('2','AD1', '1', 'GSure', '-', 30,'GSure.jpg'),
-('3','AD1', '1', 'VPlus', '-', 50,'VPlus.jpg'),
-('4','AD1', '1', 'VGrains', '-', 99.99,'VGrains.jpg'),
+('2','AD1', '1', 'GSure', 'GSure is a plant-based complete and balanced nutrition beverage. It is specially formulated with 18 types of premium whole grains and added with 28 types of essential vitamins and minerals, CaHMB, Omega 3 & 6, Prebiotics and Lutein.', 30.88,'GSure.jpg'),
+('3','AD1', '1', 'VPlus', 'Vplus Premium is an aromatic multigrain beverage formulated exclusively with 24 nutritious plant-based ingredients that include 18 types of premium whole grains, legumes & nuts as well as Goji Berry, Beetroot,Plant-Based Calcium,Soya Lecithin,Prebiotic Inulin and Corn Soluble Fiber.It is the best companion for individuals with busy lifestyle, especially to those who are lack of sleep and troubled by premature ageing problems (eg. dull skin complexion, udereyes bags and etc). It contains iron, calcium and dietary fibre as well as rich in antioxidants like lycopene and betacyanin which are helping you to stay in the pink of health!', 50,'VPlus.jpg'),
+('4','AD1', '1', 'VGrains','VGrains is a delightful drink that gives a heart-warming and delicious taste, you may enjoy it any time of the day. Naturally Cholesterol Free and Trans Fat-Free. 100% Natural & Vegetarian Friendly! It contains 18 types of premium grains and legumes with 5 colours of phytonutrients, blueberry, lutein, purple sweet potato, beta-glucan, Fibersol-2, prebiotic inulin, Alginate calcium(seaweed calcium) and soy lecithin. It can be served during breakfast, snack or supper and can be consumed cold or warm.', 99.9964,'VGrains.jpg'),
 ('5','AD1', '1', 'Fruit Drink (Mixed)', '-', 51,'MixedBerries.jpg'),
 ('6','AD1', '1', 'Fruit Drink (Mango)', '-', 13.10,'Mango.jpg');
 
@@ -152,7 +152,7 @@ CREATE TABLE cart
   product_id                VARCHAR(255) COMMENT 'product id',
   user_id                   VARCHAR(255) COMMENT 'user id',
   quantity                  INTEGER COMMENT 'quantity',
-  price                     DOUBLE  COMMENT 'Price',
+  price                     DECIMAL(10,2)  COMMENT 'Price',
   create_time               TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation Time',
   update_time               TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Update Time',
   FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE,
@@ -180,15 +180,15 @@ CREATE TABLE orders
   FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 );
 
-INSERT INTO orders(id,user_id,product_id,quantity,price,status)
-VALUES
-('1','2','2','2',60.00,'Delivered'),
-('2','3','6','3',39.30,'Pending'),
-('3','2','4','1',99.99,'Paid'),
-('4','3','3','1',50.00,'Paid'),
-('5','2','1','2',100.00,'Pending'),
-('6','2','3','2',100.00,'Paid'),
-('7','2','4','2',100.00,'Pending');
+--INSERT INTO orders(id,user_id,product_id,quantity,price,status)
+--VALUES
+--('1','2','2','2',60.00,'Delivered'),
+--('2','3','6','3',39.30,'Pending'),
+--('3','2','4','1',99.99,'Paid'),
+--('4','3','3','1',50.00,'Paid'),
+--('5','2','1','2',100.00,'Pending'),
+--('6','2','3','2',100.00,'Paid'),
+--('7','2','4','2',100.00,'Pending');
 
 
 SET FOREIGN_KEY_CHECKS = 1;

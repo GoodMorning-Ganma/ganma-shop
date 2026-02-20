@@ -6,7 +6,7 @@
         <result column="product_id" property="productId"  jdbcType="VARCHAR" />
         <result column="user_id" property="userId"  jdbcType="VARCHAR" />
         <result column="quantity" property="quantity"  jdbcType="INTEGER" />
-        <result column="price" property="price"  jdbcType="DOUBLE" />
+        <result column="price" property="price"  jdbcType="DECIMAL" />
         <result column="create_time" property="createTime"  jdbcType="TIMESTAMP" />
         <result column="update_time" property="updateTime"  jdbcType="TIMESTAMP" />
     </resultMap>
@@ -30,7 +30,7 @@
     </update>
 
     <!-- Find all cart items for a user -->
-    <select id="findCartItemsByUser" parameterType="string" resultMap="BaseResultMap">
+    <select id="findCartItemsByUser" resultMap="BaseResultMap">
         SELECT * FROM cart WHERE user_id = #{userId}
     </select>
 

@@ -10,6 +10,7 @@ import com.ganmashop.utils.GenUUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -73,8 +74,8 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.getOrdersByUserId(userId);
     }
 
-    public List<Order> getPendingOrdersByUserId(String userId) {
-        return orderDao.getPendingOrdersByUserId(userId);
+    public List<Order> getPaidOrdersByUserId(String userId) {
+        return orderDao.getPaidOrdersByUserId(userId);
     }
 
     @Override
@@ -88,7 +89,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public String createOrder(String userId, String productId, int quantity, double price, String status) {
+    public String createOrder(String userId, String productId, int quantity, BigDecimal price, String status) {
 
         String id = GenUUID.getUUID();  // auto-generate order ID
 
@@ -112,6 +113,18 @@ public class OrderServiceImpl implements OrderService {
         }
         return null; // no pending order exists
     }
+
+    @Override
+    public void updateOrdersToPaid(List<String> orderIds) {
+        for (String orderId : orderIds) {
+            Order order = orderDao.getOrderById(orderId);
+            if (order != null) {
+                order.setStatus("Paid");
+                orderDao.updateOrder(order);
+            }
+        }
+    }
+
 
 
 }

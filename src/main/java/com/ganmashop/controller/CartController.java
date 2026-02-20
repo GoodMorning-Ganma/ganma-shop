@@ -60,8 +60,8 @@ public class CartController {
 
     @PostMapping("/cart/add")
     public String addToCart(
-            @RequestParam("productId") String productId,
-            @RequestParam("quantity") int quantity,
+            String productId,
+            int quantity,
             HttpSession session,
             RedirectAttributes redirectAttributes
     ) {
@@ -80,7 +80,7 @@ public class CartController {
             cart.setProductId(productId);
             cart.setUserId(user.getId());
             cart.setQuantity(quantity);
-            cart.setPrice(product.getPrice() * quantity); // Calculate total price for this quantity
+            cart.setPrice(product.getPrice());
 
             // Save or update cart item
             cartService.save(cart);

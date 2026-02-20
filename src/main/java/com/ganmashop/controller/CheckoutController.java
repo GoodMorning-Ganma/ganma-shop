@@ -15,7 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Arrays;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,7 +33,6 @@ public class CheckoutController {
     @Autowired
     private OrderService orderService;
 
-
     // -----------------------------
     // SHOW CHECKOUT PAGE
     // -----------------------------
@@ -48,15 +48,13 @@ public class CheckoutController {
         List<Cart> cartItems = cartService.getCartItems(user.getId());
 
         List<CartProductDTO> selectedItems = cartItems.stream()
-                .filter(c -> c.getProductId() != null)
                 .filter(c -> productIds.contains(c.getProductId()))
                 .map(c -> new CartProductDTO(c, productService.findProductById(c.getProductId())))
                 .toList();
 
-
-        double subtotal = selectedItems.stream()
-                .mapToDouble(i -> i.getCart().getPrice())
-                .sum();
+        BigDecimal subtotal = selectedItems.stream()
+                .map(i -> i.getCart().getPrice())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         model.addAttribute("user", user);
         model.addAttribute("orderItems", selectedItems);
@@ -64,91 +62,65 @@ public class CheckoutController {
         model.addAttribute("subtotal", subtotal);
         model.addAttribute("deliveryFee", 2.00);
         model.addAttribute("tax", 0);
-        model.addAttribute("total", subtotal + 2);
+        model.addAttribute("total", subtotal .add(BigDecimal.valueOf(2)));
         model.addAttribute("isLoggedIn", true);
 
         return "checkout";
     }
 
-
     // -----------------------------
-    // CONFIRM ORDER (SUCCESS)
+    // CONFIRM ORDER (CREATE MULTIPLE ORDERS)
     // -----------------------------
     @PostMapping("/checkout/submit")
     public String submitOrder(
             @RequestParam List<String> productIds,
             HttpSession session,
-            RedirectAttributes redirectAttributes,
-            Model model
+            RedirectAttributes redirectAttributes
     ) {
         User user = (User) session.getAttribute("loggedInUser");
         if (user == null) return "redirect:/auth/login";
 
         List<Cart> cartItems = cartService.getCartItems(user.getId());
-
-        String lastOrderId = null;
+        List<String> orderIds = new ArrayList<>();
 
         for (Cart c : cartItems) {
             if (productIds.contains(c.getProductId())) {
+                // 检查是否已有 Pending 订单
+                Order pendingOrder = orderService.getPendingOrderByUserAndProduct(user.getId(), c.getProductId());
 
-                // ✅ Check if a pending order already exists
-                Order existingOrder = orderService.getPendingOrderByUserAndProduct(user.getId(), c.getProductId());
-                if (existingOrder != null) {
-                    lastOrderId = existingOrder.getId();// reuse existing pending order
-
+                String orderId;
+                if (pendingOrder != null) {
+                    // 已有 Pending 订单，复用它的 orderId
+                    orderId = pendingOrder.getId();
                 } else {
-                    // CREATE new pending order
-                    lastOrderId = orderService.createOrder(
+                    // 没有 Pending 订单，创建新的
+                    orderId = orderService.createOrder(
                             user.getId(),
                             c.getProductId(),
                             c.getQuantity(),
-                            c.getPrice() + 2,
+                            c.getPrice() .add(BigDecimal.valueOf(2)),
                             "Pending"
                     );
                 }
+
+                orderIds.add(orderId);
             }
         }
 
-        // Remove selected items from cart
+        // 删除购物车中已下单商品
         cartService.deleteSelectedItems(user.getId(), productIds);
 
-        if (lastOrderId != null) {
-            return "redirect:/ganma/order/payment/" + lastOrderId;
+        if (orderIds.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "Order error occurred.");
+            return "redirect:/ganma/checkout";
         }
 
-        redirectAttributes.addFlashAttribute("error", "Order error occurred.");
-        return "redirect:/ganma/checkout";
+        // 保存到 Session，方便 payment 页面使用
+        session.setAttribute("pendingOrderIds", orderIds);
+
+        return "redirect:/ganma/payment";
     }
 
-
-
-
-    @GetMapping("/order/payment/{orderId}")
-    public String showPaymentPage(@PathVariable String orderId,
-                                  Model model,
-                                  HttpSession session,
-                                  RedirectAttributes redirectAttributes) {
-
-        User user = (User) session.getAttribute("loggedInUser");
-        if (user == null) {
-            redirectAttributes.addFlashAttribute("error", "You must log in first.");
-            return "redirect:/auth/login";
-        }
-
-        OrderDTO orderDTO = orderService.getOrderDetailsById(orderId);
-
-        if (orderDTO == null) {
-            redirectAttributes.addFlashAttribute("error", "Order not found.");
-            return "redirect:/ganma/order";
-        }
-
-        model.addAttribute("orderDTO", orderDTO);
-        model.addAttribute("user", orderDTO.getUser());
-        model.addAttribute("product", orderDTO.getProduct());
-        model.addAttribute("order", orderDTO.getOrder());
-
-        return "payment";   // <---- new payment.html
-    }
 
     @PostMapping("/orderPayment/pending")
     public String savePendingOrder(
@@ -163,32 +135,62 @@ public class CheckoutController {
 
         List<Cart> cartItems = cartService.getCartItems(user.getId());
 
-        String lastOrderId = null;
-
         for (Cart c : cartItems) {
             if (productIds.contains(c.getProductId())) {
 
-                lastOrderId = orderService.createOrder(
+                // ✅ 每次都创建新的 Pending 订单（不要复用旧的）
+                orderService.createOrder(
                         user.getId(),
                         c.getProductId(),
                         c.getQuantity(),
-                        c.getPrice() + 2,
-                        "Pending"   // <---- NEW STATUS
+                        c.getPrice(),
+                        "Pending"
                 );
             }
         }
 
-        if (lastOrderId == null) {
-            redirectAttributes.addFlashAttribute("error", "Unable to create pending order.");
-            return "redirect:/ganma/checkout";
-        }
-
+        redirectAttributes.addFlashAttribute("success", "Order saved as pending. You can complete payment later.");
         return "redirect:/ganma/orderPayment";
     }
 
+
+    // -----------------------------
+    // SHOW PAYMENT PAGE (MULTI ORDERS)
+    // -----------------------------
+    @GetMapping("/payment")
+    public String showPaymentPage(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+
+        User user = (User) session.getAttribute("loggedInUser");
+        if (user == null) return "redirect:/auth/login";
+
+        List<String> orderIds = (List<String>) session.getAttribute("pendingOrderIds");
+        if (orderIds == null || orderIds.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "No pending orders found.");
+            return "redirect:/ganma/cart";
+        }
+
+        List<OrderDTO> orders = orderIds.stream()
+                .map(orderService::getOrderDetailsById)
+                .toList();
+
+        BigDecimal total = orders.stream()
+                .map(o -> o.getOrder().getPrice())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        model.addAttribute("orders", orders);
+        model.addAttribute("total", total);
+        model.addAttribute("user", user);
+
+        return "payment";
+    }
+
+
+    // -----------------------------
+    // PAYMENT SUCCESS (UPDATE ALL)
+    // -----------------------------
     @PostMapping("/order/payment/success")
     public String paymentSuccess(
-            @RequestParam String orderId,
+            @RequestParam("orderIds") List<String> orderIds,
             HttpSession session,
             RedirectAttributes redirectAttributes
     ) {
@@ -197,15 +199,13 @@ public class CheckoutController {
             return "redirect:/auth/login";
         }
 
-        // Step 2: update the status of the paid order
-        orderService.updateOrderStatus(orderId, "Paid");
+        for (String orderId : orderIds) {
+            orderService.updateOrderStatus(orderId, "Paid");
+        }
 
-        // Step 3: redirect to order page
+        session.removeAttribute("pendingOrderIds");
+
         redirectAttributes.addFlashAttribute("success", "Payment successful!");
         return "redirect:/ganma/order";
-
-
     }
-
-
 }

@@ -120,11 +120,14 @@
                        name="price" th:value="${product?.price}" required>
             </div>
 
-            <div class="col-12 col-md-6 form-group mb-md-4">
+            <div class="col-12 form-group mb-md-4">
                 <label for="description" class="form-label">介绍</label>
-                <input type="text" class="form-control form-control-lg" id="description"
-                       name="description" th:value="${product?.description}" required>
+                <textarea class="form-control form-control-lg" id="description"
+                          name="description" rows="6" style="resize: vertical;" required
+                          th:text="${product?.description}">
+                </textarea>
             </div>
+
 
             <div class="col-12 form-group mb-md-4">
                 <label for="image" class="form-label">图片名字/链接</label>

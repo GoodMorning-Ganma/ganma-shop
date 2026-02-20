@@ -80,9 +80,6 @@
                 <a href="/admin/products" class="list-group-item list-group-item-action bg-dark text-white border-0">
                     <i class="bi bi-box-seam me-2"></i>商品管理
                 </a>
-                <a href="/admin/order" class="list-group-item list-group-item-action bg-dark text-white border-0">
-                    <i class="bi bi-box-seam me-2"></i>订单管理
-                </a>
             </div>
         </nav>
         <div class="p-3 border-top">
@@ -143,7 +140,7 @@
                             <td>
                                 <div class="fw-bold" th:text="${product.name}"></div>
                                 <small class="text-muted" th:text="'ID: ' + ${product.id}"></small><br>
-                                <small class="text-muted" th:text="'Description: ' + ${product.description}"></small>
+                                <small class="text-muted" th:text="'Description: ' + ${#strings.abbreviate(product.description, 10)}"></small>
                             </td>
                             <td class="text-danger fw-bold" th:text="'RM' + ${#numbers.formatDecimal(product.price, 1, 2)}"></td>
                             <td>
@@ -179,7 +176,10 @@
                                         <div class="col-8">
                                             <h6 class="card-title mb-1" th:text="${product.name}"></h6>
                                             <div class="text-muted small mb-1" th:text="'ID: ' + ${product.id}"></div>
-                                            <div class="text-muted small mb-1" th:text="'Description: ' + ${product.description}"></div>
+                                            <div class="text-muted small mb-1"
+                                                 th:text="'Description: ' + ${#strings.abbreviate(product.description, 10)}">
+                                            </div>
+
                                             <div class="text-danger fw-bold mb-2"
                                                  th:text="'RM' + ${#numbers.formatDecimal(product.price, 1, 2)}"></div>
                                             <div class="d-grid gap-2">

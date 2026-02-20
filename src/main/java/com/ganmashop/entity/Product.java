@@ -1,5 +1,7 @@
 package com.ganmashop.entity;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 public class Product {
@@ -8,7 +10,7 @@ public class Product {
     private String categoryId;
     private String name;
     private String description;
-    private Double price;
+    private BigDecimal price;
     private String imageName;
     private Date createTime;
     private Date updateTime;
@@ -17,7 +19,7 @@ public class Product {
 
     }
 
-    public Product(String id, String userId, String categoryId, String name, String description, Double price, String imageName, Date createTime, Date updateTime){
+    public Product(String id, String userId, String categoryId, String name, String description, BigDecimal price, String imageName, Date createTime, Date updateTime){
         this.id = id;
         this.userId = userId;
         this.categoryId = categoryId;
@@ -63,10 +65,10 @@ public class Product {
     public void setDescription(String description){
         this.description=description;
     }
-    public Double getPrice(){
+    public BigDecimal getPrice(){
         return price;
     }
-    public void setPrice(double price){
+    public void setPrice(BigDecimal price){
         this.price=price;
     }
 

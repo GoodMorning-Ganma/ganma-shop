@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,7 +40,8 @@ public class OrderController {
         model.addAttribute("isLoggedIn", true);
         try {
 
-            List<Order> orders = orderService.getPendingOrdersByUserId(user.getId());
+            //List<Order> orders = orderService.getPendingOrdersByUserId(user.getId());
+            List<Order> orders = orderService.getPaidOrdersByUserId(user.getId());
             if (orders == null || orders.isEmpty()) {
                 model.addAttribute("message", "No orders found.");
             } else {
@@ -122,7 +124,7 @@ public class OrderController {
             cart.setUserId(user.getId());
             cart.setProductId(orderDTO.getProduct().getId());
             cart.setQuantity(orderDTO.getOrder().getQuantity());
-            cart.setPrice(orderDTO.getProduct().getPrice() * orderDTO.getOrder().getQuantity());
+            cart.setPrice((orderDTO.getProduct().getPrice() .multiply(BigDecimal.valueOf(orderDTO.getOrder().getQuantity()))));
 
             cartService.save(cart);
 

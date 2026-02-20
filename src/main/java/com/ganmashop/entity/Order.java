@@ -1,5 +1,6 @@
 package com.ganmashop.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -11,14 +12,14 @@ public class Order {
     private String productId;
     private String userId;
     private int quantity;
-    private double price;
+    private BigDecimal price;
     private String status;
     private Date createTime;
     private Date updateTime;
 
     public Order() {} // 必须有无参构造函数
 
-    public Order(String id, String productId, String userId, int quantity, double price, String status, Date createTime, Date updateTime){
+    public Order(String id, String productId, String userId, int quantity, BigDecimal price, String status, Date createTime, Date updateTime){
         this.id = id;
         this.productId = productId;
         this.userId = userId;
@@ -61,11 +62,11 @@ public class Order {
         this.quantity = quantity;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
