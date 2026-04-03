@@ -15,10 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Controller
 @RequestMapping("/ganma")
@@ -74,6 +72,9 @@ public class CheckoutController {
     @PostMapping("/checkout/submit")
     public String submitOrder(
             @RequestParam List<String> productIds,
+            @RequestParam(value = "paymentMethod", defaultValue = "credit") String paymentMethod,
+            @RequestParam(value = "bankProvider", required = false) String bankProvider,
+            @RequestParam(value = "cardIssuer", required = false) String cardIssuer,
             HttpSession session,
             RedirectAttributes redirectAttributes
     ) {
@@ -117,6 +118,12 @@ public class CheckoutController {
 
         // 保存到 Session，方便 payment 页面使用
         session.setAttribute("pendingOrderIds", orderIds);
+        String paymentLabel = formatPaymentMethodLabel(
+                paymentMethod,
+                "bank".equals(paymentMethod) ? bankProvider : null,
+                "credit".equals(paymentMethod) ? cardIssuer : null
+        );
+        session.setAttribute("checkoutPaymentMethodLabel", paymentLabel);
 
         return "redirect:/ganma/payment";
     }
@@ -173,13 +180,20 @@ public class CheckoutController {
                 .map(orderService::getOrderDetailsById)
                 .toList();
 
-        double total = orders.stream()
-                .mapToDouble(i -> i.getOrder().getPrice() * i.getOrder().getQuantity() + 2)
+        double subtotal = orders.stream()
+                .mapToDouble(i -> i.getOrder().getPrice() * i.getOrder().getQuantity())
                 .sum();
+        double deliveryFee = 2.00;
+        double total = subtotal + deliveryFee;
 
         model.addAttribute("orders", orders);
+        model.addAttribute("subtotal", subtotal);
+        model.addAttribute("deliveryFee", deliveryFee);
         model.addAttribute("total", total);
         model.addAttribute("user", user);
+        model.addAttribute("isLoggedIn", true);
+        Object label = session.getAttribute("checkoutPaymentMethodLabel");
+        model.addAttribute("paymentMethodLabel", label != null ? label : "Not specified");
 
         return "payment";
     }
@@ -204,8 +218,37 @@ public class CheckoutController {
         }
 
         session.removeAttribute("pendingOrderIds");
+        String pmLabel = (String) session.getAttribute("checkoutPaymentMethodLabel");
+        session.removeAttribute("checkoutPaymentMethodLabel");
 
-        redirectAttributes.addFlashAttribute("success", "Payment successful!");
+        String successMsg = "Order completed!";
+        if (pmLabel != null && !pmLabel.isBlank() && !"Not specified".equals(pmLabel)) {
+            successMsg += " Payment method: " + pmLabel + ".";
+        }
+        redirectAttributes.addFlashAttribute("success", successMsg);
         return "redirect:/ganma/order";
+    }
+
+    /**
+     * Human-readable label for the payment option chosen on checkout (card network or bank/e-wallet).
+     */
+    private static String formatPaymentMethodLabel(String paymentMethod, String bankProvider, String cardIssuer) {
+        if ("bank".equals(paymentMethod)) {
+            return switch (bankProvider == null ? "" : bankProvider) {
+                case "tng" -> "Touch 'n Go eWallet";
+                case "maybank2u" -> "Maybank2u";
+                case "cimb" -> "CIMB Clicks";
+                case "publicbank" -> "Public Bank";
+                default -> "Online banking / e-wallet";
+            };
+        }
+        return switch (cardIssuer == null ? "" : cardIssuer) {
+            case "visa" -> "Visa";
+            case "maybank" -> "Maybank";
+            case "ocbc" -> "OCBC Bank";
+            case "mastercard" -> "Mastercard";
+            case "amex" -> "American Express";
+            default -> "Credit / debit card";
+        };
     }
 }

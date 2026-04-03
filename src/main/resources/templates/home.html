@@ -7,35 +7,44 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
+        /* Calm, single-hue palette — easier on mature eyes; high legibility */
         :root {
-            --gm-brand: #3730a3;
-            --gm-brand-hover: #312e81;
-            --gm-brand-soft: rgba(55, 48, 163, 0.08);
-            --gm-accent: #ea580c;
-            --gm-surface: #f1f5f9;
-            --gm-card-radius: 1rem;
+            --gm-brand: #3a5568;
+            --gm-brand-hover: #2d4250;
+            --gm-brand-soft: rgba(58, 85, 104, 0.1);
+            --gm-text: #1e2930;
+            --gm-text-muted: #4a5f6d;
+            --gm-border: rgba(58, 85, 104, 0.14);
+            --gm-surface: #f6f7f5;
+            --gm-card-radius: 0.875rem;
         }
 
         body {
             background-color: var(--gm-surface);
-            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: var(--gm-text);
+            font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 1.0625rem;
+            line-height: 1.55;
+            -webkit-font-smoothing: antialiased;
         }
 
         .navbar-gm {
-            background: linear-gradient(135deg, var(--gm-brand) 0%, #4c1d95 100%);
-            box-shadow: 0 4px 24px rgba(30, 27, 75, 0.25);
+            background: var(--gm-brand);
+            box-shadow: 0 2px 12px rgba(45, 66, 80, 0.18);
         }
 
         .navbar-gm .navbar-brand {
             font-weight: 700;
-            letter-spacing: -0.02em;
+            letter-spacing: 0.01em;
             font-size: 1.35rem;
         }
 
         .navbar-gm .nav-link {
-            color: rgba(255, 255, 255, 0.92) !important;
+            color: rgba(255, 255, 255, 0.95) !important;
             font-weight: 500;
-            padding: 0.5rem 0.75rem !important;
+            font-size: 1.05rem;
+            padding: 0.65rem 0.85rem !important;
+            min-height: 2.75rem;
             border-radius: 0.5rem;
             transition: background-color 0.2s ease, color 0.2s ease;
         }
@@ -43,12 +52,21 @@
         .navbar-gm .nav-link:hover,
         .navbar-gm .nav-link:focus {
             color: #fff !important;
-            background-color: rgba(255, 255, 255, 0.12);
+            background-color: rgba(255, 255, 255, 0.14);
         }
 
         .navbar-gm .btn-nav-cta {
             font-weight: 600;
-            padding: 0.4rem 1.1rem;
+            font-size: 1.05rem;
+            padding: 0.55rem 1.25rem;
+            min-height: 2.75rem;
+            color: var(--gm-brand) !important;
+            border: none;
+        }
+
+        .navbar-gm .btn-nav-cta:hover {
+            background: #f0f2f1 !important;
+            color: var(--gm-brand-hover) !important;
         }
 
         /* Hero carousel — controlled height, no overwhelming tall banner */
@@ -59,7 +77,8 @@
         .hero-carousel {
             border-radius: var(--gm-card-radius);
             overflow: hidden;
-            box-shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
+            box-shadow: 0 6px 24px rgba(45, 66, 80, 0.1);
+            border: 1px solid var(--gm-border);
         }
 
         .hero-carousel .carousel-item img {
@@ -81,23 +100,149 @@
         }
 
         .hero-carousel .carousel-indicators [data-bs-target] {
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            margin: 0 4px;
+            margin: 0 5px;
+            background-color: rgba(255, 255, 255, 0.55);
         }
 
-        /* Search toolbar */
+        .hero-carousel .carousel-indicators .active {
+            background-color: #fff;
+        }
+
+        /* Search toolbar — compact; sort uses Bootstrap dropdown (no native <select> on mobile) */
         .toolbar-card {
             border-radius: var(--gm-card-radius);
-            border: 1px solid rgba(15, 23, 42, 0.06);
+            border: 1px solid var(--gm-border);
             background: #fff;
         }
 
-        .toolbar-card .form-control:focus,
-        .toolbar-card .form-select:focus {
-            border-color: var(--gm-brand);
-            box-shadow: 0 0 0 0.2rem var(--gm-brand-soft);
+        .gm-toolbar-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 992px) {
+            .gm-toolbar-row {
+                flex-direction: row;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+        }
+
+        .gm-sort-dropdown .dropdown-toggle {
+            font-size: 1.0625rem;
+            font-weight: 500;
+            padding: 0.55rem 0.95rem;
+            border-color: var(--gm-border);
+            color: var(--gm-text);
+            background: #fff;
+            border-radius: 0.65rem;
+            min-height: 3rem;
+        }
+
+        @media (min-width: 992px) {
+            .gm-sort-dropdown .dropdown-toggle {
+                min-width: 11.5rem;
+            }
+        }
+
+        .gm-sort-dropdown .dropdown-toggle::after {
+            margin-left: auto;
+        }
+
+        .gm-sort-dropdown .dropdown-menu {
+            font-size: 1rem;
+            border: 1px solid var(--gm-border);
+            border-radius: 0.65rem;
+            box-shadow: 0 6px 20px rgba(45, 66, 80, 0.1);
+            padding: 0.4rem;
+            max-width: min(100vw - 2rem, 320px);
+        }
+
+        @media (max-width: 991.98px) {
+            .gm-sort-dropdown .dropdown-menu {
+                width: 100%;
+                max-width: none;
+            }
+        }
+
+        .gm-sort-dropdown .dropdown-item {
+            border-radius: 0.45rem;
+            padding: 0.55rem 0.85rem;
+            font-size: 1rem;
+            line-height: 1.45;
+            color: var(--gm-text);
+        }
+
+        .gm-sort-dropdown .dropdown-item:hover,
+        .gm-sort-dropdown .dropdown-item:focus {
+            background-color: var(--gm-brand-soft);
+            color: var(--gm-text);
+        }
+
+        .gm-sort-dropdown .dropdown-item:active {
+            background-color: var(--gm-brand);
+            color: #fff;
+        }
+
+        .gm-search-group {
+            border-radius: 0.65rem;
+            overflow: hidden;
+            box-shadow: none;
+            border: 1px solid var(--gm-border);
+            flex: 1;
+            min-width: 0;
+        }
+
+        .gm-search-group .input-group-text {
+            background: #f0f2f1;
+            border: 0;
+            color: var(--gm-text-muted);
+            padding-left: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .gm-search-group .form-control {
+            border: 0;
+            background: #f0f2f1;
+            font-size: 1.0625rem;
+            padding-top: 0.65rem;
+            padding-bottom: 0.65rem;
+            min-height: 3rem;
+            color: var(--gm-text);
+        }
+
+        .gm-search-group .form-control::placeholder {
+            color: #6b7d89;
+            opacity: 1;
+        }
+
+        .gm-search-group .form-control:focus {
+            box-shadow: none;
+            background: #fff;
+        }
+
+        .gm-search-group .btn-gm-primary {
+            border-radius: 0;
+            padding-left: 1.15rem;
+            padding-right: 1.15rem;
+            min-height: 3rem;
+            font-size: 1.0625rem;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 575.98px) {
+            .gm-search-group .btn-gm-primary span.gm-search-btn-text {
+                display: none;
+            }
+        }
+
+        .toolbar-card .form-control:focus {
+            border-color: transparent;
+            box-shadow: none;
         }
 
         .btn-gm-primary {
@@ -106,54 +251,57 @@
             font-weight: 600;
         }
 
-        .btn-gm-primary:hover {
+        .btn-gm-primary:hover,
+        .btn-gm-primary:focus {
             background-color: var(--gm-brand-hover);
             border-color: var(--gm-brand-hover);
         }
 
-        /* Product cards */
+        /* Product cards — soft, stable; no strong motion */
         .product-card {
-            border: none;
+            border: 1px solid var(--gm-border);
             border-radius: var(--gm-card-radius);
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
             background: #fff;
         }
 
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12) !important;
+        @media (hover: hover) and (pointer: fine) {
+            .product-card:hover {
+                box-shadow: 0 8px 28px rgba(45, 66, 80, 0.12) !important;
+                border-color: rgba(58, 85, 104, 0.22);
+            }
+
+            .product-card:hover .product-img-link img {
+                transform: scale(1.02);
+            }
         }
 
         .product-card .product-img-link {
             display: block;
-            border-radius: var(--gm-card-radius) var(--gm-card-radius) 0 0;
+            border-radius: calc(var(--gm-card-radius) - 1px) calc(var(--gm-card-radius) - 1px) 0 0;
             overflow: hidden;
-            background: #f8fafc;
+            background: #eef1ef;
         }
 
         .product-card .product-img-link img {
             aspect-ratio: 1;
             width: 100%;
             object-fit: cover;
-            transition: transform 0.35s ease;
-        }
-
-        .product-card:hover .product-img-link img {
-            transform: scale(1.04);
+            transition: transform 0.3s ease;
         }
 
         .product-card .price-tag {
-            color: var(--gm-accent);
+            color: var(--gm-brand-hover);
             font-weight: 700;
-            font-size: 1.15rem;
-            letter-spacing: -0.02em;
+            font-size: clamp(1.125rem, 2.5vw, 1.25rem);
+            letter-spacing: 0.01em;
         }
 
         .product-card .product-title {
-            color: #0f172a;
+            color: var(--gm-text);
             font-weight: 600;
-            font-size: 1.05rem;
-            line-height: 1.35;
+            font-size: clamp(1.0625rem, 2.2vw, 1.125rem);
+            line-height: 1.4;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             line-clamp: 2;
@@ -162,34 +310,81 @@
         }
 
         .btn-fav {
-            border-color: var(--gm-brand);
+            border: 2px solid var(--gm-brand);
             color: var(--gm-brand);
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 1rem;
+            min-height: 2.875rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
         }
 
-        .btn-fav:hover {
+        .btn-fav:hover,
+        .btn-fav:focus {
             background-color: var(--gm-brand);
             border-color: var(--gm-brand);
             color: #fff;
         }
 
         footer.footer-gm {
-            background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%);
+            background: var(--gm-brand-hover);
             margin-top: 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        footer.footer-gm h5 {
+            font-size: 1.1rem;
         }
 
         footer.footer-gm a {
-            color: rgba(255, 255, 255, 0.75);
+            color: rgba(255, 255, 255, 0.88);
             text-decoration: none;
+            font-size: 1rem;
             transition: color 0.2s ease;
         }
 
         footer.footer-gm a:hover {
             color: #fff;
+            text-decoration: underline;
+            text-underline-offset: 0.2em;
+        }
+
+        footer.footer-gm .text-white-50,
+        footer.footer-gm .small {
+            color: rgba(255, 255, 255, 0.82) !important;
+            font-size: 0.98rem !important;
         }
 
         .section-heading {
-            letter-spacing: -0.03em;
+            letter-spacing: 0.01em;
+            color: var(--gm-text);
+            font-size: clamp(1.35rem, 3vw, 1.5rem);
+        }
+
+        .gm-lead-muted {
+            color: var(--gm-text-muted);
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .gm-empty-state h4 {
+            font-size: 1.25rem;
+            color: var(--gm-text);
+        }
+
+        .gm-empty-state .text-muted {
+            color: var(--gm-text-muted) !important;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 575.98px) {
+            body {
+                font-size: 1.0625rem;
+            }
+
+            .navbar-gm .navbar-brand {
+                font-size: 1.25rem;
+            }
         }
     </style>
 </head>
@@ -199,7 +394,7 @@
     <div class="container py-1 py-lg-0">
         <a class="navbar-brand d-flex align-items-center gap-2" href="/ganma/index">
             <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-white bg-opacity-10 px-2 py-1">
-                <i class="bi bi-bag-heart-fill text-warning"></i>
+                <i class="bi bi-bag-heart-fill text-white"></i>
             </span>
             Ganma
         </a>
@@ -270,30 +465,53 @@
 
     <div class="container px-3 px-lg-4 py-4">
         <div class="card toolbar-card shadow-sm mb-4 mb-lg-5 p-3 p-md-4">
-            <form class="row g-3 align-items-stretch align-items-md-end" method="get" th:action="@{/ganma/index}">
-                <div class="col-12 col-lg-5 order-lg-2">
-                    <label class="form-label small text-muted mb-1 d-none d-md-block">Search</label>
-                    <div class="input-group input-group-lg input-group-md-normal">
-                        <span class="input-group-text bg-light border-end-0 text-secondary">
-                            <i class="bi bi-search"></i>
-                        </span>
-                        <input type="search" class="form-control border-start-0 bg-light" name="keyword"
-                               placeholder="Search products…" th:value="${searchKeyword}" autocomplete="off">
-                    </div>
+            <form id="homeSearchForm" class="gm-toolbar-row" method="get" th:action="@{/ganma/index}">
+                <input type="hidden" name="sort" id="homeSortInput"
+                       th:value="${selectedSort == null ? '' : selectedSort}">
+
+                <div class="dropdown gm-sort-dropdown order-lg-0 flex-shrink-0">
+                    <button class="dropdown-toggle btn w-100 d-flex align-items-center gap-2 text-start"
+                            type="button" id="homeSortDropdown" data-bs-toggle="dropdown" data-bs-display="static"
+                            aria-expanded="false" aria-label="Sort products">
+                        <i class="bi bi-filter-left fs-5 text-secondary flex-shrink-0"></i>
+                        <span id="homeSortLabel" class="text-truncate flex-grow-1"
+                              th:text="${selectedSort == 'price_asc' ? 'Price: Low to High' : (selectedSort == 'price_desc' ? 'Price: High to Low' : (selectedSort == 'newest' ? 'Newest' : 'Sort by'))}">Sort by</span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="homeSortDropdown">
+                        <li>
+                            <button type="button" class="dropdown-item" data-home-sort="" data-home-sort-label="Sort by">
+                                Default order
+                            </button>
+                        </li>
+                        <li><hr class="dropdown-divider my-1"></li>
+                        <li>
+                            <button type="button" class="dropdown-item" data-home-sort="price_asc" data-home-sort-label="Price: Low to High">
+                                Price: Low to High
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button" class="dropdown-item" data-home-sort="price_desc" data-home-sort-label="Price: High to Low">
+                                Price: High to Low
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button" class="dropdown-item" data-home-sort="newest" data-home-sort-label="Newest">
+                                Newest first
+                            </button>
+                        </li>
+                    </ul>
                 </div>
-                <div class="col-12 col-sm-6 col-lg-3 order-lg-1">
-                    <label class="form-label small text-muted mb-1 d-none d-md-block">Sort</label>
-                    <select class="form-select form-select-lg form-select-md-normal" name="sort" onchange="this.form.submit()">
-                        <option value="" th:selected="${selectedSort == null || selectedSort == ''}">Sort by</option>
-                        <option value="price_asc" th:selected="${selectedSort == 'price_asc'}">Price: Low to High</option>
-                        <option value="price_desc" th:selected="${selectedSort == 'price_desc'}">Price: High to Low</option>
-                        <option value="newest" th:selected="${selectedSort == 'newest'}">Newest</option>
-                    </select>
-                </div>
-                <div class="col-12 col-sm-6 col-lg-2 order-lg-3">
-                    <label class="form-label small text-muted mb-1 d-none d-md-block d-lg-none">&nbsp;</label>
-                    <button class="btn btn-gm-primary btn-lg w-100 rounded-3" type="submit">
-                        <i class="bi bi-search me-1"></i> Search
+
+                <div class="input-group gm-search-group order-lg-1 flex-lg-grow-1">
+                    <span class="input-group-text">
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                    </span>
+                    <input type="search" class="form-control" name="keyword"
+                           placeholder="Search products…" th:value="${searchKeyword}" autocomplete="off"
+                           aria-label="Search products">
+                    <button class="btn btn-gm-primary d-flex align-items-center justify-content-center gap-1" type="submit">
+                        <i class="bi bi-search"></i>
+                        <span class="gm-search-btn-text">Search</span>
                     </button>
                 </div>
             </form>
@@ -301,17 +519,17 @@
 
         <div class="d-flex flex-column flex-sm-row align-items-sm-end justify-content-between gap-2 mb-3 mb-lg-4">
             <div>
-                <h2 class="section-heading h4 mb-1 text-dark fw-bold">Products</h2>
-                <p class="text-muted small mb-0">Tap a card to view details. Prices shown in RM.</p>
+                <h2 class="section-heading h4 mb-2 fw-bold">Products</h2>
+                <p class="gm-lead-muted mb-0">Tap a product to see details. Prices are in RM (Malaysian Ringgit).</p>
             </div>
         </div>
 
         <div class="row" th:if="${products.isEmpty()}">
             <div class="col-12">
-                <div class="text-center py-5 px-3 rounded-4 bg-white shadow-sm border border-light">
+                <div class="gm-empty-state text-center py-5 px-3 rounded-4 bg-white shadow-sm border border-light">
                     <i class="bi bi-inbox display-4 text-muted"></i>
                     <h4 class="mt-3 fw-semibold">No products found</h4>
-                    <p class="text-muted mb-0">Try another keyword or clear the search.</p>
+                    <p class="text-muted mb-0">Try a different search word, or clear the search box.</p>
                 </div>
             </div>
         </div>
@@ -328,7 +546,7 @@
                         </a>
                         <p class="price-tag mb-3" th:text="'RM ' + ${#numbers.formatDecimal(product.price, 1, 2)}">RM 0.00</p>
                         <div class="mt-auto pt-1">
-                            <button type="button" class="btn btn-sm btn-outline-primary btn-fav rounded-pill px-3 w-100"
+                            <button type="button" class="btn btn-outline-primary btn-fav rounded-pill px-3 w-100"
                                     th:attr="onclick=|addToFavourite(${product.id})|">
                                 <i class="bi bi-heart me-1"></i>Add to favourites
                             </button>
@@ -345,7 +563,7 @@
         <div class="row g-4 text-center text-md-start">
             <div class="col-md-4">
                 <h5 class="fw-semibold mb-3">About</h5>
-                <p class="text-white-50 small mb-0">Curated picks and fair prices — your everyday shop.</p>
+                <p class="text-white-50 mb-0">Curated picks and fair prices — your everyday shop.</p>
             </div>
             <div class="col-md-4">
                 <h5 class="fw-semibold mb-3">Help</h5>
@@ -365,26 +583,26 @@
             </div>
         </div>
         <hr class="border-secondary opacity-25 my-4">
-        <p class="text-center text-white-50 small mb-0">&copy; 2026 Ganma Shop. All rights reserved.</p>
+        <p class="text-center text-white-50 mb-0">&copy; 2026 Ganma Shop. All rights reserved.</p>
     </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<style>
-    @media (min-width: 768px) {
-        .input-group-lg.input-group-md-normal,
-        .form-select-lg.form-select-md-normal {
-            font-size: 1rem;
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
-        }
-        .btn-lg {
-            --bs-btn-padding-y: 0.5rem;
-            --bs-btn-font-size: 1rem;
-        }
-    }
-</style>
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.gm-sort-dropdown [data-home-sort-label]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var input = document.getElementById('homeSortInput');
+                var label = document.getElementById('homeSortLabel');
+                if (!input || !label) return;
+                input.value = this.getAttribute('data-home-sort') || '';
+                label.textContent = this.getAttribute('data-home-sort-label') || 'Sort by';
+                var form = document.getElementById('homeSearchForm');
+                if (form) form.submit();
+            });
+        });
+    });
+
     function addToFavourite(productId) {
         fetch('/ganma/favourite/add/' + productId, { method: 'POST' })
             .then(function (r) { return r.text(); })

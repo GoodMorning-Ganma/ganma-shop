@@ -24,6 +24,8 @@ public interface OrderService {
     List<OrderDTO> getAllOrderDetails();
     List<OrderDTO> getRecentOrderDetails();
     List<OrderDTO> getOrderDetailsByUserId(String userId);
+
+    List<OrderDTO> getOrderDetailsByUserIdAndStatus(String userId, String status);
     OrderDTO getOrderDetailsById(String orderId);
     List<Order> getAllOrders();
     List<Order> getOrdersByUserId(String userId);

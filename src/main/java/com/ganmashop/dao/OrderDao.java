@@ -30,6 +30,8 @@ public interface OrderDao {
     Order getOrderById(String orderId);
     OrderDTO getOrderDetailsById(String orderId);
     List<OrderDTO> getOrderDetailsByUserId(String userId);
+
+    List<OrderDTO> getOrderDetailsByUserIdAndStatus(@Param("userId") String userId, @Param("status") String status);
     List<OrderDTO> getAllOrderDetails();
     List<OrderDTO> getRecentOrderDetails();
     List<Order> getAllOrders();

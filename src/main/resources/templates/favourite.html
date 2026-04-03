@@ -3,216 +3,351 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Favourites</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
+    <title>My Favourites — Ganma</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
         :root {
-            --primary-color: #6f42c1;
-            --secondary-color: #0d6efd;
-            --accent-color: #dc3545;
+            --gm-brand: #3a5568;
+            --gm-brand-hover: #2d4250;
+            --gm-brand-soft: rgba(58, 85, 104, 0.1);
+            --gm-text: #1e2930;
+            --gm-text-muted: #4a5f6d;
+            --gm-border: rgba(58, 85, 104, 0.14);
+            --gm-surface: #f6f7f5;
+            --gm-card-radius: 0.875rem;
         }
 
-        /* 统一导航栏样式 */
-        .navbar {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #5a32a3 100%);
-            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        body {
+            background-color: var(--gm-surface);
+            color: var(--gm-text);
+            font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 1.0625rem;
+            line-height: 1.55;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* 侧边栏优化 */
+        .navbar-gm {
+            background: var(--gm-brand);
+            box-shadow: 0 2px 12px rgba(45, 66, 80, 0.18);
+        }
+
+        .navbar-gm .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            font-size: 1.35rem;
+        }
+
+        .navbar-gm .nav-link {
+            color: rgba(255, 255, 255, 0.95) !important;
+            font-weight: 500;
+            font-size: 1.05rem;
+            padding: 0.65rem 0.85rem !important;
+            min-height: 2.75rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .navbar-gm .nav-link:hover,
+        .navbar-gm .nav-link:focus {
+            color: #fff !important;
+            background-color: rgba(255, 255, 255, 0.14);
+        }
+
+        .navbar-gm .btn-nav-cta {
+            font-weight: 600;
+            font-size: 1.05rem;
+            padding: 0.55rem 1.25rem;
+            min-height: 2.75rem;
+            color: var(--gm-brand) !important;
+            border: none;
+        }
+
+        .navbar-gm .btn-nav-cta:hover {
+            background: #f0f2f1 !important;
+            color: var(--gm-brand-hover) !important;
+        }
+
+        .text-gm-brand {
+            color: var(--gm-brand) !important;
+        }
+
         .account-sidebar {
-            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            background: #fff;
+            border-radius: var(--gm-card-radius);
+            border: 1px solid var(--gm-border);
+            box-shadow: 0 1px 3px rgba(45, 66, 80, 0.06);
             padding: 1.5rem;
             margin-bottom: 1.5rem;
         }
 
         .account-sidebar .nav-link {
-            color: var(--primary-color) !important;
-            border-radius: 0.75rem;
+            color: var(--gm-text) !important;
+            font-weight: 500;
+            border-radius: 0.65rem;
             margin: 0.25rem 0;
-            transition: all 0.3s ease;
+            transition: background-color 0.2s ease, color 0.2s ease;
         }
 
         .account-sidebar .nav-link.active {
-            background: var(--primary-color) !important;
-            color: white !important;
+            background: var(--gm-brand) !important;
+            color: #fff !important;
         }
 
         .account-sidebar .nav-link:hover:not(.active) {
-            background: rgba(111, 66, 193, 0.1);
+            background: var(--gm-brand-soft);
+            color: var(--gm-text) !important;
         }
 
-        /* 商品卡片优化 */
         .product-card {
-            border: none !important;
-            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border-radius: 1rem;
-            transition: all 0.3s ease;
+            border: 1px solid var(--gm-border);
+            border-radius: var(--gm-card-radius);
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+            background: #fff;
         }
 
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        @media (hover: hover) and (pointer: fine) {
+            .product-card:hover {
+                box-shadow: 0 8px 28px rgba(45, 66, 80, 0.12) !important;
+                border-color: rgba(58, 85, 104, 0.22);
+            }
+
+            .product-card:hover .product-img-link img {
+                transform: scale(1.02);
+            }
         }
 
-        .card-img-container {
-            position: relative;
+        .product-card .product-img-link {
+            display: block;
+            border-radius: calc(var(--gm-card-radius) - 1px) calc(var(--gm-card-radius) - 1px) 0 0;
             overflow: hidden;
-            border-radius: 1rem 1rem 0 0;
+            background: #eef1ef;
         }
 
-        .card-img-top {
-            height: 200px;
+        .product-card .product-img-link img {
+            aspect-ratio: 1;
+            width: 100%;
             object-fit: cover;
             transition: transform 0.3s ease;
         }
 
-        .product-card:hover .card-img-top {
-            transform: scale(1.05);
-        }
-
-        .card-title {
-            color: var(--primary-color);
+        .product-card .product-title {
+            color: var(--gm-text);
             font-weight: 600;
+            font-size: clamp(1.0625rem, 2.2vw, 1.125rem);
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
-        /* 响应式调整 */
-        @media (max-width: 768px) {
-            .card-img-top {
-                height: 150px;
+        .btn-gm-primary {
+            background-color: var(--gm-brand);
+            border-color: var(--gm-brand);
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .btn-gm-primary:hover,
+        .btn-gm-primary:focus {
+            background-color: var(--gm-brand-hover);
+            border-color: var(--gm-brand-hover);
+            color: #fff;
+        }
+
+        .empty-favourites-card {
+            background: #fff;
+            border-radius: var(--gm-card-radius);
+            border: 1px solid var(--gm-border);
+            box-shadow: 0 1px 3px rgba(45, 66, 80, 0.06);
+            min-height: 280px;
+        }
+
+        .section-heading {
+            letter-spacing: 0.01em;
+            color: var(--gm-text);
+            font-size: clamp(1.35rem, 3vw, 1.5rem);
+        }
+
+        .gm-lead-muted {
+            color: var(--gm-text-muted);
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        footer.footer-gm {
+            background: var(--gm-brand-hover);
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        footer.footer-gm h5 {
+            font-size: 1.1rem;
+        }
+
+        footer.footer-gm a {
+            color: rgba(255, 255, 255, 0.88);
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.2s ease;
+        }
+
+        footer.footer-gm a:hover {
+            color: #fff;
+            text-decoration: underline;
+            text-underline-offset: 0.2em;
+        }
+
+        footer.footer-gm .text-white-50 {
+            color: rgba(255, 255, 255, 0.82) !important;
+            font-size: 0.98rem !important;
+        }
+
+        @media (max-width: 767.98px) {
+            .navbar-gm .navbar-brand {
+                font-size: 1.25rem;
             }
 
             .account-sidebar {
                 margin-bottom: 1rem;
             }
         }
-
-        /* 统一按钮样式 */
-        .btn-primary {
-            background: var(--primary-color);
-            border: none;
-            border-radius: 0.75rem;
-            padding: 0.5rem 1.25rem;
-        }
-
-        .btn-primary:hover {
-            background: #5a32a3;
-        }
-
-        .empty-state {
-            min-height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
     </style>
 </head>
 <body>
 
-<!-- 统一导航栏 -->
-<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-    <div class="container">
-        <a class="navbar-brand" href="/ganma/index">Ganma</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+<nav class="navbar navbar-expand-lg navbar-dark navbar-gm sticky-top">
+    <div class="container py-1 py-lg-0">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="/ganma/index">
+            <span class="d-inline-flex align-items-center justify-content-center rounded-3 bg-white bg-opacity-10 px-2 py-1">
+                <i class="bi bi-bag-heart-fill text-white"></i>
+            </span>
+            Ganma
+        </a>
+        <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link" href="/ganma/cart">Carts</a></li>
-                <li class="nav-item" th:if="${isLoggedIn}">
-                    <a class="nav-link" href="/ganma/account">Account</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav me-auto mt-3 mt-lg-0 gap-lg-1">
                 <li class="nav-item">
-                    <a class="nav-link" th:href="${isLoggedIn ? '/auth/logout' : '/auth/login'}">
-                        <span th:text="${isLoggedIn ? 'Logout' : 'Login'}"></span>
+                    <a class="nav-link d-flex align-items-center gap-2" href="/ganma/cart">
+                        <i class="bi bi-cart3 fs-5"></i><span>Cart</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-2"
+                       th:href="${isLoggedIn ? '/ganma/account' : '/auth/login'}">
+                        <i class="bi bi-person-circle fs-5"></i><span>Account</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-2" href="/ganma/favourite">
+                        <i class="bi bi-heart fs-5"></i><span>Favourites</span>
                     </a>
                 </li>
             </ul>
+            <div class="d-flex flex-column flex-lg-row align-items-stretch align-items-lg-center gap-2 mt-3 mt-lg-0 pb-3 pb-lg-0">
+                <a class="btn btn-light btn-nav-cta rounded-pill"
+                   th:href="${isLoggedIn ? '/auth/logout' : '/auth/login'}">
+                    <i th:class="${isLoggedIn ? 'bi bi-box-arrow-right' : 'bi bi-box-arrow-in-right'}"></i>
+                    <span class="ms-1" th:text="${isLoggedIn ? 'Logout' : 'Login'}">Login</span>
+                </a>
+            </div>
         </div>
     </div>
 </nav>
 
-<!-- Main Content -->
-<div class="container my-5">
-    <div class="row">
-        <!-- 侧边栏菜单 -->
-        <div class="col-12 col-md-3">
-            <div class="account-sidebar">
-                <h5 class="mb-3 text-primary"><i class="bi bi-person-circle me-2"></i>Account Menu</h5>
-                <ul class="nav flex-column nav-pills">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/ganma/account">
-                            <i class="bi bi-person me-2"></i>Profile Info
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/ganma/favourite">
-                            <i class="bi bi-heart-fill me-2"></i>My Favourite
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="collapse" href="#orderCollapse">
-                            <i class="bi bi-bag me-2"></i>My Order
-                        </a>
-                        <div class="collapse ps-3" id="orderCollapse">
-                            <ul class="nav flex-column">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="/ganma/order">Order Info</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="/ganma/orderPayment">Payment</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="/ganma/orderHistory">Order History</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- 收藏商品列表 -->
-        <div class="col-12 col-md-9">
-            <h3 class="mb-4"><i class="bi bi-heart-fill me-2 text-primary"></i>My Favourites</h3>
-
-            <div th:if="${favourites.isEmpty()}" class="empty-state">
-                <i class="bi bi-heartbreak display-4 text-muted mb-3"></i>
-                <h4 class="text-muted">No favourite items yet</h4>
-                <a href="/ganma/index" class="btn btn-primary mt-3">Start Shopping</a>
-            </div>
-
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-                <div class="col" th:each="product : ${favourites}"
-                     th:attr="data-product-id=${product.id}">
-                    <div class="card product-card h-100">
-                        <div class="card-img-container">
-                            <a th:href="@{/ganma/product/{id}(id=${product.id})}">
-                                <img th:src="@{'/images/' + ${product.imageName}}"
-                                     class="card-img-top"
-                                     alt="Product Image">
+<main>
+    <div class="container my-5 px-3 px-lg-4">
+        <div class="row">
+            <div class="col-12 col-md-3">
+                <div class="account-sidebar">
+                    <h5 class="mb-3 fw-semibold text-gm-brand">
+                        <i class="bi bi-person-circle me-2"></i>Account Menu
+                    </h5>
+                    <ul class="nav flex-column nav-pills">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/ganma/account">
+                                <i class="bi bi-person me-2"></i>Profile Info
                             </a>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title mb-3" th:text="${product.name}"></h5>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <a th:href="@{/ganma/product/{id}(id=${product.id})}"
-                                   class="btn btn-primary btn-sm">
-                                    <i class="bi bi-eye me-2"></i>View Details
-                                </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/ganma/favourite">
+                                <i class="bi bi-heart-fill me-2"></i>My Favourite
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="collapse" href="#orderCollapse">
+                                <i class="bi bi-bag me-2"></i>My Order
+                            </a>
+                            <div class="collapse ps-3" id="orderCollapse">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/ganma/order">Order Info</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/ganma/orderPayment">Payment</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="/ganma/orderHistory">Order History</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
 
-                                <!-- FIXED onclick -->
-                                <button class="btn btn-outline-danger btn-sm"
-                                        th:attr="onclick=|removeFavourite('${product.id}')|">
-                                    <i class="bi bi-trash"></i>
-                                </button>
+            <div class="col-12 col-md-9">
+                <div class="d-flex flex-column flex-sm-row align-items-sm-end justify-content-between gap-2 mb-4">
+                    <div>
+                        <h1 class="section-heading h4 mb-2 fw-bold">
+                            <i class="bi bi-heart-fill me-2 text-gm-brand"></i>My Favourites
+                        </h1>
+                        <p class="gm-lead-muted mb-0">Saved items from the shop — open a product for details and price.</p>
+                    </div>
+                </div>
+
+                <div id="favourites-empty"
+                     class="empty-favourites-card p-5 mb-4 d-flex flex-column align-items-center justify-content-center text-center"
+                     th:classappend="${favourites.isEmpty()} ? '' : ' d-none'">
+                    <i class="bi bi-heartbreak display-4 text-muted mb-3"></i>
+                    <h4 class="fw-semibold mb-2" style="color: var(--gm-text);">No favourite items yet</h4>
+                    <p class="text-muted mb-0">Browse the store and tap “Add to favourites” on any product.</p>
+                    <a href="/ganma/index" class="btn btn-gm-primary mt-4 px-4 rounded-pill">
+                        <i class="bi bi-shop me-2"></i>Start Shopping
+                    </a>
+                </div>
+
+                <div id="favourites-grid" class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4"
+                     th:classappend="${favourites.isEmpty()} ? 'd-none' : ''">
+                    <div class="col" th:each="product : ${favourites}"
+                         th:attr="data-product-id=${product.id}">
+                        <div class="card product-card h-100 shadow-sm">
+                            <a th:href="@{/ganma/product/{id}(id=${product.id})}" class="product-img-link text-decoration-none">
+                                <img th:src="@{'/images/' + ${product.imageName}}"
+                                     th:alt="${product.name}"
+                                     loading="lazy">
+                            </a>
+                            <div class="card-body d-flex flex-column text-start p-3 p-md-4">
+                                <a th:href="@{/ganma/product/{id}(id=${product.id})}" class="text-decoration-none">
+                                    <h3 class="product-title mb-3" th:text="${product.name}"></h3>
+                                </a>
+                                <div class="mt-auto d-flex flex-wrap gap-2 align-items-center">
+                                    <a th:href="@{/ganma/product/{id}(id=${product.id})}"
+                                       class="btn btn-gm-primary btn-sm rounded-pill px-3">
+                                        <i class="bi bi-eye me-1"></i>View
+                                    </a>
+                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3"
+                                            th:attr="onclick=|removeFavourite('${product.id}')|">
+                                        <i class="bi bi-trash me-1"></i>Remove
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -220,69 +355,72 @@
             </div>
         </div>
     </div>
-</div>
+</main>
 
-<!-- 统一页脚 -->
-<footer class="py-4 bg-dark text-light mt-5">
-    <div class="container text-center text-md-start">
-        <div class="row">
-            <div class="col-md-4 mb-3">
-                <h5>About Us</h5>
-                <p>Your one-stop shop for the best products at unbeatable prices.</p>
+<footer class="footer-gm py-5 text-light">
+    <div class="container px-3 px-lg-4">
+        <div class="row g-4 text-center text-md-start">
+            <div class="col-md-4">
+                <h5 class="fw-semibold mb-3">About</h5>
+                <p class="text-white-50 mb-0">Curated picks and fair prices — your everyday shop.</p>
             </div>
-            <div class="col-md-4 mb-3">
-                <h5>Customer Service</h5>
-                <ul class="list-unstyled">
-                    <li><a href="#" class="text-light">Contact Us</a></li>
-                    <li><a href="#" class="text-light">Returns</a></li>
-                    <li><a href="#" class="text-light">FAQs</a></li>
+            <div class="col-md-4">
+                <h5 class="fw-semibold mb-3">Help</h5>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2"><a href="#">Contact</a></li>
+                    <li class="mb-2"><a href="#">Returns</a></li>
+                    <li><a href="#">FAQs</a></li>
                 </ul>
             </div>
-            <div class="col-md-4 mb-3">
-                <h5>Follow Us</h5>
-                <a href="#" class="text-light me-3"><i class="bi bi-facebook"></i></a>
-                <a href="#" class="text-light me-3"><i class="bi bi-instagram"></i></a>
-                <a href="#" class="text-light me-3"><i class="bi bi-twitter"></i></a>
+            <div class="col-md-4">
+                <h5 class="fw-semibold mb-3">Follow</h5>
+                <div class="d-flex justify-content-center justify-content-md-start gap-3 fs-5">
+                    <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+                </div>
             </div>
         </div>
-        <p class="text-center mt-3">&copy; 2024 Ganma Shop. All Rights Reserved.</p>
+        <hr class="border-secondary opacity-25 my-4">
+        <p class="text-center text-white-50 mb-0">&copy; 2026 Ganma Shop. All rights reserved.</p>
     </div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     function removeFavourite(productId) {
-
         if (!confirm('确定要移除收藏吗？')) {
             return;
         }
 
-        fetch(`/ganma/favourite/remove/${productId}`, {
+        fetch('/ganma/favourite/remove/' + productId, {
             method: 'POST'
         })
-        .then(response => response.text())
-        .then(result => {
-            if (result === "SUCCESS") {
-
-                // Remove card automatically from page
-                const item = document.querySelector(`[data-product-id="${productId}"]`);
-                if (item) {
-                    item.remove();
+            .then(function (response) { return response.text(); })
+            .then(function (result) {
+                if (result === 'SUCCESS') {
+                    var item = document.querySelector('[data-product-id="' + productId + '"]');
+                    if (item) {
+                        item.remove();
+                    }
+                    if (document.querySelectorAll('[data-product-id]').length === 0) {
+                        var emptyEl = document.getElementById('favourites-empty');
+                        var gridEl = document.getElementById('favourites-grid');
+                        if (emptyEl) {
+                            emptyEl.classList.remove('d-none');
+                        }
+                        if (gridEl) {
+                            gridEl.classList.add('d-none');
+                        }
+                    }
+                } else if (result === 'NOT_LOGGED_IN') {
+                    alert('You must login first');
+                    window.location.href = '/auth/login';
+                } else {
+                    alert('Failed to remove favourite.');
                 }
-
-                // If no more items, show empty-state block
-                if (document.querySelectorAll('[data-product-id]').length === 0) {
-                    document.querySelector('.empty-state').style.display = 'flex';
-                }
-
-            } else if (result === "NOT_LOGGED_IN") {
-                alert("You must login first");
-                window.location.href = "/auth/login";
-            } else {
-                alert("Failed to remove favourite.");
-            }
-        })
-        .catch(err => console.error(err));
+            })
+            .catch(function (err) { console.error(err); });
     }
 </script>
 

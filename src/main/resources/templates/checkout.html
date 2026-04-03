@@ -1,24 +1,265 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>Checkout</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <style>
-        :root { --primary-color: #6f42c1; --light-bg: #f8f9fa; }
-        body { background-color: var(--light-bg); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .navbar { background: linear-gradient(135deg, var(--primary-color) 0%, #5a32a3 100%); }
-        .checkout-card { background: white; border-radius: 1rem; box-shadow: 0 4px 8px rgba(0,0,0,0.05); padding: 2rem; }
-        .form-control:focus { border-color: var(--primary-color); box-shadow: 0 0 0 0.2rem rgba(111,66,193,0.25); }
-        .payment-option.active { border-color: var(--primary-color); background-color: rgba(111,66,193,0.05); }
-        .footer { background-color: #212529; color: white; }
+        :root {
+            --primary: #6f42c1;
+            --primary-dark: #5a32a3;
+            --accent: #0d6efd;
+            --surface: #ffffff;
+            --page-bg: #eef1f5;
+            --text-muted: #6c757d;
+            --radius: 1rem;
+            --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+            --shadow-sm: 0 2px 12px rgba(15, 23, 42, 0.06);
+        }
+
+        body {
+            background: var(--page-bg);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            box-shadow: 0 4px 20px rgba(90, 50, 163, 0.25);
+        }
+
+        .checkout-hero {
+            max-width: 720px;
+            margin-bottom: 1.75rem;
+        }
+
+        .checkout-hero h1 {
+            font-size: clamp(1.5rem, 4vw, 1.85rem);
+            font-weight: 700;
+            color: #1a1a2e;
+            letter-spacing: -0.02em;
+        }
+
+        .checkout-hero p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 0;
+        }
+
+        .checkout-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.75rem 1.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            height: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .checkout-card {
+                padding: 2rem 2rem;
+            }
+        }
+
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+
+        .form-control, .form-select {
+            border-radius: 0.65rem;
+            border-color: #dee2e6;
+            padding: 0.6rem 0.85rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.2);
+        }
+
+        .payment-tile {
+            cursor: pointer;
+            border: 2px solid #e9ecef;
+            border-radius: 0.85rem;
+            padding: 1rem 1.1rem;
+            transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .payment-tile:hover {
+            border-color: #ced4da;
+            background: #fafbfc;
+        }
+
+        .payment-tile.active {
+            border-color: var(--primary);
+            background: linear-gradient(145deg, rgba(111, 66, 193, 0.06) 0%, rgba(111, 66, 193, 0.02) 100%);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .payment-tile .tile-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            background: #f3f0fa;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .payment-tile.active .tile-icon {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .payment-tile .tile-text strong {
+            display: block;
+            font-size: 0.95rem;
+            color: #1a1a2e;
+        }
+
+        .payment-tile .tile-text small {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .payment-tile input.form-check-input {
+            margin-top: 0.35rem;
+            flex-shrink: 0;
+        }
+
+        .payment-details {
+            border-radius: 0.85rem;
+            background: #f8f9fb;
+            border: 1px solid #e9ecef;
+            padding: 1.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .issuer-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+            margin-top: 0.35rem;
+        }
+
+        .issuer-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            padding: 0.2rem 0.45rem;
+            border-radius: 0.35rem;
+            background: #fff;
+            border: 1px solid #dee2e6;
+            color: #495057;
+        }
+
+        .bank-option {
+            border: 2px solid #e9ecef;
+            border-radius: 0.75rem;
+            padding: 0.85rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
+        .bank-option:hover {
+            border-color: #ced4da;
+            background: #fff;
+        }
+
+        .bank-option:has(input:checked) {
+            border-color: var(--primary);
+            background: rgba(111, 66, 193, 0.06);
+        }
+
+        .bank-option input {
+            flex-shrink: 0;
+        }
+
+        .order-summary-card .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 0.65rem 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.95rem;
+        }
+
+        .order-summary-card .summary-row:last-of-type {
+            border-bottom: none;
+        }
+
+        .order-summary-card .summary-total {
+            margin-top: 0.75rem;
+            padding-top: 1rem;
+            border-top: 2px solid #1a1a2e;
+            font-size: 1.1rem;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, var(--accent) 0%, #0b5ed7 100%);
+            border: none;
+            box-shadow: 0 4px 14px rgba(13, 110, 253, 0.35);
+        }
+
+        .btn-confirm:hover {
+            background: linear-gradient(135deg, #0b5ed7 0%, #0a58ca 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(13, 110, 253, 0.4);
+        }
+
+        .modal-header {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .modal-footer {
+            border-top: none;
+        }
+
+        .invalid-hint {
+            font-size: 0.8rem;
+            color: #dc3545;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .is-invalid-field ~ .invalid-hint,
+        .is-invalid-field + .invalid-hint {
+            display: block;
+        }
     </style>
 </head>
 <body>
 
-<!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container">
         <a class="navbar-brand fw-bold" href="/ganma/index">Ganma</a>
@@ -45,73 +286,160 @@
     </div>
 </nav>
 
-<!-- Checkout Content -->
-<div class="container my-5">
+<div class="container my-4 my-md-5">
 
-    <!-- Error Alert -->
     <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
         <span th:text="${error}"></span>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
-    <!-- Success Alert -->
     <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
         <span th:text="${success}"></span>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
+    <div class="checkout-hero">
+        <h1><i class="bi bi-bag-check me-2 text-primary"></i>Checkout</h1>
+        <p>Review your details, choose how you want to pay, then confirm your order.</p>
+    </div>
+
     <div class="row g-4 flex-column-reverse flex-md-row">
 
-        <!-- Checkout Form -->
         <div class="col-md-6">
-            <div class="checkout-card h-100">
-                <h3 class="mb-4 fw-bold">Checkout & Payment</h3>
+            <div class="checkout-card">
+                <h2 class="section-title"><i class="bi bi-credit-card-2-front"></i> Checkout &amp; payment</h2>
 
-                <form id="checkout-form" method="post" th:action="@{/ganma/checkout/submit}">
+                <form id="checkout-form" method="post" th:action="@{/ganma/checkout/submit}" novalidate>
 
-                    <!-- Preserve productIds -->
                     <input type="hidden" name="productIds"
                            th:each="id : ${productIds}"
                            th:value="${id}"/>
 
                     <div class="row g-3">
                         <div class="col-sm-6">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" class="form-control" name="fullName"
-                                   th:value="${user.username}">
+                            <label class="form-label" for="fullName">Full name</label>
+                            <input type="text" class="form-control" id="fullName" name="fullName"
+                                   th:value="${user.username}" autocomplete="name">
                         </div>
 
                         <div class="col-sm-6">
-                            <label class="form-label">Phone Number</label>
-                            <input type="text" class="form-control" name="phone"
-                                   th:value="${user.phone}">
+                            <label class="form-label" for="phone">Phone number</label>
+                            <input type="tel" class="form-control" id="phone" name="phone"
+                                   th:value="${user.phone}" autocomplete="tel">
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label">Shipping Address</label>
-                            <textarea class="form-control" name="address" rows="3"
-                                      th:text="${user.address}"></textarea>
+                            <label class="form-label" for="address">Shipping address</label>
+                            <textarea class="form-control" id="address" name="address" rows="3" autocomplete="street-address"
+                                      th:text="${user.address != null ? user.address : ''}"></textarea>
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label">Select Payment Method</label>
+                            <label class="form-label d-block mb-2">Select payment method</label>
                             <div class="d-flex flex-column flex-sm-row gap-3">
-                                <div class="form-check payment-option border rounded p-3 flex-fill">
+                                <label class="payment-tile active flex-fill mb-0" id="tile-credit" for="credit">
                                     <input class="form-check-input" type="radio" name="paymentMethod" value="credit" id="credit" checked>
-                                    <label class="form-check-label" for="credit">Credit Card</label>
+                                    <span class="tile-icon"><i class="bi bi-credit-card"></i></span>
+                                    <span class="tile-text">
+                                        <strong>Credit / debit card</strong>
+                                        <small>Visa, Maybank, OCBC &amp; more</small>
+                                    </span>
+                                </label>
+
+                                <label class="payment-tile flex-fill mb-0" id="tile-bank" for="bank">
+                                    <input class="form-check-input" type="radio" name="paymentMethod" value="bank" id="bank">
+                                    <span class="tile-icon"><i class="bi bi-phone"></i></span>
+                                    <span class="tile-text">
+                                        <strong>Online banking &amp; e-wallet</strong>
+                                        <small>Touch ’n Go &amp; bank portals</small>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Credit card details -->
+                        <div class="col-12" id="panel-credit">
+                            <div class="payment-details">
+                                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+                                    <div>
+                                        <span class="fw-semibold text-dark">Card details</span>
+                                        <div class="issuer-badges" aria-hidden="true">
+                                            <span class="issuer-badge" style="color:#1a1f71;">VISA</span>
+                                            <span class="issuer-badge" style="color:#ffc107;">MAYBANK</span>
+                                            <span class="issuer-badge" style="color:#e31837;">OCBC</span>
+                                            <span class="issuer-badge">MASTERCARD</span>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="form-check payment-option border rounded p-3 flex-fill">
-                                    <input class="form-check-input" type="radio" name="paymentMethod" value="bank" id="bank">
-                                    <label class="form-check-label" for="bank">Online Banking</label>
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label" for="cardIssuer">Card issuer / network</label>
+                                        <select class="form-select" id="cardIssuer" name="cardIssuer">
+                                            <option value="visa">Visa</option>
+                                            <option value="maybank">Maybank</option>
+                                            <option value="ocbc">OCBC Bank</option>
+                                            <option value="mastercard">Mastercard</option>
+                                            <option value="amex">American Express</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label" for="cardNumber">Card number</label>
+                                        <input type="text" class="form-control font-monospace" id="cardNumber" name="cardNumber"
+                                               inputmode="numeric" autocomplete="cc-number" maxlength="19"
+                                               placeholder="0000 0000 0000 0000">
+                                        <div class="invalid-hint" id="hint-cardNumber">Enter 15 digits (Amex) or 16 digits (Visa / Mastercard / most banks).</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="cardExpiry">Expiry (MM/YY)</label>
+                                        <input type="text" class="form-control font-monospace" id="cardExpiry" name="cardExpiry"
+                                               inputmode="numeric" autocomplete="cc-exp" maxlength="5" placeholder="MM/YY">
+                                        <div class="invalid-hint" id="hint-cardExpiry">Use format MM/YY.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="cardCvv">CVV</label>
+                                        <input type="password" class="form-control font-monospace" id="cardCvv" name="cardCvv"
+                                               inputmode="numeric" autocomplete="cc-csc" maxlength="4" placeholder="•••">
+                                        <div class="invalid-hint" id="hint-cardCvv">Enter 3 or 4 digits.</div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label" for="cardName">Name on card</label>
+                                        <input type="text" class="form-control" id="cardName" name="cardName"
+                                               autocomplete="cc-name" placeholder="As shown on card">
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-12 text-end">
-                            <button type="button" class="btn btn-primary px-4 rounded-pill fw-bold"
-                                    data-bs-toggle="modal" data-bs-target="#confirmModal">
-                                <i class="bi bi-check-circle me-2"></i>Confirm Order
+                        <!-- Online banking / e-wallet -->
+                        <div class="col-12 d-none" id="panel-bank">
+                            <div class="payment-details">
+                                <span class="fw-semibold text-dark d-block mb-3">Choose provider</span>
+                                <div class="d-flex flex-column gap-2">
+                                    <label class="bank-option mb-0">
+                                        <input type="radio" name="bankProvider" value="tng" class="form-check-input" checked>
+                                        <span class="fw-semibold">Touch ’n Go eWallet</span>
+                                    </label>
+                                    <label class="bank-option mb-0">
+                                        <input type="radio" name="bankProvider" value="maybank2u" class="form-check-input">
+                                        <span>Maybank2u</span>
+                                    </label>
+                                    <label class="bank-option mb-0">
+                                        <input type="radio" name="bankProvider" value="cimb" class="form-check-input">
+                                        <span>CIMB Clicks</span>
+                                    </label>
+                                    <label class="bank-option mb-0">
+                                        <input type="radio" name="bankProvider" value="publicbank" class="form-check-input">
+                                        <span>Public Bank</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 text-end pt-2">
+                            <button type="button" class="btn btn-primary btn-confirm px-4 py-2 rounded-pill fw-bold"
+                                    id="btn-open-confirm">
+                                <i class="bi bi-check-circle me-2"></i>Confirm order
                             </button>
                         </div>
                     </div>
@@ -119,78 +447,177 @@
             </div>
         </div>
 
-        <!-- Order Summary -->
         <div class="col-md-6">
-            <div class="checkout-card h-100">
-                <h4 class="fw-bold mb-3">Order Summary</h4>
+            <div class="checkout-card order-summary-card">
+                <h2 class="section-title"><i class="bi bi-receipt"></i> Order summary</h2>
 
-                <ul class="list-group mb-3">
-
-                    <li class="list-group-item d-flex justify-content-between"
-                        th:each="item : ${orderItems}">
-                        <span th:text="${item.product.name} + ' (x' + ${item.cart.quantity} + ')'"></span>
+                <div class="summary-body">
+                    <div class="summary-row" th:each="item : ${orderItems}">
+                        <span th:text="${item.product.name} + ' × ' + ${item.cart.quantity}"></span>
                         <strong th:text="'RM ' + ${#numbers.formatDecimal(item.cart.price * item.cart.quantity, 1, 2)}"></strong>
-                    </li>
+                    </div>
 
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Delivery Fee</span>
+                    <div class="summary-row">
+                        <span class="text-muted">Delivery fee</span>
                         <span th:text="'RM ' + ${#numbers.formatDecimal(deliveryFee, 1, 2)}"></span>
-                    </li>
+                    </div>
 
-                    <li class="list-group-item d-flex justify-content-between">
-                        <span>Service Tax (0%)</span>
+                    <div class="summary-row">
+                        <span class="text-muted">Service tax (0%)</span>
                         <span th:text="'RM ' + ${#numbers.formatDecimal(tax, 1, 2)}"></span>
-                    </li>
+                    </div>
 
-                    <li class="list-group-item d-flex justify-content-between fw-bold">
+                    <div class="summary-row summary-total">
                         <span>Total</span>
                         <span th:text="'RM ' + ${#numbers.formatDecimal(total, 1, 2)}"></span>
-                    </li>
-
-                </ul>
-
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Confirm Order Modal -->
 <div class="modal fade" id="confirmModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <!-- Title only -->
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">Confirm Order</h5>
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header px-4 pt-4">
+                <h5 class="modal-title fw-bold">Confirm order</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-
-            <!-- Footer with left + right buttons -->
-            <div class="modal-footer d-flex justify-content-between">
-                <!-- Save as Pending (LEFT) -->
+            <div class="modal-body px-4 text-muted small">
+                You will proceed to payment after confirming. You can still save as pending from the next step if needed.
+            </div>
+            <div class="modal-footer px-4 pb-4 d-flex justify-content-between">
                 <form method="post" th:action="@{/ganma/orderPayment/pending}">
                     <input type="hidden" name="productIds"
                            th:each="id : ${productIds}"
                            th:value="${id}" />
-                    <button type="submit" class="btn btn-outline-secondary">
-                        No
-                    </button>
+                    <button type="submit" class="btn btn-outline-secondary rounded-pill px-3">No, save pending</button>
                 </form>
-
-
-                <!-- Confirm Order (RIGHT) -->
-                <button type="submit" form="checkout-form" class="btn btn-success">
-                    Confirm Order
+                <button type="submit" form="checkout-form" class="btn btn-success rounded-pill px-4 fw-semibold" id="modal-submit">
+                    Confirm order
                 </button>
-
             </div>
-
         </div>
     </div>
 </div>
 
-
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function () {
+    const creditRadio = document.getElementById('credit');
+    const bankRadio = document.getElementById('bank');
+    const tileCredit = document.getElementById('tile-credit');
+    const tileBank = document.getElementById('tile-bank');
+    const panelCredit = document.getElementById('panel-credit');
+    const panelBank = document.getElementById('panel-bank');
+    const cardNumber = document.getElementById('cardNumber');
+    const cardExpiry = document.getElementById('cardExpiry');
+    const cardCvv = document.getElementById('cardCvv');
+    const btnOpenConfirm = document.getElementById('btn-open-confirm');
+    const form = document.getElementById('checkout-form');
+
+    function syncPaymentUI() {
+        const credit = creditRadio.checked;
+        tileCredit.classList.toggle('active', credit);
+        tileBank.classList.toggle('active', !credit);
+        panelCredit.classList.toggle('d-none', !credit);
+        panelBank.classList.toggle('d-none', credit);
+    }
+
+    [creditRadio, bankRadio].forEach(function (el) {
+        el.addEventListener('change', syncPaymentUI);
+    });
+    syncPaymentUI();
+
+    const cardIssuer = document.getElementById('cardIssuer');
+
+    function cardDigitLimit() {
+        return cardIssuer.value === 'amex' ? 15 : 16;
+    }
+
+    cardNumber.addEventListener('input', function () {
+        const max = cardDigitLimit();
+        let d = this.value.replace(/\D/g, '').slice(0, max);
+        this.value = d.replace(/(.{4})/g, '$1 ').trim();
+    });
+
+    cardIssuer.addEventListener('change', function () {
+        cardNumber.dispatchEvent(new Event('input'));
+    });
+
+    cardExpiry.addEventListener('input', function () {
+        let d = this.value.replace(/\D/g, '').slice(0, 4);
+        if (d.length >= 2) {
+            this.value = d.slice(0, 2) + '/' + d.slice(2);
+        } else {
+            this.value = d;
+        }
+    });
+
+    cardCvv.addEventListener('input', function () {
+        this.value = this.value.replace(/\D/g, '').slice(0, 4);
+    });
+
+    function clearCardErrors() {
+        [cardNumber, cardExpiry, cardCvv].forEach(function (el) {
+            el.classList.remove('is-invalid', 'is-invalid-field');
+        });
+    }
+
+    function validateCredit() {
+        clearCardErrors();
+        let ok = true;
+        const digits = cardNumber.value.replace(/\s/g, '');
+        const need = cardDigitLimit();
+        if (digits.length !== need || !/^\d+$/.test(digits)) {
+            cardNumber.classList.add('is-invalid', 'is-invalid-field');
+            ok = false;
+        }
+        const exp = cardExpiry.value;
+        if (!/^\d{2}\/\d{2}$/.test(exp)) {
+            cardExpiry.classList.add('is-invalid', 'is-invalid-field');
+            ok = false;
+        } else {
+            const mm = parseInt(exp.slice(0, 2), 10);
+            if (mm < 1 || mm > 12) {
+                cardExpiry.classList.add('is-invalid', 'is-invalid-field');
+                ok = false;
+            }
+        }
+        const cvv = cardCvv.value;
+        if (!/^\d{3,4}$/.test(cvv)) {
+            cardCvv.classList.add('is-invalid', 'is-invalid-field');
+            ok = false;
+        }
+        return ok;
+    }
+
+    btnOpenConfirm.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (creditRadio.checked && !validateCredit()) {
+            return;
+        }
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+            const modalEl = document.getElementById('confirmModal');
+            let inst = bootstrap.Modal.getInstance(modalEl);
+            if (!inst) inst = new bootstrap.Modal(modalEl);
+            inst.show();
+        }
+    });
+
+    form.addEventListener('submit', function (e) {
+        if (creditRadio.checked && !validateCredit()) {
+            e.preventDefault();
+            const modalEl = document.getElementById('confirmModal');
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                const inst = bootstrap.Modal.getInstance(modalEl);
+                if (inst) inst.hide();
+            }
+        }
+    });
+})();
+</script>
 
 </body>
 </html>

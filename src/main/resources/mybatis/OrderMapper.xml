@@ -16,6 +16,8 @@
         <!-- 映射 Order 对象 -->
         <association property="order" javaType="com.ganmashop.entity.Order">
             <id     property="id"         column="orderId"/>
+            <result property="userId"     column="orderUserId"/>
+            <result property="productId"  column="orderProductId"/>
             <result property="quantity"   column="orderQuantity"/>
             <result property="price"      column="orderPrice"/>
             <result property="status"     column="orderStatus"/>
@@ -143,6 +145,8 @@
     <select id="getOrderDetailsById" resultMap="OrderDTORMap">
         SELECT
         o.id          AS orderId,
+        o.user_id     AS orderUserId,
+        o.product_id  AS orderProductId,
         o.quantity    AS orderQuantity,
         o.price       AS orderPrice,
         o.status      AS orderStatus,
@@ -164,6 +168,32 @@
         LEFT JOIN product p ON o.product_id = p.id
         LEFT JOIN user u ON o.user_id = u.id
         WHERE o.id = #{orderId}
+    </select>
+
+    <select id="getOrderDetailsByUserIdAndStatus" resultMap="OrderDTORMap">
+        SELECT
+        o.id          AS orderId,
+        o.user_id     AS orderUserId,
+        o.product_id  AS orderProductId,
+        o.quantity    AS orderQuantity,
+        o.price       AS orderPrice,
+        o.status      AS orderStatus,
+        o.create_time AS orderCreateTime,
+        p.id          AS productId,
+        p.name        AS productName,
+        p.description AS productDescription,
+        p.price       AS productPrice,
+        p.image_name  AS productImage,
+        u.id          AS userId,
+        u.username    AS userUsername,
+        u.email       AS userEmail,
+        u.phone       AS userPhone,
+        u.address     AS userAddress
+        FROM orders o
+        LEFT JOIN product p ON o.product_id = p.id
+        LEFT JOIN `user` u ON o.user_id = u.id
+        WHERE o.user_id = #{userId} AND o.status = #{status}
+        ORDER BY o.create_time DESC
     </select>
 
     <select id="countOrdersCreatedAfter" resultType="int">
