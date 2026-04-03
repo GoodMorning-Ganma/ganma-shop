@@ -18,6 +18,9 @@ public interface OrderService {
     void save(Order order);
     String createOrder(String userId, String productId, int quantity, Double price, String status);
 
+    /** Persists checkout delivery fields on the order row only (user profile unchanged). */
+    void updateOrderShippingSnapshot(String orderId, String recipient, String phone, String address);
+
     void updateOrderStatus(String orderId, String status);
     void updateOrdersToPaid(List<String> orderIds);
 

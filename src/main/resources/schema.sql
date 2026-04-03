@@ -174,11 +174,19 @@ CREATE TABLE orders
   quantity                   INTEGER COMMENT 'quantity',
   price                      DOUBLE  COMMENT 'Price',
   status                     VARCHAR(255) DEFAULT 'Pending' COMMENT 'Order Status',
+  shipping_recipient       VARCHAR(255) NULL COMMENT 'Checkout delivery name snapshot',
+  shipping_phone           VARCHAR(64) NULL COMMENT 'Checkout phone snapshot',
+  shipping_address         VARCHAR(512) NULL COMMENT 'Checkout address snapshot',
   create_time                TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation Time',
   update_time               TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Update Time',
   FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 );
+
+-- Existing DB: run once if upgrading:
+-- ALTER TABLE orders ADD COLUMN shipping_recipient VARCHAR(255) NULL COMMENT 'Checkout delivery name snapshot';
+-- ALTER TABLE orders ADD COLUMN shipping_phone VARCHAR(64) NULL COMMENT 'Checkout phone snapshot';
+-- ALTER TABLE orders ADD COLUMN shipping_address VARCHAR(512) NULL COMMENT 'Checkout address snapshot';
 
 --INSERT INTO orders(id,user_id,product_id,quantity,price,status)
 --VALUES

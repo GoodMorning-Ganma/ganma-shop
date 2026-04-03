@@ -102,6 +102,19 @@ public class OrderServiceImpl implements OrderService {
         orderDao.insertOrder(id, userId, productId, quantity, price, status);
         return id;
     }
+
+    @Override
+    public void updateOrderShippingSnapshot(String orderId, String recipient, String phone, String address) {
+        if (orderId == null || orderId.isBlank()) {
+            return;
+        }
+        orderDao.updateOrderShipping(
+                orderId,
+                recipient != null ? recipient : "",
+                phone != null ? phone : "",
+                address != null ? address : ""
+        );
+    }
     @Override
     public List<Order> getPendingPaymentOrders(String userId) {
         return orderDao.getPendingPaymentOrders(userId);

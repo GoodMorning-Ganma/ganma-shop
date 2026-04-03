@@ -113,6 +113,18 @@
             flex-shrink: 0;
         }
 
+        .order-qty-pill {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--gm-brand-hover);
+            background: var(--gm-brand-soft);
+            border: 1px solid var(--gm-border);
+            padding: 0.3rem 0.7rem;
+            border-radius: 50rem;
+            flex-shrink: 0;
+            align-self: flex-start;
+        }
+
         .info-muted {
             font-size: 0.9375rem;
             color: var(--gm-text-muted);
@@ -278,16 +290,16 @@
             <div th:each="dto, iterStat : ${orders}"
                  class="payment-order-block"
                  th:classappend="${!iterStat.last} ? ' is-separated' : ''">
-                <div class="d-flex gap-3 mb-3">
+                <div class="d-flex gap-3 mb-3 align-items-start">
                     <img th:src="@{'/images/' + ${dto.product.imageName.split(',')[0]}}"
                          class="product-img"
                          th:alt="${dto.product.name}">
-                    <div class="min-w-0 flex-grow-1">
-                        <p class="fw-semibold mb-1 text-truncate" th:text="${dto.product.name}">Product</p>
-                        <p class="info-muted mb-0">
-                            <i class="bi bi-box-seam me-1 text-gm-brand"></i>
-                            Qty <span th:text="${dto.order.quantity}">1</span>
-                        </p>
+                    <div class="min-w-0 flex-grow-1 d-flex justify-content-between align-items-start gap-2">
+                        <div class="min-w-0">
+                            <span class="text-muted small d-block mb-1">Product</span>
+                            <p class="fw-semibold mb-0 text-break" th:text="${dto.product.name}">Product</p>
+                        </div>
+                        <span class="order-qty-pill">× <span th:text="${dto.order.quantity}">1</span></span>
                     </div>
                 </div>
 
@@ -323,21 +335,21 @@
                 <i class="bi bi-person-fill text-gm-brand mt-1"></i>
                 <div>
                     <span class="text-muted small d-block">Recipient</span>
-                    <span class="fw-semibold" th:text="${user.username}">Name</span>
+                    <span class="fw-semibold" th:text="${deliveryRecipient}">Name</span>
                 </div>
             </div>
             <div class="delivery-line mb-2">
                 <i class="bi bi-telephone text-gm-brand mt-1"></i>
                 <div>
                     <span class="text-muted small d-block">Phone</span>
-                    <span class="info-muted mb-0" th:text="${user.phone}">—</span>
+                    <span class="info-muted mb-0" th:text="${deliveryPhone}">—</span>
                 </div>
             </div>
             <div class="delivery-line mb-0">
                 <i class="bi bi-house text-gm-brand mt-1"></i>
                 <div>
                     <span class="text-muted small d-block">Address</span>
-                    <span class="info-muted mb-0" th:text="${user.address}">—</span>
+                    <span class="info-muted mb-0" th:text="${deliveryAddress}">—</span>
                 </div>
             </div>
         </div>

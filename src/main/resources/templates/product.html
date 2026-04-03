@@ -343,6 +343,11 @@
 
             .description-box {
                 padding: 1rem 1.05rem;
+                max-height: min(42vh, 20rem);
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior: contain;
+                box-shadow: inset 0 -1px 0 var(--gm-border);
             }
 
             .product-description,
@@ -444,13 +449,14 @@
 
                         <!-- 产品详情 -->
                         <div class="col-md-6 product-detail-col d-flex flex-column">
-                            <h1 th:text="${product.name}" class="product-title mb-2 fw-bold"></h1>
+                            <h1 th:text="${product.name}"
+                                class="product-title mb-2 fw-bold order-1 order-md-0"></h1>
 
-                            <p class="price-text mb-3">
+                            <p class="price-text mb-3 order-2 order-md-0">
                                 RM <span th:text="${#numbers.formatDecimal(product.price, 1, 2)}"></span>
                             </p>
 
-                            <div class="description-box mb-3">
+                            <div class="description-box mb-2 mb-md-3 order-5 order-md-0 mt-3 mt-md-0">
                                 <h2 class="description-heading">Description</h2>
                                 <th:block th:with="desc=${product.description}">
                                     <th:block th:if="${#strings.contains(desc, 'Types of Whole Grains:')}">
@@ -468,7 +474,7 @@
                                 </th:block>
                             </div>
 
-                            <form action="/ganma/cart/add" method="post" class="mb-2">
+                            <form action="/ganma/cart/add" method="post" class="mb-2 order-3 order-md-0">
                                 <input type="hidden" name="productId" th:value="${product.id}">
 
                                 <div class="purchase-actions mb-3">
@@ -487,7 +493,7 @@
                                 </div>
                             </form>
 
-                            <div class="trust-row pt-2">
+                            <div class="trust-row pt-2 order-4 order-md-0">
                                 <small><i class="bi bi-shield-check" aria-hidden="true"></i> Secure checkout</small>
                                 <small><i class="bi bi-truck" aria-hidden="true"></i> Free shipping</small>
                             </div>

@@ -25,6 +25,12 @@ public interface OrderDao {
                      @Param("status") String status);
 
     void updateOrder(Order order);
+
+    void updateOrderShipping(@Param("orderId") String orderId,
+                            @Param("recipient") String recipient,
+                            @Param("phone") String phone,
+                            @Param("address") String address);
+
     void updateOrdersToPaid(List<String> orderIds);
 
     Order getOrderById(String orderId);

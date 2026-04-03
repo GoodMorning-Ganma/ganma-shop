@@ -8,6 +8,9 @@
         <result column="quantity" property="quantity"  jdbcType="INTEGER" />
         <result column="price" property="price"  jdbcType="DOUBLE" />
         <result column="status" property="status"  jdbcType="VARCHAR" />
+        <result column="shipping_recipient" property="shippingRecipient" jdbcType="VARCHAR" />
+        <result column="shipping_phone" property="shippingPhone" jdbcType="VARCHAR" />
+        <result column="shipping_address" property="shippingAddress" jdbcType="VARCHAR" />
         <result column="create_time" property="createTime"  jdbcType="TIMESTAMP" />
         <result column="update_time" property="updateTime"  jdbcType="TIMESTAMP" />
     </resultMap>
@@ -98,6 +101,15 @@
         WHERE id = #{id}
     </update>
 
+    <update id="updateOrderShipping">
+        UPDATE orders
+        SET shipping_recipient = #{recipient},
+            shipping_phone     = #{phone},
+            shipping_address   = #{address},
+            update_time        = NOW()
+        WHERE id = #{orderId}
+    </update>
+
     <select id="getAllOrderDetails" resultMap="OrderDTORMap">
         SELECT
         o.id          AS orderId,
@@ -110,10 +122,10 @@
         p.description AS productDescription,
         p.price      AS productPrice,
         u.id         AS userId,
-        u.username   AS userUsername,  -- 保持与resultMap一致
+        COALESCE(NULLIF(TRIM(o.shipping_recipient), ''), u.username) AS userUsername,
         u.email       AS userEmail,
-        u.phone       AS userPhone,
-        u.address     AS userAddress
+        COALESCE(NULLIF(TRIM(o.shipping_phone), ''), u.phone)       AS userPhone,
+        COALESCE(NULLIF(TRIM(o.shipping_address), ''), u.address)     AS userAddress
         FROM orders o
         LEFT JOIN product p ON o.product_id = p.id
         LEFT JOIN `user` u ON o.user_id = u.id
@@ -132,10 +144,10 @@
         p.description AS productDescription,
         p.price       AS productPrice,
         u.id          AS userId,
-        u.username    AS userUsername,
+        COALESCE(NULLIF(TRIM(o.shipping_recipient), ''), u.username) AS userUsername,
         u.email       AS userEmail,
-        u.phone       AS userPhone,
-        u.address     AS userAddress
+        COALESCE(NULLIF(TRIM(o.shipping_phone), ''), u.phone)       AS userPhone,
+        COALESCE(NULLIF(TRIM(o.shipping_address), ''), u.address)   AS userAddress
         FROM orders o
         LEFT JOIN product p ON o.product_id = p.id
         LEFT JOIN `user` u ON o.user_id = u.id
@@ -159,10 +171,10 @@
         p.image_name  AS productImage,
 
         u.id         AS userId,
-        u.username   AS userUsername,
+        COALESCE(NULLIF(TRIM(o.shipping_recipient), ''), u.username) AS userUsername,
         u.email      AS userEmail,
-        u.phone      AS userPhone,
-        u.address    AS userAddress
+        COALESCE(NULLIF(TRIM(o.shipping_phone), ''), u.phone)        AS userPhone,
+        COALESCE(NULLIF(TRIM(o.shipping_address), ''), u.address)    AS userAddress
 
         FROM orders o
         LEFT JOIN product p ON o.product_id = p.id
@@ -185,10 +197,10 @@
         p.price       AS productPrice,
         p.image_name  AS productImage,
         u.id          AS userId,
-        u.username    AS userUsername,
+        COALESCE(NULLIF(TRIM(o.shipping_recipient), ''), u.username) AS userUsername,
         u.email       AS userEmail,
-        u.phone       AS userPhone,
-        u.address     AS userAddress
+        COALESCE(NULLIF(TRIM(o.shipping_phone), ''), u.phone)       AS userPhone,
+        COALESCE(NULLIF(TRIM(o.shipping_address), ''), u.address)  AS userAddress
         FROM orders o
         LEFT JOIN product p ON o.product_id = p.id
         LEFT JOIN `user` u ON o.user_id = u.id

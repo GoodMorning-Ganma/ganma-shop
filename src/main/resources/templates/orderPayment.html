@@ -137,6 +137,44 @@
             flex-wrap: wrap;
         }
 
+        .order-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--gm-text-muted);
+            margin-bottom: 0.2rem;
+        }
+
+        .order-id-text {
+            font-family: inherit;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            color: var(--gm-text);
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            line-height: 1.45;
+            -webkit-user-select: all;
+            user-select: all;
+        }
+
+        .order-qty-pill {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--gm-brand-hover);
+            background: var(--gm-brand-soft);
+            border: 1px solid var(--gm-border);
+            padding: 0.3rem 0.7rem;
+            border-radius: 50rem;
+            flex-shrink: 0;
+            align-self: flex-start;
+        }
+
+        .payment-card .payment-product-row {
+            align-items: flex-start;
+        }
+
         .order-line-thumb {
             width: 64px;
             height: 64px;
@@ -200,8 +238,9 @@
         }
 
         .order-badge-paid {
-            background: rgba(58, 85, 104, 0.14);
-            color: var(--gm-brand-hover);
+            background: #d9e8f2;
+            color: #1a4a6e;
+            border: 1px solid rgba(58, 85, 104, 0.22);
         }
 
         .order-badge-delivered {
@@ -291,8 +330,12 @@
 
         @media (max-width: 767.98px) {
             .payment-header-row {
-                flex-direction: column;
-                align-items: stretch;
+                flex-direction: row;
+                align-items: flex-start;
+            }
+
+            .payment-header-row .order-badge {
+                align-self: flex-start;
             }
 
             .navbar-gm .navbar-brand {
@@ -300,7 +343,12 @@
             }
 
             .payment-card {
-                padding: 1.2rem;
+                padding: 1rem;
+            }
+
+            .payment-card .order-line-thumb {
+                width: 72px;
+                height: 72px;
             }
         }
     </style>
@@ -414,34 +462,38 @@
                 <div th:each="item : ${orders}">
                     <div class="payment-card">
                         <div class="payment-header-row mb-3">
-                            <h2 class="h5 mb-0 fw-semibold">
-                                Order #<span th:text="${#strings.substring(item.order.id,0,8)} + '...'"></span>
-                            </h2>
-                            <span class="order-badge"
+                            <div class="min-w-0 flex-grow-1">
+                                <div class="order-label">Order number</div>
+                                <p class="order-id-text mb-0"
+                                   th:text="${#strings.length(item.order.id) == 32 ? (#strings.substring(item.order.id,0,8) + '-' + #strings.substring(item.order.id,8,12) + '-' + #strings.substring(item.order.id,12,16) + '-' + #strings.substring(item.order.id,16,20) + '-' + #strings.substring(item.order.id,20,32)) : item.order.id}">order-id</p>
+                            </div>
+                            <span class="order-badge flex-shrink-0"
                                   th:classappend="${item.order.status == 'Pending'} ? ' order-badge-pending' : (${item.order.status == 'Paid'} ? ' order-badge-paid' : (${item.order.status == 'Delivered'} ? ' order-badge-delivered' : ' order-badge-default'))"
                                   th:text="${item.order.status}"></span>
                         </div>
 
-                        <div class="d-flex align-items-center gap-3 py-3 payment-row">
+                        <div class="d-flex gap-3 py-3 payment-row payment-product-row">
                             <img th:if="${item.product != null and item.product.imageName != null}"
                                  th:src="@{'/images/' + ${item.product.imageName.split(',')[0]}}"
                                  class="order-line-thumb" th:alt="${item.product.name}">
-                            <div class="min-w-0 flex-grow-1">
-                                <span class="text-muted small d-block"><i class="bi bi-box-seam me-1 text-gm-brand"></i>Product</span>
-                                <span class="fw-medium text-truncate d-block"
-                                      th:text="${item.product != null ? item.product.name : 'Product unavailable'}">Name</span>
-                                <span class="text-muted small">Qty <span th:text="${item.order.quantity}">1</span></span>
+                            <div class="min-w-0 flex-grow-1 d-flex justify-content-between align-items-start gap-2">
+                                <div class="min-w-0">
+                                    <span class="text-muted small d-block mb-1"><i class="bi bi-box-seam me-1 text-gm-brand"></i>Product</span>
+                                    <span class="fw-semibold text-break d-block"
+                                          th:text="${item.product != null ? item.product.name : 'Product unavailable'}">Name</span>
+                                </div>
+                                <span class="order-qty-pill">× <span th:text="${item.order.quantity}">1</span></span>
                             </div>
                         </div>
 
-                        <div class="d-flex justify-content-between align-items-center py-3 payment-row">
-                            <span class="text-muted"><i class="bi bi-calendar3 me-2 text-gm-brand"></i>Order date</span>
-                            <span th:text="${#dates.format(item.order.createTime, 'dd MMM yyyy HH:mm')}"></span>
+                        <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap py-3 payment-row">
+                            <span class="text-muted small d-flex align-items-center"><i class="bi bi-calendar3 me-2 text-gm-brand flex-shrink-0"></i>Order date</span>
+                            <span class="text-end" th:text="${#dates.format(item.order.createTime, 'dd MMM yyyy, HH:mm')}">date</span>
                         </div>
 
-                        <div class="d-flex justify-content-between align-items-center py-3">
-                            <span class="fw-semibold">Total amount</span>
-                            <span class="gm-order-price">RM <span th:text="${#numbers.formatDecimal(item.order.price * item.order.quantity,1,2)}"></span></span>
+                        <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap py-3">
+                            <span class="fw-semibold">Total</span>
+                            <span class="gm-order-price text-end">RM <span th:text="${#numbers.formatDecimal(item.order.price * item.order.quantity,1,2)}"></span></span>
                         </div>
 
                         <div class="mt-3">

@@ -256,9 +256,162 @@
         .is-invalid-field + .invalid-hint {
             display: block;
         }
+
+        /* Contact & shipping — clearer grouping */
+        .checkout-details-block {
+            border-radius: 0.85rem;
+            background: linear-gradient(180deg, #f8f9fb 0%, #f3f4f7 100%);
+            border: 1px solid #e9ecef;
+            padding: 1.1rem 1.15rem 1.15rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .checkout-details-block .details-heading {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 0.85rem;
+        }
+
+        .checkout-field-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+        }
+
+        .checkout-field-row .field-icon {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 0.55rem;
+            background: #fff;
+            border: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            flex-shrink: 0;
+            font-size: 1rem;
+        }
+
+        .checkout-field-row .field-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .checkout-field-row + .checkout-field-row {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed rgba(0, 0, 0, 0.08);
+        }
+
+        /* Mobile: comfortable tap targets */
+        @media (max-width: 767.98px) {
+            .checkout-card {
+                padding: 1.25rem 1.1rem;
+            }
+
+            .form-control, .form-select, textarea.form-control {
+                min-height: 48px;
+                font-size: 1rem;
+            }
+
+            textarea.form-control {
+                min-height: 6.5rem;
+            }
+
+            .payment-tile {
+                padding: 1rem 1rem;
+                min-height: 3.5rem;
+            }
+
+            .btn-confirm, .btn-confirm-sticky {
+                min-height: 48px;
+                padding-top: 0.65rem;
+                padding-bottom: 0.65rem;
+            }
+        }
+
+        /* Sticky total + confirm (mobile — use d-flex d-md-none on element) */
+        .checkout-sticky-cta {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1030;
+            padding: 0.65rem 1rem calc(0.65rem + env(safe-area-inset-bottom, 0));
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(8px);
+            border-top: 1px solid #e9ecef;
+            box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.08);
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        @media (max-width: 767.98px) {
+            body.checkout-has-sticky {
+                padding-bottom: calc(5.25rem + env(safe-area-inset-bottom, 0));
+            }
+
+            .checkout-inline-confirm {
+                display: none !important;
+            }
+        }
+
+        .checkout-sticky-cta .sticky-total-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .checkout-sticky-cta .sticky-total-value {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #1a1a2e;
+            line-height: 1.2;
+        }
+
+        .checkout-sticky-cta .btn-confirm-sticky {
+            flex: 1;
+            max-width: 12.5rem;
+            font-weight: 700;
+            border-radius: 0.75rem;
+            background: linear-gradient(135deg, var(--accent) 0%, #0b5ed7 100%);
+            border: none;
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(13, 110, 253, 0.35);
+        }
+
+        .modal-footer.checkout-modal-actions {
+            flex-direction: column-reverse;
+            align-items: stretch;
+            gap: 0.65rem;
+        }
+
+        @media (min-width: 576px) {
+            .modal-footer.checkout-modal-actions {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .checkout-modal-actions .btn {
+            min-height: 48px;
+        }
+
+        @media (min-width: 576px) {
+            .checkout-modal-actions form,
+            .checkout-modal-actions #modal-submit {
+                width: auto;
+            }
+        }
     </style>
 </head>
-<body>
+<body class="checkout-has-sticky">
 
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container">
@@ -303,7 +456,7 @@
         <p>Review your details, choose how you want to pay, then confirm your order.</p>
     </div>
 
-    <div class="row g-4 flex-column-reverse flex-md-row">
+    <div class="row g-4 flex-column flex-md-row">
 
         <div class="col-md-6">
             <div class="checkout-card">
@@ -315,24 +468,44 @@
                            th:each="id : ${productIds}"
                            th:value="${id}"/>
 
+                    <div class="checkout-details-block mb-3">
+                        <div class="details-heading">Shipping details</div>
+                        <div class="row g-3">
+                            <div class="col-12 col-sm-6">
+                                <div class="checkout-field-row">
+                                    <span class="field-icon d-none d-sm-flex" aria-hidden="true"><i class="bi bi-person"></i></span>
+                                    <div class="field-body">
+                                        <label class="form-label" for="fullName">Full name</label>
+                                        <input type="text" class="form-control" id="fullName" name="fullName"
+                                               th:value="${user.username}" autocomplete="name" placeholder="As on your ID">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="checkout-field-row">
+                                    <span class="field-icon d-none d-sm-flex" aria-hidden="true"><i class="bi bi-telephone"></i></span>
+                                    <div class="field-body">
+                                        <label class="form-label" for="phone">Phone number</label>
+                                        <input type="tel" class="form-control" id="phone" name="phone"
+                                               th:value="${user.phone}" autocomplete="tel" placeholder="For delivery updates">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="checkout-field-row">
+                                    <span class="field-icon d-none d-sm-flex" aria-hidden="true"><i class="bi bi-geo-alt"></i></span>
+                                    <div class="field-body">
+                                        <label class="form-label" for="address">Shipping address</label>
+                                        <textarea class="form-control" id="address" name="address" rows="3" autocomplete="street-address"
+                                                  placeholder="Street, unit, city, postcode"
+                                                  th:text="${user.address != null ? user.address : ''}"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row g-3">
-                        <div class="col-sm-6">
-                            <label class="form-label" for="fullName">Full name</label>
-                            <input type="text" class="form-control" id="fullName" name="fullName"
-                                   th:value="${user.username}" autocomplete="name">
-                        </div>
-
-                        <div class="col-sm-6">
-                            <label class="form-label" for="phone">Phone number</label>
-                            <input type="tel" class="form-control" id="phone" name="phone"
-                                   th:value="${user.phone}" autocomplete="tel">
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label" for="address">Shipping address</label>
-                            <textarea class="form-control" id="address" name="address" rows="3" autocomplete="street-address"
-                                      th:text="${user.address != null ? user.address : ''}"></textarea>
-                        </div>
 
                         <div class="col-12">
                             <label class="form-label d-block mb-2">Select payment method</label>
@@ -436,9 +609,8 @@
                             </div>
                         </div>
 
-                        <div class="col-12 text-end pt-2">
-                            <button type="button" class="btn btn-primary btn-confirm px-4 py-2 rounded-pill fw-bold"
-                                    id="btn-open-confirm">
+                        <div class="col-12 text-end pt-2 checkout-inline-confirm">
+                            <button type="button" class="btn btn-primary btn-confirm px-4 py-2 rounded-pill fw-bold js-open-confirm">
                                 <i class="bi bi-check-circle me-2"></i>Confirm order
                             </button>
                         </div>
@@ -477,6 +649,16 @@
     </div>
 </div>
 
+<div class="checkout-sticky-cta d-flex d-md-none" role="region" aria-label="Order total and confirm">
+    <div class="flex-shrink-0">
+        <div class="sticky-total-label">Total</div>
+        <div class="sticky-total-value" th:text="'RM ' + ${#numbers.formatDecimal(total, 1, 2)}">RM 0.00</div>
+    </div>
+    <button type="button" class="btn btn-confirm-sticky js-open-confirm ms-auto">
+        <i class="bi bi-check-circle me-1"></i>Confirm order
+    </button>
+</div>
+
 <div class="modal fade" id="confirmModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4 border-0 shadow">
@@ -487,14 +669,14 @@
             <div class="modal-body px-4 text-muted small">
                 You will proceed to payment after confirming. You can still save as pending from the next step if needed.
             </div>
-            <div class="modal-footer px-4 pb-4 d-flex justify-content-between">
-                <form method="post" th:action="@{/ganma/orderPayment/pending}">
+            <div class="modal-footer checkout-modal-actions px-4 pb-4">
+                <form method="post" th:action="@{/ganma/orderPayment/pending}" class="m-0 w-100">
                     <input type="hidden" name="productIds"
                            th:each="id : ${productIds}"
                            th:value="${id}" />
-                    <button type="submit" class="btn btn-outline-secondary rounded-pill px-3">No, save pending</button>
+                    <button type="submit" class="btn btn-outline-secondary rounded-pill px-3 w-100">No, save pending</button>
                 </form>
-                <button type="submit" form="checkout-form" class="btn btn-success rounded-pill px-4 fw-semibold" id="modal-submit">
+                <button type="submit" form="checkout-form" class="btn btn-success rounded-pill px-4 fw-semibold w-100" id="modal-submit">
                     Confirm order
                 </button>
             </div>
@@ -514,7 +696,7 @@
     const cardNumber = document.getElementById('cardNumber');
     const cardExpiry = document.getElementById('cardExpiry');
     const cardCvv = document.getElementById('cardCvv');
-    const btnOpenConfirm = document.getElementById('btn-open-confirm');
+    const openConfirmButtons = document.querySelectorAll('.js-open-confirm');
     const form = document.getElementById('checkout-form');
 
     function syncPaymentUI() {
@@ -593,7 +775,7 @@
         return ok;
     }
 
-    btnOpenConfirm.addEventListener('click', function (e) {
+    function openConfirmModal(e) {
         e.preventDefault();
         if (creditRadio.checked && !validateCredit()) {
             return;
@@ -604,6 +786,10 @@
             if (!inst) inst = new bootstrap.Modal(modalEl);
             inst.show();
         }
+    }
+
+    openConfirmButtons.forEach(function (btn) {
+        btn.addEventListener('click', openConfirmModal);
     });
 
     form.addEventListener('submit', function (e) {

@@ -1,6 +1,5 @@
 package com.ganmashop.entity;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -14,6 +13,10 @@ public class Order {
     private int quantity;
     private Double price;
     private String status;
+    /** Snapshot from checkout; does not change the user profile. */
+    private String shippingRecipient;
+    private String shippingPhone;
+    private String shippingAddress;
     private Date createTime;
     private Date updateTime;
 
@@ -76,6 +79,30 @@ public class Order {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getShippingRecipient() {
+        return shippingRecipient;
+    }
+
+    public void setShippingRecipient(String shippingRecipient) {
+        this.shippingRecipient = shippingRecipient;
+    }
+
+    public String getShippingPhone() {
+        return shippingPhone;
+    }
+
+    public void setShippingPhone(String shippingPhone) {
+        this.shippingPhone = shippingPhone;
+    }
+
+    public String getShippingAddress() {
+        return shippingAddress;
+    }
+
+    public void setShippingAddress(String shippingAddress) {
+        this.shippingAddress = shippingAddress;
     }
 
     public Date getCreateTime() {

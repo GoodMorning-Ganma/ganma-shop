@@ -22,6 +22,10 @@ import java.util.List;
 @RequestMapping("/ganma")
 public class CheckoutController {
 
+    private static final String SESSION_CHECKOUT_NAME = "checkoutDeliveryName";
+    private static final String SESSION_CHECKOUT_PHONE = "checkoutDeliveryPhone";
+    private static final String SESSION_CHECKOUT_ADDRESS = "checkoutDeliveryAddress";
+
     @Autowired
     private CartService cartService;
 
@@ -72,6 +76,9 @@ public class CheckoutController {
     @PostMapping("/checkout/submit")
     public String submitOrder(
             @RequestParam List<String> productIds,
+            @RequestParam(value = "fullName", required = false) String fullName,
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "address", required = false) String address,
             @RequestParam(value = "paymentMethod", defaultValue = "credit") String paymentMethod,
             @RequestParam(value = "bankProvider", required = false) String bankProvider,
             @RequestParam(value = "cardIssuer", required = false) String cardIssuer,
@@ -125,6 +132,28 @@ public class CheckoutController {
         );
         session.setAttribute("checkoutPaymentMethodLabel", paymentLabel);
 
+        String name = fullName != null ? fullName.trim() : "";
+        if (name.isEmpty() && user.getUsername() != null) {
+            name = user.getUsername();
+        }
+        session.setAttribute(SESSION_CHECKOUT_NAME, name);
+
+        String phoneVal = phone != null ? phone.trim() : "";
+        if (phoneVal.isEmpty() && user.getPhone() != null) {
+            phoneVal = user.getPhone();
+        }
+        session.setAttribute(SESSION_CHECKOUT_PHONE, phoneVal);
+
+        String addr = address != null ? address.trim() : "";
+        if (addr.isEmpty() && user.getAddress() != null) {
+            addr = user.getAddress();
+        }
+        session.setAttribute(SESSION_CHECKOUT_ADDRESS, addr);
+
+        for (String orderId : orderIds) {
+            orderService.updateOrderShippingSnapshot(orderId, name, phoneVal, addr);
+        }
+
         return "redirect:/ganma/payment";
     }
 
@@ -145,7 +174,7 @@ public class CheckoutController {
         for (Cart c : cartItems) {
             if (productIds.contains(c.getProductId())) {
 
-                // ✅ 每次都创建新的 Pending 订单（不要复用旧的）
+                // 每次都创建新的 Pending 订单（不要复用旧的）
                 orderService.createOrder(
                         user.getId(),
                         c.getProductId(),
@@ -191,6 +220,9 @@ public class CheckoutController {
         model.addAttribute("deliveryFee", deliveryFee);
         model.addAttribute("total", total);
         model.addAttribute("user", user);
+        model.addAttribute("deliveryRecipient", firstNonBlank((String) session.getAttribute(SESSION_CHECKOUT_NAME), user.getUsername()));
+        model.addAttribute("deliveryPhone", firstNonBlank((String) session.getAttribute(SESSION_CHECKOUT_PHONE), user.getPhone()));
+        model.addAttribute("deliveryAddress", firstNonBlank((String) session.getAttribute(SESSION_CHECKOUT_ADDRESS), user.getAddress()));
         model.addAttribute("isLoggedIn", true);
         Object label = session.getAttribute("checkoutPaymentMethodLabel");
         model.addAttribute("paymentMethodLabel", label != null ? label : "Not specified");
@@ -220,6 +252,9 @@ public class CheckoutController {
         session.removeAttribute("pendingOrderIds");
         String pmLabel = (String) session.getAttribute("checkoutPaymentMethodLabel");
         session.removeAttribute("checkoutPaymentMethodLabel");
+        session.removeAttribute(SESSION_CHECKOUT_NAME);
+        session.removeAttribute(SESSION_CHECKOUT_PHONE);
+        session.removeAttribute(SESSION_CHECKOUT_ADDRESS);
 
         String successMsg = "Order completed!";
         if (pmLabel != null && !pmLabel.isBlank() && !"Not specified".equals(pmLabel)) {
@@ -232,6 +267,13 @@ public class CheckoutController {
     /**
      * Human-readable label for the payment option chosen on checkout (card network or bank/e-wallet).
      */
+    private static String firstNonBlank(String preferred, String fallback) {
+        if (preferred != null && !preferred.isBlank()) {
+            return preferred;
+        }
+        return fallback != null ? fallback : "";
+    }
+
     private static String formatPaymentMethodLabel(String paymentMethod, String bankProvider, String cardIssuer) {
         if ("bank".equals(paymentMethod)) {
             return switch (bankProvider == null ? "" : bankProvider) {
