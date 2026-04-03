@@ -173,7 +173,7 @@
                             <h5 class="mb-2 fw-semibold" th:text="${item.product.name}"></h5>
                             <div class="d-flex align-items-center gap-2">
                                 <span class="text-muted">Price:</span>
-                                <span class="text-primary fw-bold" th:text="'RM' + ${item.cart.price}"></span>
+                                <span class="text-primary fw-bold" th:text="'RM ' + ${#numbers.formatDecimal(item.cart.price, 1, 2)}"></span>
                             </div>
                         </div>
                         <div class="col-12 col-md-3 text-md-end mt-3 mt-md-0">

@@ -224,7 +224,7 @@
                         <h1 th:text="${product.name}" class="mb-3 fs-2 fw-bold"></h1>
 
                         <div class="d-flex align-items-center mb-3">
-                            <span class="price-text me-3">RM <span th:text="${product.price}"></span></span>
+                            <span class="price-text me-3">RM <span th:text="${#numbers.formatDecimal(product.price, 1, 2)}"></span></span>
                         </div>
 
                         <div class="description-box mb-4 flex-grow-1">

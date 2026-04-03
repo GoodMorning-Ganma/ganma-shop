@@ -134,12 +134,12 @@
 
                     <li class="list-group-item d-flex justify-content-between">
                         <span>Delivery Fee</span>
-                        <span th:text="'RM ' + ${deliveryFee}"></span>
+                        <span th:text="'RM ' + ${#numbers.formatDecimal(deliveryFee, 1, 2)}"></span>
                     </li>
 
                     <li class="list-group-item d-flex justify-content-between">
                         <span>Service Tax (0%)</span>
-                        <span th:text="'RM ' + ${tax}"></span>
+                        <span th:text="'RM ' + ${#numbers.formatDecimal(tax, 1, 2)}"></span>
                     </li>
 
                     <li class="list-group-item d-flex justify-content-between fw-bold">
