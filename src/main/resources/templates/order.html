@@ -136,6 +136,41 @@
             object-fit: cover;
             background: #eef1ef;
             flex-shrink: 0;
+            cursor: zoom-in;
+        }
+
+        .gm-order-img-lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: rgba(24, 36, 44, 0.92);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            cursor: zoom-out;
+        }
+
+        .gm-order-img-lightbox.is-open {
+            display: flex;
+        }
+
+        .gm-order-img-lightbox img {
+            max-width: min(96vw, 900px);
+            max-height: 85vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: var(--gm-card-radius);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+            cursor: default;
+        }
+
+        .gm-order-img-lightbox-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1;
         }
 
         .gm-order-price {
@@ -395,6 +430,15 @@
     </div>
 </main>
 
+<div id="gmOrderImgLightbox" class="gm-order-img-lightbox" role="dialog" aria-modal="true" aria-label="Product image"
+     aria-hidden="true">
+    <button type="button" class="btn btn-light rounded-circle gm-order-img-lightbox-close shadow"
+            id="gmOrderImgLightboxClose" aria-label="Close">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="" id="gmOrderImgLightboxImg">
+</div>
+
 <footer class="footer-gm py-5 text-light">
     <div class="container px-3 px-lg-4">
         <div class="row g-4 text-center text-md-start">
@@ -425,5 +469,52 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    (function () {
+        const lb = document.getElementById('gmOrderImgLightbox');
+        const fullImg = document.getElementById('gmOrderImgLightboxImg');
+        const closeBtn = document.getElementById('gmOrderImgLightboxClose');
+        if (!lb || !fullImg || !closeBtn) return;
+
+        function openLightbox(src, alt) {
+            fullImg.src = src;
+            fullImg.alt = alt || '';
+            lb.classList.add('is-open');
+            lb.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            lb.classList.remove('is-open');
+            lb.setAttribute('aria-hidden', 'true');
+            fullImg.src = 'data:image/gif;base64,R0lGODlhAQABAAAAACw=';
+            fullImg.alt = '';
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('click', function (e) {
+            const thumb = e.target.closest('img.order-line-thumb');
+            if (!thumb) return;
+            const src = thumb.currentSrc || thumb.src;
+            if (!src || src.indexOf('data:image/gif;base64,') === 0) return;
+            e.preventDefault();
+            openLightbox(src, thumb.getAttribute('alt') || '');
+        });
+
+        lb.addEventListener('click', function (e) {
+            if (e.target === lb) closeLightbox();
+        });
+        closeBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            closeLightbox();
+        });
+        fullImg.addEventListener('click', function (e) {
+            e.stopPropagation();
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && lb.classList.contains('is-open')) closeLightbox();
+        });
+    })();
+</script>
 </body>
 </html>
