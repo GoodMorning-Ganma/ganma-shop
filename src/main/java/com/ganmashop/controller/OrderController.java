@@ -124,7 +124,7 @@ public class OrderController {
             cart.setUserId(user.getId());
             cart.setProductId(orderDTO.getProduct().getId());
             cart.setQuantity(orderDTO.getOrder().getQuantity());
-            cart.setPrice((orderDTO.getProduct().getPrice() .multiply(BigDecimal.valueOf(orderDTO.getOrder().getQuantity()))));
+            cart.setPrice((orderDTO.getProduct().getPrice() *orderDTO.getOrder().getQuantity()));
 
             cartService.save(cart);
 

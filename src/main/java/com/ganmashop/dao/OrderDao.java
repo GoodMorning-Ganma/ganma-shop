@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,7 +21,7 @@ public interface OrderDao {
                      @Param("userId") String userId,
                      @Param("productId") String productId,
                      @Param("quantity") int quantity,
-                     @Param("price") BigDecimal price,
+                     @Param("price") Double price,
                      @Param("status") String status);
 
     void updateOrder(Order order);
@@ -37,5 +38,6 @@ public interface OrderDao {
     List<Order> getDeliveredOrdersByUserId(String userId);
     List<Order> getPendingPaymentOrders(String userId);
     Order getPendingOrderByUserAndProduct(String userId, String productId);
+    int countOrdersCreatedAfter(@Param("after") Date after);
 
 }

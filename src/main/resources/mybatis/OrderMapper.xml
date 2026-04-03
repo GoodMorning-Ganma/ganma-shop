@@ -6,7 +6,7 @@
         <result column="user_id" property="userId"  jdbcType="VARCHAR" />
         <result column="product_id" property="productId"  jdbcType="VARCHAR" />
         <result column="quantity" property="quantity"  jdbcType="INTEGER" />
-        <result column="price" property="price"  jdbcType="DECIMAL" />
+        <result column="price" property="price"  jdbcType="DOUBLE" />
         <result column="status" property="status"  jdbcType="VARCHAR" />
         <result column="create_time" property="createTime"  jdbcType="TIMESTAMP" />
         <result column="update_time" property="updateTime"  jdbcType="TIMESTAMP" />
@@ -164,6 +164,10 @@
         LEFT JOIN product p ON o.product_id = p.id
         LEFT JOIN user u ON o.user_id = u.id
         WHERE o.id = #{orderId}
+    </select>
+
+    <select id="countOrdersCreatedAfter" resultType="int">
+        SELECT COUNT(*) FROM orders WHERE create_time &gt; #{after}
     </select>
 
 </mapper>

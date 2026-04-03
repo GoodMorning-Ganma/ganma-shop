@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -89,9 +90,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public String createOrder(String userId, String productId, int quantity, BigDecimal price, String status) {
+    public String createOrder(String userId, String productId, int quantity, Double price, String status) {
 
-        String id = GenUUID.getUUID();  // auto-generate order ID
+        String id = GenUUID.getUUID();
 
         orderDao.insertOrder(id, userId, productId, quantity, price, status);
         return id;
@@ -125,6 +126,12 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-
+    @Override
+    public int countOrdersCreatedAfter(Date after) {
+        if (after == null) {
+            return 0;
+        }
+        return orderDao.countOrdersCreatedAfter(after);
+    }
 
 }

@@ -277,7 +277,7 @@
                     const card = checkbox.closest(".cart-item-card");
                     const price = parseFloat(card.dataset.price) || 0;
                     const quantity = parseInt(card.dataset.quantity) || 1;
-                    total += price;
+                    total += price * quantity;
                 }
             });
             totalAmountEl.textContent = total.toFixed(2);

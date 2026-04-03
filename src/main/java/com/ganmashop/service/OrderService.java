@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
 @Service
 public interface OrderService {
     void save(Order order);
-    String createOrder(String userId, String productId, int quantity, BigDecimal price, String status);
+    String createOrder(String userId, String productId, int quantity, Double price, String status);
 
     void updateOrderStatus(String orderId, String status);
     void updateOrdersToPaid(List<String> orderIds);
@@ -31,5 +32,6 @@ public interface OrderService {
     List<Order> getPendingPaymentOrders(String userId);
     Order getPendingOrderByUserAndProduct(String userId, String productId);
 
+    int countOrdersCreatedAfter(Date after);
 
 }

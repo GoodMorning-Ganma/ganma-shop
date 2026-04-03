@@ -10,7 +10,7 @@ public class Product {
     private String categoryId;
     private String name;
     private String description;
-    private BigDecimal price;
+    private Double price;
     private String imageName;
     private Date createTime;
     private Date updateTime;
@@ -19,7 +19,7 @@ public class Product {
 
     }
 
-    public Product(String id, String userId, String categoryId, String name, String description, BigDecimal price, String imageName, Date createTime, Date updateTime){
+    public Product(String id, String userId, String categoryId, String name, String description, Double price, String imageName, Date createTime, Date updateTime){
         this.id = id;
         this.userId = userId;
         this.categoryId = categoryId;
@@ -65,10 +65,10 @@ public class Product {
     public void setDescription(String description){
         this.description=description;
     }
-    public BigDecimal getPrice(){
+    public Double getPrice(){
         return price;
     }
-    public void setPrice(BigDecimal price){
+    public void setPrice(Double price){
         this.price=price;
     }
 

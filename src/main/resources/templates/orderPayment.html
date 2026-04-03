@@ -177,7 +177,7 @@
 
                     <div class="d-flex justify-content-between py-3">
                         <span class="label fw-bold">Total Amount</span>
-                        <span class="price-tag">RM <span th:text="${order.price}"></span></span>
+                        <span class="price-tag">RM <span th:text="${#numbers.formatDecimal(order.price * order.quantity,1,2)}"></span></span>
                     </div>
 
                     <!-- Buttons -->

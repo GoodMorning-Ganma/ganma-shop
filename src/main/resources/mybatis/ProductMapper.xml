@@ -7,7 +7,7 @@
         <result column="category_id" property="categoryId" jdbcType="VARCHAR" />
         <result column="name" property="name" jdbcType="VARCHAR" />
         <result column="description" property="description" jdbcType="VARCHAR" />
-        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="price" property="price" jdbcType="DOUBLE" />
         <result column="image_name" property="imageName" jdbcType="VARCHAR" />
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />

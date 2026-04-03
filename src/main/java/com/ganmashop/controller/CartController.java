@@ -42,7 +42,7 @@ public class CartController {
             try {
                 // 首先查看当前用户有没有曾经把product添加进cart里
                 List<Cart> cartItems = cartService.getCartItems(user.getId());
-                // 然后通过cartItems的productId，link product table 获取到对应的product信息包括名字
+
                 List<CartProductDTO> cartProductDetails = cartItems.stream()
                         .map(cart -> {
                             Product product = productService.findProductById(cart.getProductId());

@@ -52,9 +52,9 @@ public class CheckoutController {
                 .map(c -> new CartProductDTO(c, productService.findProductById(c.getProductId())))
                 .toList();
 
-        BigDecimal subtotal = selectedItems.stream()
-                .map(i -> i.getCart().getPrice())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        double subtotal = selectedItems.stream()
+                .mapToDouble(i -> i.getCart().getPrice() * i.getCart().getQuantity())
+                .sum();
 
         model.addAttribute("user", user);
         model.addAttribute("orderItems", selectedItems);
@@ -62,7 +62,7 @@ public class CheckoutController {
         model.addAttribute("subtotal", subtotal);
         model.addAttribute("deliveryFee", 2.00);
         model.addAttribute("tax", 0);
-        model.addAttribute("total", subtotal .add(BigDecimal.valueOf(2)));
+        model.addAttribute("total", subtotal + 2);
         model.addAttribute("isLoggedIn", true);
 
         return "checkout";
@@ -94,11 +94,11 @@ public class CheckoutController {
                     orderId = pendingOrder.getId();
                 } else {
                     // 没有 Pending 订单，创建新的
-                    orderId = orderService.createOrder(
+                    orderId =  orderService.createOrder(
                             user.getId(),
                             c.getProductId(),
                             c.getQuantity(),
-                            c.getPrice() .add(BigDecimal.valueOf(2)),
+                            c.getPrice(),
                             "Pending"
                     );
                 }
@@ -173,9 +173,9 @@ public class CheckoutController {
                 .map(orderService::getOrderDetailsById)
                 .toList();
 
-        BigDecimal total = orders.stream()
-                .map(o -> o.getOrder().getPrice())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        double total = orders.stream()
+                .mapToDouble(i -> i.getOrder().getPrice() * i.getOrder().getQuantity() + 2)
+                .sum();
 
         model.addAttribute("orders", orders);
         model.addAttribute("total", total);

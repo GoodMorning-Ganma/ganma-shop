@@ -14,9 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin")
@@ -67,6 +67,22 @@ public class AdminOrderController {
                 return "admin/order";
             }
         }
+    }
+
+    /**
+     * 轮询：统计创建时间晚于指定时间点的订单数量（用于管理端新订单提醒）。
+     */
+    @GetMapping("/api/orders/new-count")
+    @ResponseBody
+    public ResponseEntity<Map<String, Integer>> countNewOrdersSince(
+            @RequestParam("after") long afterEpochMs,
+            HttpSession session) {
+        User user = (User) session.getAttribute("loggedInUser");
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        int count = orderService.countOrdersCreatedAfter(new Date(afterEpochMs));
+        return ResponseEntity.ok(Map.of("count", count));
     }
 
     @PostMapping("/orders/{id}/deliver")

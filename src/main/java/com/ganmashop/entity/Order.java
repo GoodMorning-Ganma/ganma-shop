@@ -12,14 +12,14 @@ public class Order {
     private String productId;
     private String userId;
     private int quantity;
-    private BigDecimal price;
+    private Double price;
     private String status;
     private Date createTime;
     private Date updateTime;
 
     public Order() {} // 必须有无参构造函数
 
-    public Order(String id, String productId, String userId, int quantity, BigDecimal price, String status, Date createTime, Date updateTime){
+    public Order(String id, String productId, String userId, int quantity, Double price, String status, Date createTime, Date updateTime){
         this.id = id;
         this.productId = productId;
         this.userId = userId;
@@ -62,11 +62,11 @@ public class Order {
         this.quantity = quantity;
     }
 
-    public BigDecimal getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 

@@ -188,7 +188,7 @@
                                 <i class="bi bi-calendar me-2 text-primary"></i>
                                 <span th:text="${#dates.format(order.createTime, 'dd MMM yyyy HH:mm')}"></span>
                             </div>
-                            <div class="text-primary fw-bold">RM <span th:text="${order.price}"></span></div>
+                            <div class="text-primary fw-bold">RM <span th:text="${#numbers.formatDecimal(order.price * order.quantity,1,2)}"></span></div>
                         </div>
 
                         <div class="mt-3 d-flex justify-content-end">

@@ -129,7 +129,7 @@
                     <li class="list-group-item d-flex justify-content-between"
                         th:each="item : ${orderItems}">
                         <span th:text="${item.product.name} + ' (x' + ${item.cart.quantity} + ')'"></span>
-                        <strong th:text="'RM ' + ${item.cart.price}"></strong>
+                        <strong th:text="'RM ' + ${#numbers.formatDecimal(item.cart.price * item.cart.quantity, 1, 2)}"></strong>
                     </li>
 
                     <li class="list-group-item d-flex justify-content-between">
@@ -144,7 +144,7 @@
 
                     <li class="list-group-item d-flex justify-content-between fw-bold">
                         <span>Total</span>
-                        <span th:text="'RM ' + ${total}"></span>
+                        <span th:text="'RM ' + ${#numbers.formatDecimal(total, 1, 2)}"></span>
                     </li>
 
                 </ul>

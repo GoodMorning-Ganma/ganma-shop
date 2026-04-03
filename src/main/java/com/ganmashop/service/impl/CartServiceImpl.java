@@ -44,7 +44,6 @@ public class CartServiceImpl implements CartService {
             if (Objects.nonNull(existingCartItems)) {
                 // 如果已存在就只增加product数量
                 existingCartItems.setQuantity(existingCartItems.getQuantity() + cart.getQuantity());
-                existingCartItems.setPrice((existingCartItems.getPrice().add(cart.getPrice() .multiply(BigDecimal.valueOf(cart.getQuantity())))));
                 cartDao.updateCart(existingCartItems);
             } else {
                 cart.setId(GenUUID.getUUID());

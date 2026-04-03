@@ -9,14 +9,14 @@ public class Cart {
     private String productId;
     private String userId;
     private int quantity;
-    private BigDecimal price;
+    private Double price;
     private Date createTime;
     private Date updateTime;
 
     public Cart(){
 
     }
-    public Cart(String id, String productId, String userId, int quantity, BigDecimal price, Date createTime, Date updateTime){
+    public Cart(String id, String productId, String userId, int quantity, Double price, Date createTime, Date updateTime){
         this.id=id;
         this.productId=productId;
         this.userId=userId;
@@ -56,11 +56,11 @@ public class Cart {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-    public BigDecimal getPrice(){
+    public Double getPrice(){
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
