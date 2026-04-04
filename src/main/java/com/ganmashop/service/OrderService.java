@@ -39,4 +39,7 @@ public interface OrderService {
 
     int countOrdersCreatedAfter(Date after);
 
+    /** Order ids with create_time strictly after {@code after}, newest first. */
+    List<String> findOrderIdsCreatedAfter(Date after);
+
 }

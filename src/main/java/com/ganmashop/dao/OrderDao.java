@@ -48,4 +48,6 @@ public interface OrderDao {
     Order getPendingOrderByUserAndProduct(String userId, String productId);
     int countOrdersCreatedAfter(@Param("after") Date after);
 
+    List<String> findOrderIdsCreatedAfter(@Param("after") Date after);
+
 }

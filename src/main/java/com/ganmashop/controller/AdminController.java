@@ -1,6 +1,7 @@
 package com.ganmashop.controller;
 import com.ganmashop.entity.User;
 import com.ganmashop.service.UserService;
+import com.ganmashop.utils.AdminViewHelper;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,6 +30,7 @@ public class AdminController {
 
         User user = (User) session.getAttribute("loggedInUser");
         model.addAttribute("isLoggedIn", user != null);
+        AdminViewHelper.putWelcomeNameIfLoggedIn(session, model);
 
         return "admin/users";
     }
@@ -58,28 +60,40 @@ public class AdminController {
     }
 
     @GetMapping("/users/editUser/{id}")
-    public String showEditForm(@ModelAttribute User user, Model model, HttpSession session) {
-        if(user != null){
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
-        user = userService.findUserById(loggedInUser.getId());
-        model.addAttribute("user", user);
+    public String showEditForm(@PathVariable String id, Model model, HttpSession session) {
+        if (session.getAttribute("loggedInUser") == null) {
+            return "redirect:/auth/login";
         }
-
+        User user = userService.findUserById(id);
+        if (user == null || user.getUserType() == null
+                || !"admin".equalsIgnoreCase(user.getUserType().trim())) {
+            return "redirect:/admin/users";
+        }
+        user.setPassword("");
+        model.addAttribute("user", user);
         return "admin/updateUser";
     }
 
     @PostMapping("/users/updateUser/{id}")
-    public String updateAccount(@ModelAttribute User user, HttpSession session, RedirectAttributes redirectAttributes) {
+    public String updateAccount(@PathVariable String id, @ModelAttribute User user, HttpSession session,
+                                RedirectAttributes redirectAttributes) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
-        if (loggedInUser != null) {
-            user.setId(loggedInUser.getId()); // Ensure the correct ID is used
-            userService.updateUser(user);
-            session.setAttribute("loggedInUser", userService.findUserById(loggedInUser.getId())); // Update session
-
-            // Add a success message as a flash attribute
-            redirectAttributes.addFlashAttribute("message", "用户更新成功!");
+        if (loggedInUser == null) {
+            return "redirect:/auth/login";
         }
-        return "redirect:/admin/users"; // Redirect back to the account page
+        User existing = userService.findUserById(id);
+        if (existing == null || existing.getUserType() == null
+                || !"admin".equalsIgnoreCase(existing.getUserType().trim())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "只能编辑管理员账号。");
+            return "redirect:/admin/users";
+        }
+        user.setId(id);
+        userService.updateUser(user);
+        if (id.equals(loggedInUser.getId())) {
+            session.setAttribute("loggedInUser", userService.findUserById(id));
+        }
+        redirectAttributes.addFlashAttribute("message", "用户更新成功!");
+        return "redirect:/admin/users";
     }
 
     @GetMapping("/users/deleteUser/{id}")

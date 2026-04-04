@@ -429,6 +429,9 @@
             </ul>
 
             <ul class="navbar-nav ms-auto">
+                <li class="nav-item" th:if="${isAdminUser}">
+                    <a class="nav-link" href="/admin/index">管理后台</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="${isLoggedIn ? '/auth/logout' : '/auth/login'}">
                         <span th:text="${isLoggedIn ? 'Logout' : 'Login'}"></span>

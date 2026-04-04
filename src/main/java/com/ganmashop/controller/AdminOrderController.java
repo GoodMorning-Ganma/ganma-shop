@@ -7,6 +7,7 @@ import com.ganmashop.entity.User;
 import com.ganmashop.service.OrderService;
 import com.ganmashop.service.ProductService;
 import com.ganmashop.service.UserService;
+import com.ganmashop.utils.AdminViewHelper;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 @Controller
 @RequestMapping("/admin")
@@ -38,6 +40,7 @@ public class AdminOrderController {
             return "redirect:/auth/login";
         } else {
             model.addAttribute("isLoggedIn", true);
+            AdminViewHelper.putWelcomeNameIfLoggedIn(session, model);
             try {
                 List<OrderDTO> recentOrderDetails = orderService.getRecentOrderDetails();
                 model.addAttribute("orderDetails", recentOrderDetails);
@@ -58,6 +61,7 @@ public class AdminOrderController {
             return "redirect:/auth/login";
         } else {
             model.addAttribute("isLoggedIn", true);
+            AdminViewHelper.putWelcomeNameIfLoggedIn(session, model);
             try {
                 List<OrderDTO> orderDetails = orderService.getAllOrderDetails();
                 model.addAttribute("orderDetails", orderDetails);
@@ -83,6 +87,24 @@ public class AdminOrderController {
         }
         int count = orderService.countOrdersCreatedAfter(new Date(afterEpochMs));
         return ResponseEntity.ok(Map.of("count", count));
+    }
+
+    /**
+     * 用于管理端通知：列出创建时间晚于指定时间点的订单 id（客户端再结合本地「单条已读」集合计算角标）。
+     */
+    @GetMapping("/api/orders/new-ids-since")
+    @ResponseBody
+    public ResponseEntity<Map<String, List<String>>> listNewOrderIdsSince(
+            @RequestParam("after") long afterEpochMs,
+            HttpSession session) {
+        User user = (User) session.getAttribute("loggedInUser");
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+        List<String> ids = orderService.findOrderIdsCreatedAfter(new Date(afterEpochMs));
+        Map<String, List<String>> body = new HashMap<>();
+        body.put("ids", ids);
+        return ResponseEntity.ok(body);
     }
 
     @PostMapping("/orders/{id}/deliver")

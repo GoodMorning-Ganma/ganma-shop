@@ -152,4 +152,12 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.countOrdersCreatedAfter(after);
     }
 
+    @Override
+    public List<String> findOrderIdsCreatedAfter(Date after) {
+        if (after == null) {
+            return List.of();
+        }
+        return orderDao.findOrderIdsCreatedAfter(after);
+    }
+
 }

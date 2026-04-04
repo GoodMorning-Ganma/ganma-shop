@@ -4,6 +4,7 @@ import com.ganmashop.entity.Product;
 import com.ganmashop.entity.User;
 import com.ganmashop.service.ProductService;
 import com.ganmashop.service.UserService;
+import com.ganmashop.utils.AdminViewHelper;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,6 +34,7 @@ public class AdminProductController {
         // 登录状态检查（可选）
         User user = (User) session.getAttribute("loggedInUser");
         model.addAttribute("isLoggedIn", user != null);
+        AdminViewHelper.putWelcomeNameIfLoggedIn(session, model);
 
         return "admin/products";
     }

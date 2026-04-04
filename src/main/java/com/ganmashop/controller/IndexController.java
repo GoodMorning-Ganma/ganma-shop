@@ -31,7 +31,12 @@ public class IndexController {
                                @RequestParam(required = false) String sort) {
         User user = (User) session.getAttribute("loggedInUser");
         model.addAttribute("isLoggedIn", user != null);
-
+        if (user != null) {
+            String display = (user.getName() != null && !user.getName().isBlank())
+                    ? user.getName().trim()
+                    : user.getUsername();
+            model.addAttribute("welcomeName", display);
+        }
 
         Map<String, Object> params = new HashMap<>();
         params.put("keyword", keyword);

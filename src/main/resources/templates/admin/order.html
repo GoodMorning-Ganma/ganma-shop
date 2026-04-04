@@ -98,6 +98,93 @@
             z-index: 1080;
         }
 
+        .admin-notif-order-scroll {
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        .admin-notif-order-row.admin-notif-read {
+            opacity: 0.65;
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+
+        #sidebar > .d-flex.flex-column {
+            height: 100%;
+            min-height: 0;
+        }
+
+        #sidebar nav.flex-grow-1 {
+            min-height: 0;
+        }
+
+        #sidebar .admin-sidebar-welcome {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .admin-welcome-inner {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.65rem 0.75rem;
+            border-radius: 0.65rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+        }
+
+        .admin-welcome-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            min-width: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1;
+            color: #fff;
+            background: linear-gradient(145deg, #6b8aa8 0%, #3d5568 100%);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+        }
+
+        .admin-welcome-meta {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .admin-welcome-label {
+            font-size: 0.68rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.52);
+            margin-bottom: 0.12rem;
+        }
+
+        .admin-welcome-name {
+            font-size: 0.94rem;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.25;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 992px) {
+            .admin-welcome-avatar {
+                width: 2.35rem;
+                height: 2.35rem;
+                min-width: 2.35rem;
+                font-size: 0.92rem;
+            }
+
+            .admin-welcome-inner {
+                padding: 0.55rem 0.65rem;
+            }
+        }
+
     </style>
 </head>
 <body class="d-flex">
@@ -107,7 +194,7 @@
         <h3 class="text-center py-3 mb-4 border-bottom">
             <a href="/admin/index" class="text-white text-decoration-none">管理面板</a>
         </h3>
-        <nav class="flex-grow-1 px-3">
+        <nav class="flex-grow-1 px-3 overflow-auto">
             <div class="list-group list-group-flush">
                 <a href="/admin/users" class="list-group-item list-group-item-action bg-dark text-white border-0">
                     <i class="bi bi-people me-2"></i>管理员列表
@@ -115,14 +202,29 @@
                 <a href="/admin/products" class="list-group-item list-group-item-action bg-dark text-white border-0">
                     <i class="bi bi-box-seam me-2"></i>商品管理
                 </a>
+                <a href="/ganma/index" class="list-group-item list-group-item-action bg-dark text-white border-0">
+                    <i class="bi bi-shop-window me-2"></i>前往商城
+                </a>
             </div>
         </nav>
-        <div class="p-3 border-top">
-            <a th:href="${isLoggedIn ? '/auth/logout' : '/auth/login'}"
-               class="btn btn-outline-light w-100">
-                <i th:class="${isLoggedIn ? 'bi-box-arrow-right' : 'bi-box-arrow-in-right'}" class="bi me-2"></i>
-                <span th:text="${isLoggedIn ? '登出' : '登录'}"></span>
-            </a>
+        <div class="flex-shrink-0 border-top border-secondary border-opacity-25">
+            <div class="admin-sidebar-welcome pt-3 pb-2" th:if="${welcomeName != null}">
+                <div class="admin-welcome-inner" role="status">
+                    <div class="admin-welcome-avatar" aria-hidden="true"
+                         th:text="${#strings.substring(welcomeName, 0, 1)}">A</div>
+                    <div class="admin-welcome-meta">
+                        <div class="admin-welcome-label">欢迎回来</div>
+                        <div class="admin-welcome-name" th:text="${welcomeName}">用户</div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-3 pb-3" th:classappend="${welcomeName != null} ? ' pt-2' : ' pt-3'">
+                <a th:href="${isLoggedIn ? '/auth/logout' : '/auth/login'}"
+                   class="btn btn-outline-light w-100">
+                    <i th:class="${isLoggedIn ? 'bi-box-arrow-right' : 'bi-box-arrow-in-right'}" class="bi me-2"></i>
+                    <span th:text="${isLoggedIn ? '登出' : '登录'}"></span>
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -163,6 +265,27 @@
                             <li class="px-3 pb-1">
                                 <small class="text-muted" id="adminOrderNotifSummary">正在同步…</small>
                             </li>
+                            <li class="px-0 py-0" th:if="${orderDetails != null && !orderDetails.isEmpty()}">
+                                <div class="px-3 pt-2 pb-1 small text-muted">最近订单 · 单条已读</div>
+                                <div class="admin-notif-order-scroll border-top border-secondary border-opacity-25">
+                                    <div th:each="orderDTO, iter : ${orderDetails}" th:if="${iter.index < 8}"
+                                         class="admin-notif-order-row d-flex align-items-start justify-content-between gap-2 px-3 py-2 border-bottom border-secondary border-opacity-25"
+                                         th:attr="data-notif-order-id=${orderDTO.order.id},
+                                                  data-notif-order-ms=${orderDTO.order.createTime != null ? orderDTO.order.createTime.getTime() : 0}">
+                                        <div class="min-w-0 flex-grow-1">
+                                            <div class="small fw-semibold text-truncate"
+                                                 th:text="${orderDTO.product.name}">商品</div>
+                                            <div class="text-muted" style="font-size: 0.75rem;"
+                                                 th:text="${orderDTO.order.createTime != null ? #dates.format(orderDTO.order.createTime, 'dd/MM HH:mm') : '—'}"></div>
+                                        </div>
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-secondary flex-shrink-0 py-0 px-2"
+                                                th:attr="data-mark-read-order-id=${orderDTO.order.id}">
+                                            标为已读
+                                        </button>
+                                    </div>
+                                </div>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <button type="button" class="dropdown-item" id="adminMarkOrdersSeen">
@@ -196,7 +319,8 @@
                         </thead>
                         <tbody>
                         <tr th:each="orderDTO : ${orderDetails}"
-                            th:attr="data-order-ms=${orderDTO.order.createTime != null ? orderDTO.order.createTime.getTime() : 0}">
+                            th:attr="data-order-ms=${orderDTO.order.createTime != null ? orderDTO.order.createTime.getTime() : 0},
+                                    data-order-id=${orderDTO.order.id}">
                             <td>
                                 <div class="fw-semibold" th:text="${orderDTO.user.username}"></div>
                                 <small class="text-muted" th:text="${orderDTO.user.email}"></small>
@@ -238,7 +362,8 @@
                 <div class="row row-cols-1 g-3">
                     <div class="col" th:each="orderDTO : ${orderDetails}">
                         <div class="card order-card shadow-sm border-0 rounded-4"
-                             th:attr="data-order-ms=${orderDTO.order.createTime != null ? orderDTO.order.createTime.getTime() : 0}">
+                             th:attr="data-order-ms=${orderDTO.order.createTime != null ? orderDTO.order.createTime.getTime() : 0},
+                                    data-order-id=${orderDTO.order.id}">
                             <div class="card-body">
                                 <h5 class="card-title mb-2 d-flex justify-content-between align-items-center">
                                     <span th:text="${orderDTO.product.name}"></span>
@@ -430,11 +555,35 @@
 <script>
     (function () {
         const LS_KEY = 'ganma_admin_orders_seen_at_ms';
+        const LS_READ_IDS = 'ganma_admin_orders_read_ids';
         const POLL_MS = 25000;
 
         function getSeenAtMs() {
             const v = localStorage.getItem(LS_KEY);
             return v != null ? parseInt(v, 10) : null;
+        }
+
+        function getReadIdSet() {
+            try {
+                const raw = localStorage.getItem(LS_READ_IDS);
+                if (!raw) return new Set();
+                const arr = JSON.parse(raw);
+                if (!Array.isArray(arr)) return new Set();
+                return new Set(arr.filter(Boolean));
+            } catch (e) {
+                return new Set();
+            }
+        }
+
+        function saveReadIdSet(set) {
+            localStorage.setItem(LS_READ_IDS, JSON.stringify(Array.from(set)));
+        }
+
+        function isRowUnread(ms, orderId) {
+            const seen = parseInt(localStorage.getItem(LS_KEY) || '0', 10);
+            if (isNaN(ms) || ms <= seen) return false;
+            if (orderId && getReadIdSet().has(orderId)) return false;
+            return true;
         }
 
         function maxOrderMsOnPage() {
@@ -453,15 +602,28 @@
         }
 
         function applyNewOrderHighlight() {
-            const seen = parseInt(localStorage.getItem(LS_KEY) || '0', 10);
             document.querySelectorAll('[data-order-ms]').forEach(function (el) {
                 const ms = parseInt(el.getAttribute('data-order-ms'), 10);
-                const isNew = !isNaN(ms) && ms > seen;
+                const orderId = el.getAttribute('data-order-id');
+                const isNew = isRowUnread(ms, orderId);
                 if (el.tagName === 'TR') {
                     el.classList.toggle('table-success', isNew);
                 } else {
                     el.classList.toggle('order-card-new', isNew);
                 }
+            });
+        }
+
+        function applyNotifDropdownReadState() {
+            document.querySelectorAll('[data-notif-order-id]').forEach(function (row) {
+                const id = row.getAttribute('data-notif-order-id');
+                const ms = parseInt(row.getAttribute('data-notif-order-ms'), 10);
+                const unread = isRowUnread(ms, id);
+                row.classList.toggle('admin-notif-read', !unread);
+                const btn = row.querySelector('[data-mark-read-order-id]');
+                if (!btn) return;
+                btn.disabled = !unread;
+                btn.textContent = unread ? '标为已读' : '已读';
             });
         }
 
@@ -484,24 +646,28 @@
             if (el) el.textContent = text;
         }
 
-        function fetchNewCount() {
+        function fetchUnreadCount() {
             const seen = getSeenAtMs();
             if (seen === null) return Promise.resolve(0);
-            return fetch('/admin/api/orders/new-count?after=' + encodeURIComponent(String(seen)))
+            return fetch('/admin/api/orders/new-ids-since?after=' + encodeURIComponent(String(seen)))
                 .then(function (r) {
-                    if (r.status === 401) return 0;
+                    if (r.status === 401) return { ids: [] };
                     if (!r.ok) throw new Error('poll failed');
                     return r.json();
                 })
                 .then(function (data) {
-                    return typeof data.count === 'number' ? data.count : 0;
+                    const ids = Array.isArray(data.ids) ? data.ids : [];
+                    const read = getReadIdSet();
+                    return ids.filter(function (id) {
+                        return id && !read.has(id);
+                    }).length;
                 });
         }
 
         let lastPolledCount = -1;
 
         function poll() {
-            fetchNewCount().then(function (count) {
+            fetchUnreadCount().then(function (count) {
                 setBadgeCount(count);
                 if (lastPolledCount >= 0 && count > lastPolledCount) {
                     const toastEl = document.getElementById('adminNewOrderToast');
@@ -512,13 +678,24 @@
                 }
                 lastPolledCount = count;
                 if (count > 0) {
-                    setSummary('有 ' + count + ' 笔新订单（自上次标记已读起）');
+                    setSummary('有 ' + count + ' 笔未读新订单（可逐条标为已读）');
                 } else {
-                    setSummary('暂无新订单');
+                    setSummary('暂无未读新订单');
                 }
             }).catch(function () {
                 setSummary('通知同步失败，请检查网络');
             });
+        }
+
+        function markOrderRead(orderId) {
+            if (!orderId) return;
+            const set = getReadIdSet();
+            set.add(orderId);
+            saveReadIdSet(set);
+            applyNewOrderHighlight();
+            applyNotifDropdownReadState();
+            lastPolledCount = -1;
+            poll();
         }
 
         function markAllSeen() {
@@ -526,7 +703,9 @@
             const cur = parseInt(localStorage.getItem(LS_KEY) || '0', 10);
             const next = max > 0 ? Math.max(cur, max) : Date.now();
             localStorage.setItem(LS_KEY, String(next));
+            localStorage.removeItem(LS_READ_IDS);
             applyNewOrderHighlight();
+            applyNotifDropdownReadState();
             lastPolledCount = -1;
             poll();
         }
@@ -534,10 +713,19 @@
         document.addEventListener('DOMContentLoaded', function () {
             ensureInitialSeenAt();
             applyNewOrderHighlight();
+            applyNotifDropdownReadState();
             poll();
             setInterval(poll, POLL_MS);
             var btn = document.getElementById('adminMarkOrdersSeen');
             if (btn) btn.addEventListener('click', markAllSeen);
+            document.addEventListener('click', function (e) {
+                var t = e.target.closest('[data-mark-read-order-id]');
+                if (!t || t.disabled) return;
+                var id = t.getAttribute('data-mark-read-order-id');
+                if (!id) return;
+                e.preventDefault();
+                markOrderRead(id);
+            });
         });
     })();
 </script>

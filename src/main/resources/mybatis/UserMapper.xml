@@ -38,10 +38,12 @@
 
     <update id="updateUser">
         update user set
+        username = #{username},
         email = #{email},
         name = #{name},
         phone = #{phone},
         address = #{address},
+        password = #{password},
         update_time = now()
         where id = #{id}
     </update>
