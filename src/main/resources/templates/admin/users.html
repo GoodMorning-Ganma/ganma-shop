@@ -53,6 +53,65 @@
             }
         }
 
+        .admin-sidebar-toggle {
+            flex-shrink: 0;
+            width: 2.5rem;
+            height: 2.5rem;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.38);
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .admin-sidebar-toggle:hover,
+        .admin-sidebar-toggle:focus {
+            background: rgba(255, 255, 255, 0.22);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.55);
+        }
+
+        .admin-sidebar-toggle:focus-visible {
+            outline: 2px solid rgba(255, 255, 255, 0.6);
+            outline-offset: 2px;
+        }
+
+        .admin-sidebar-toggle-mobile {
+            flex-shrink: 0;
+            width: 2.75rem;
+            height: 2.75rem;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.65rem;
+            border: none;
+            background: #212529;
+            color: #fff;
+            box-shadow: 0 2px 10px rgba(33, 37, 41, 0.2);
+            transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+        }
+
+        .admin-sidebar-toggle-mobile:hover,
+        .admin-sidebar-toggle-mobile:focus {
+            background: #343a40;
+            color: #fff;
+            box-shadow: 0 3px 12px rgba(33, 37, 41, 0.28);
+        }
+
+        .admin-sidebar-toggle-mobile:active {
+            transform: scale(0.97);
+        }
+
+        .admin-sidebar-toggle-mobile:focus-visible {
+            outline: 2px solid #0d6efd;
+            outline-offset: 2px;
+        }
+
         /* 用户管理专属样式（保留原有样式） */
         .table-responsive {
             overflow-x: auto;
@@ -64,31 +123,178 @@
             flex-wrap: nowrap;
         }
 
-        @media (max-width: 768px) {
-            .mobile-card {
-                background: white;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                margin-bottom: 12px;
-                padding: 16px;
+        @media (max-width: 767.98px) {
+            :root {
+                --adm-m-bg: #eef1f4;
+                --adm-m-card: #ffffff;
+                --adm-m-brand: #3a5568;
+                --adm-m-brand-soft: rgba(58, 85, 104, 0.12);
+                --adm-m-text: #1e2930;
+                --adm-m-muted: #5c6f7a;
+                --adm-m-border: rgba(58, 85, 104, 0.12);
             }
 
-            .data-label {
-                color: #6c757d;
-                font-size: 0.875rem;
-                margin-bottom: 4px;
+            .admin-users-mobile-wrap {
+                background: linear-gradient(180deg, var(--adm-m-bg) 0%, #e8ecf0 100%);
+                margin: -0.75rem -0.75rem 0;
+                padding: 1rem 0.75rem 1.5rem;
+                min-height: 50vh;
+                border-radius: 0;
             }
 
-            .data-value {
-                font-weight: 500;
-                margin-bottom: 12px;
+            .admin-users-mobile-top {
+                margin-bottom: 1rem;
+            }
+
+            .admin-users-mobile-title {
+                font-size: 1.35rem;
+                font-weight: 700;
+                letter-spacing: -0.02em;
+                color: var(--adm-m-text);
+            }
+
+            .admin-users-mobile-cta {
+                border-radius: 0.75rem;
+                font-weight: 600;
+                padding: 0.65rem 1rem;
+                box-shadow: 0 4px 14px rgba(13, 110, 253, 0.28);
+            }
+
+            .admin-user-card-list {
+                display: flex;
+                flex-direction: column;
+                gap: 0.85rem;
+            }
+
+            .admin-user-card {
+                background: var(--adm-m-card);
+                border-radius: 1rem;
+                border: 1px solid var(--adm-m-border);
+                box-shadow: 0 4px 20px rgba(45, 66, 80, 0.08);
+                overflow: hidden;
+            }
+
+            .admin-user-card__accent {
+                height: 3px;
+                background: linear-gradient(90deg, var(--adm-m-brand) 0%, #5a7a94 100%);
+                opacity: 0.9;
+            }
+
+            .admin-user-card__body {
+                padding: 1rem 1rem 0.25rem;
+            }
+
+            .admin-user-card__head {
+                display: flex;
+                align-items: center;
+                gap: 0.85rem;
+                margin-bottom: 0.85rem;
+            }
+
+            .admin-user-card__avatar {
+                width: 3rem;
+                height: 3rem;
+                min-width: 3rem;
+                border-radius: 0.85rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+                font-weight: 700;
+                color: #fff;
+                background: linear-gradient(145deg, #5a7a94 0%, var(--adm-m-brand) 100%);
+                box-shadow: 0 4px 12px rgba(58, 85, 104, 0.25);
+            }
+
+            .admin-user-card__meta {
+                min-width: 0;
+                flex: 1;
+            }
+
+            .admin-user-card__name {
+                font-size: 1.0625rem;
+                font-weight: 700;
+                color: var(--adm-m-text);
+                line-height: 1.25;
+                margin: 0 0 0.2rem;
                 word-break: break-word;
             }
 
-            .mobile-action-btn {
-                padding: 8px 12px;
-                font-size: 0.875rem;
+            .admin-user-card__id {
+                display: inline-flex;
+                align-items: center;
+                font-size: 0.72rem;
+                font-weight: 600;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+                color: var(--adm-m-muted);
+                background: var(--adm-m-brand-soft);
+                padding: 0.2rem 0.5rem;
+                border-radius: 999px;
+            }
+
+            .admin-user-card__rows {
+                display: flex;
+                flex-direction: column;
+                gap: 0.55rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .admin-user-card__row {
+                display: flex;
+                align-items: flex-start;
+                gap: 0.65rem;
+                font-size: 0.9rem;
+                line-height: 1.45;
+                color: var(--adm-m-text);
+            }
+
+            .admin-user-card__row i {
+                font-size: 1.05rem;
+                color: var(--adm-m-brand);
+                opacity: 0.85;
+                margin-top: 0.1rem;
+                flex-shrink: 0;
+            }
+
+            .admin-user-card__row span {
+                min-width: 0;
+                word-break: break-word;
+            }
+
+            .admin-user-card__row-label {
+                display: block;
+                font-size: 0.68rem;
+                font-weight: 600;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+                color: var(--adm-m-muted);
+                margin-bottom: 0.05rem;
+            }
+
+            .admin-user-card__actions {
+                display: flex;
+                gap: 0.5rem;
+                padding: 0.85rem 1rem 1rem;
+                margin-top: 0.25rem;
+                border-top: 1px solid var(--adm-m-border);
+                background: linear-gradient(180deg, rgba(248, 249, 251, 0.5) 0%, rgba(255, 255, 255, 0) 100%);
+            }
+
+            .admin-user-card__actions .btn {
                 flex: 1;
+                border-radius: 0.65rem;
+                font-weight: 600;
+                font-size: 0.9rem;
+                padding: 0.55rem 0.75rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.35rem;
+            }
+
+            .table-responsive {
+                min-height: auto;
             }
         }
 
@@ -218,21 +424,24 @@
 <!-- 主内容区 -->
 <div class="main-content flex-grow-1">
     <div class="container-fluid p-3 p-lg-4">
-        <!-- 移动端菜单按钮 -->
-        <button class="btn btn-dark d-lg-none" onclick="toggleSidebar()">
-            菜单
-        </button>
-
         <div th:if="${message}" class="alert alert-success" role="alert" th:text="${message}"></div>
         <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
 
         <!-- 用户列表内容（保持原有结构不变） -->
         <div class="card d-none d-md-block shadow-sm">
-            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">管理员列表</h5>
-                <a href="/admin/addAdmin" class="btn btn-primary">
-                    <i class="bi bi-plus-lg"></i> 新增
-                </a>
+            <div class="card-header bg-dark text-white py-3">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                    <div class="d-flex align-items-center gap-2 min-w-0 flex-grow-1 me-2">
+                        <button type="button" class="admin-sidebar-toggle d-lg-none"
+                                onclick="toggleSidebar()" aria-label="打开侧栏菜单">
+                            <i class="bi bi-list fs-4" aria-hidden="true"></i>
+                        </button>
+                        <h5 class="mb-0 text-white text-truncate">管理员列表</h5>
+                    </div>
+                    <a href="/admin/addAdmin" class="btn btn-primary btn-sm flex-shrink-0">
+                        <i class="bi bi-plus-lg"></i> 新增
+                    </a>
+                </div>
             </div>
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
@@ -271,46 +480,61 @@
         </div>
 
         <!-- 移动端卡片布局 -->
-        <div class="d-md-none">
-            <div class="mb-3">
-                <h3>管理员列表</h3>
-                <a href="/admin/addAdmin" class="btn btn-primary w-100">
+        <div class="d-md-none admin-users-mobile-wrap">
+            <div class="admin-users-mobile-top">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <button type="button" class="admin-sidebar-toggle-mobile"
+                            onclick="toggleSidebar()" aria-label="打开侧栏菜单">
+                        <i class="bi bi-list fs-4" aria-hidden="true"></i>
+                    </button>
+                    <h3 class="mb-0 flex-grow-1 admin-users-mobile-title">管理员列表</h3>
+                </div>
+                <a href="/admin/addAdmin" class="btn btn-primary w-100 admin-users-mobile-cta">
                     <i class="bi bi-plus-lg"></i> 新增管理员
                 </a>
             </div>
 
-            <div th:each="user : ${users}" class="mobile-card">
-                <div class="row g-2">
-                    <div class="col-12">
-                        <div class="data-label">ID</div>
-                        <div class="data-value" th:text="${user.id}"></div>
-                    </div>
-                    <div class="col-12">
-                        <div class="data-label">用户名</div>
-                        <div class="data-value" th:text="${user.username}"></div>
-                    </div>
-                    <div class="col-12">
-                        <div class="data-label">邮箱</div>
-                        <div class="data-value" th:text="${user.email}"></div>
-                    </div>
-                    <div class="col-12">
-                        <div class="data-label">手机号</div>
-                        <div class="data-value" th:text="${user.phone}"></div>
-                    </div>
-                    <div class="col-12">
-                        <div class="d-flex action-buttons gap-2 mt-2">
-                            <a th:href="@{/admin/users/editUser/{id}(id=${user.id})}"
-                               class="btn btn-outline-primary mobile-action-btn">
-                                <i class="bi bi-pencil"></i> 编辑
-                            </a>
-                            <a th:href="@{/admin/users/deleteUser/{id}(id=${user.id})}"
-                               class="btn btn-outline-danger mobile-action-btn"
-                               onclick="return confirm('确认删除？')">
-                                <i class="bi bi-trash"></i> 删除
-                            </a>
+            <div class="admin-user-card-list">
+                <article th:each="u : ${users}" class="admin-user-card">
+                    <div class="admin-user-card__accent" aria-hidden="true"></div>
+                    <div class="admin-user-card__body">
+                        <div class="admin-user-card__head">
+                            <div class="admin-user-card__avatar"
+                                 th:text="${#strings.isEmpty(u.username) ? '?' : #strings.toUpperCase(#strings.substring(u.username, 0, 1))}">A</div>
+                            <div class="admin-user-card__meta">
+                                <p class="admin-user-card__name" th:text="${u.username}">username</p>
+                                <span class="admin-user-card__id" th:text="${u.id}">ID</span>
+                            </div>
+                        </div>
+                        <div class="admin-user-card__rows">
+                            <div class="admin-user-card__row">
+                                <i class="bi bi-envelope" aria-hidden="true"></i>
+                                <span>
+                                    <span class="admin-user-card__row-label">邮箱</span>
+                                    <span th:text="${u.email}">email</span>
+                                </span>
+                            </div>
+                            <div class="admin-user-card__row">
+                                <i class="bi bi-telephone" aria-hidden="true"></i>
+                                <span>
+                                    <span class="admin-user-card__row-label">手机</span>
+                                    <span th:text="${u.phone != null ? u.phone : '—'}">phone</span>
+                                </span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <div class="admin-user-card__actions">
+                        <a th:href="@{/admin/users/editUser/{id}(id=${u.id})}"
+                           class="btn btn-outline-primary">
+                            <i class="bi bi-pencil"></i> 编辑
+                        </a>
+                        <a th:href="@{/admin/users/deleteUser/{id}(id=${u.id})}"
+                           class="btn btn-outline-danger"
+                           onclick="return confirm('确认删除该管理员？')">
+                            <i class="bi bi-trash"></i> 删除
+                        </a>
+                    </div>
+                </article>
             </div>
         </div>
     </div>
