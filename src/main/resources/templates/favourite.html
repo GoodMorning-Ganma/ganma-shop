@@ -206,6 +206,62 @@
             font-size: 0.98rem !important;
         }
 
+        .gm-toast-wrap {
+            position: fixed;
+            top: 5.2rem;
+            right: 1rem;
+            z-index: 1090;
+            width: min(92vw, 340px);
+            pointer-events: none;
+        }
+
+        .gm-toast {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            background: #fff;
+            color: var(--gm-text);
+            border: 1px solid var(--gm-border);
+            border-radius: 0.8rem;
+            box-shadow: 0 10px 28px rgba(45, 66, 80, 0.2);
+            padding: 0.75rem 0.8rem;
+            transform: translateY(-10px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s ease;
+            pointer-events: auto;
+        }
+
+        .gm-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .gm-toast__icon {
+            color: #198754;
+            font-size: 1.05rem;
+            margin-top: 0.08rem;
+        }
+
+        .gm-toast__text {
+            font-size: 0.92rem;
+            line-height: 1.4;
+            word-break: break-word;
+            flex: 1;
+        }
+
+        .gm-toast__close {
+            border: none;
+            background: transparent;
+            color: #6c757d;
+            padding: 0;
+            width: 1.2rem;
+            height: 1.2rem;
+            line-height: 1;
+            font-size: 1rem;
+        }
+
         @media (max-width: 767.98px) {
             .navbar-gm .navbar-brand {
                 font-size: 1.25rem;
@@ -362,6 +418,14 @@
     </div>
 </main>
 
+<div class="gm-toast-wrap" aria-live="polite" aria-atomic="true">
+    <div id="favToast" class="gm-toast" role="status">
+        <i class="bi bi-check-circle-fill gm-toast__icon" aria-hidden="true"></i>
+        <div id="favToastText" class="gm-toast__text">操作成功</div>
+        <button type="button" class="gm-toast__close" aria-label="Close" onclick="hideFavouriteToast()">&times;</button>
+    </div>
+</div>
+
 <footer class="footer-gm py-5 text-light">
     <div class="container px-3 px-lg-4">
         <div class="row g-4 text-center text-md-start">
@@ -393,11 +457,33 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    function removeFavourite(productId) {
-        if (!confirm('确定要移除收藏吗？')) {
-            return;
-        }
+    var favouriteToastTimer = null;
 
+    function showFavouriteToast(message) {
+        var toast = document.getElementById('favToast');
+        var text = document.getElementById('favToastText');
+        if (!toast || !text) return;
+        text.textContent = message || '操作成功';
+        toast.classList.add('show');
+        if (favouriteToastTimer) {
+            clearTimeout(favouriteToastTimer);
+        }
+        favouriteToastTimer = setTimeout(function () {
+            toast.classList.remove('show');
+        }, 2300);
+    }
+
+    function hideFavouriteToast() {
+        var toast = document.getElementById('favToast');
+        if (!toast) return;
+        toast.classList.remove('show');
+        if (favouriteToastTimer) {
+            clearTimeout(favouriteToastTimer);
+            favouriteToastTimer = null;
+        }
+    }
+
+    function removeFavourite(productId) {
         fetch('/ganma/favourite/remove/' + productId, {
             method: 'POST'
         })
@@ -408,6 +494,7 @@
                     if (item) {
                         item.remove();
                     }
+                    showFavouriteToast('已移除收藏');
                     if (document.querySelectorAll('[data-product-id]').length === 0) {
                         var emptyEl = document.getElementById('favourites-empty');
                         var gridEl = document.getElementById('favourites-grid');
@@ -419,10 +506,10 @@
                         }
                     }
                 } else if (result === 'NOT_LOGGED_IN') {
-                    alert('You must login first');
+                    showFavouriteToast('请先登录');
                     window.location.href = '/auth/login';
                 } else {
-                    alert('Failed to remove favourite.');
+                    showFavouriteToast('移除收藏失败，请稍后再试');
                 }
             })
             .catch(function (err) { console.error(err); });
